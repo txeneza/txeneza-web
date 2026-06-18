@@ -1,0 +1,36 @@
+/* Leaflet Custom Overrides */
+
+.leaflet-container {
+  font-family: inherit;
+  background-color: var(--background) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--card) !important;
+  color: var(--foreground) !important;
+  border-radius: var(--radius) !important;
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+}
+
+.leaflet-popup-tip {
+  background: var(--card) !important;
+}
+
+.leaflet-bar {
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: none !important;
+  border-radius: var(--radius) !important;
+  overflow: hidden;
+}
+
+.leaflet-bar a {
+  background-color: var(--card) !important;
+  color: var(--foreground) !important;
+  border-bottom: 1px solid hsl(var(--border)) !important;
+  transition: background-color 0.2s;
+}
+
+.leaflet-bar a:hover {
+  background-color: hsl(var(--accent)) !important;
+}
