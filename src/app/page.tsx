@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
+import { LandingPage } from "@/components/landing/landing-page";
 
 export default function Home() {
-  // Redireciona de forma permanente/temporária para a rota /map
-  redirect("/map");
+  return <LandingPage />;
 }
+
