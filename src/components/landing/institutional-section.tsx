@@ -30,7 +30,7 @@ export const InstitutionalSection: React.FC = () => {
   ];
 
   return (
-    <section id="ods" className="py-20 md:py-28 bg-slate-950 text-white relative">
+    <section id="ods" className="py-20 md:py-28 bg-background dark:bg-grey900 text-foreground dark:text-grey50 relative">
       <div className="absolute top-[30%] left-[-10%] w-[45%] aspect-square rounded-full bg-forestGreen/10 filter blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -42,16 +42,16 @@ export const InstitutionalSection: React.FC = () => {
             <h2 className="text-3.5xl sm:text-4.5xl font-black tracking-tight leading-tight">
               Apoio à Gestão e Sustentabilidade Urbana
             </h2>
-            <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+            <p className="text-slate-605 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
               O Txeneza foi idealizado sob bases científicas para apoiar os planos locais de limpeza e higiene urbana. No âmbito do nosso estudo de viabilidade acadêmica, a solução desenha sinergias com entidades ativas na gestão de resíduos da Beira.
             </p>
 
             {/* Disclaimer Alert */}
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 flex gap-4 items-start">
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex gap-4 items-start">
               <Landmark className="w-5 h-5 text-limeGreen shrink-0 mt-0.5" />
               <div className="text-xs">
-                <h4 className="font-extrabold text-slate-200">Delimitação de Integração</h4>
-                <p className="text-slate-500 mt-1 leading-relaxed">
+                <h4 className="font-extrabold text-foreground dark:text-slate-200">Delimitação de Integração</h4>
+                <p className="text-slate-600 dark:text-slate-500 mt-1 leading-relaxed">
                   Clarificamos que esta plataforma atua de forma independente como protótipo acadêmico. Não possui integração automática formal instalada nos sistemas internos da <strong>CMB</strong>, <strong>AMOR</strong> ou <strong>Kolekt</strong>, servindo como uma proposta tecnológica viável para futura adoção.
                 </p>
               </div>
@@ -68,7 +68,7 @@ export const InstitutionalSection: React.FC = () => {
                 ].map((ent, idx) => (
                   <span
                     key={idx}
-                    className="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-bold text-slate-350"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-202 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-355"
                   >
                     🏛️ {ent}
                   </span>
@@ -93,7 +93,7 @@ export const InstitutionalSection: React.FC = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: idx * 0.15 }}
-                    className="p-6 rounded-3xl bg-slate-900/40 border border-slate-850 hover:border-limeGreen/10 flex gap-5 items-start group transition-all"
+                    className="p-6 rounded-3xl bg-slate-50/40 dark:bg-slate-900/40 border border-slate-202 dark:border-slate-850 hover:border-limeGreen/10 flex gap-5 items-start group transition-all"
                   >
                     {/* Badge ODS */}
                     <div className={`w-14 h-14 rounded-2xl ${ods.color} flex flex-col items-center justify-center shrink-0 text-white font-mono shadow-lg relative`}>
@@ -103,11 +103,11 @@ export const InstitutionalSection: React.FC = () => {
 
                     {/* Text */}
                     <div>
-                      <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                      <h3 className="text-base font-extrabold text-foreground dark:text-white flex items-center gap-2">
                         {ods.title}
                         <Icon className="w-4 h-4 text-slate-500 opacity-60 group-hover:opacity-100 transition-opacity" />
                       </h3>
-                      <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
+                      <p className="text-xs sm:text-sm text-slate-605 dark:text-slate-400 mt-2 leading-relaxed">
                         {ods.desc}
                       </p>
                     </div>

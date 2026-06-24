@@ -21,7 +21,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground dark:bg-grey900 dark:text-grey50">
         <span className="text-sm text-gray-500 animate-pulse">A validar autenticação...</span>
       </div>
     );

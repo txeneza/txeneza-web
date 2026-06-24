@@ -13,7 +13,7 @@ import { LandingFooter } from "./landing-footer";
 
 export const LandingPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans antialiased overflow-x-hidden selection:bg-limeGreen selection:text-forestGreen">
+    <div className="min-h-screen bg-background text-foreground dark:bg-grey900 dark:text-grey50 font-sans antialiased overflow-x-hidden selection:bg-limeGreen selection:text-forestGreen">
       {/* Top Navigation */}
       <LandingNav />
 

@@ -54,7 +54,7 @@ export const HowItWorksSection: React.FC = () => {
   };
 
   return (
-    <section id="funcionamento" className="py-20 md:py-28 bg-slate-950 text-white relative">
+    <section id="funcionamento" className="py-20 md:py-28 bg-background dark:bg-grey900 text-foreground dark:text-grey50 relative">
       {/* Decorative radial gradient */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] aspect-square rounded-full bg-forestGreen/10 filter blur-3xl pointer-events-none" />
 
@@ -66,7 +66,7 @@ export const HowItWorksSection: React.FC = () => {
           <h2 className="text-3.5xl sm:text-5xl font-black tracking-tight mt-3">
             Como Funciona o Txeneza?
           </h2>
-          <p className="text-slate-400 mt-4 text-base sm:text-lg leading-relaxed">
+          <p className="text-slate-650 dark:text-slate-400 mt-4 text-base sm:text-lg leading-relaxed">
             Reportar um foco de lixo leva menos de 1 minuto. Desenvolvemos um fluxo simples e acessível para qualquer cidadão colaborar na melhoria do saneamento da cidade.
           </p>
         </div>
@@ -80,7 +80,7 @@ export const HowItWorksSection: React.FC = () => {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative"
         >
           {/* Connector Line (Desktop only) */}
-          <div className="hidden lg:block absolute top-[2.25rem] left-[10%] right-[10%] h-[2px] bg-slate-800 -z-10" />
+          <div className="hidden lg:block absolute top-[2.25rem] left-[10%] right-[10%] h-[2px] bg-slate-200 dark:bg-slate-800 -z-10" />
 
           {steps.map((step, index) => {
             const Icon = step.icon;
@@ -88,31 +88,31 @@ export const HowItWorksSection: React.FC = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-slate-900/60 border border-slate-850 hover:border-limeGreen/20 rounded-3xl p-6 relative group transition-all duration-300 flex flex-col justify-between"
+                className="bg-slate-50/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-850 hover:border-limeGreen/20 rounded-3xl p-6 relative group transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   {/* Step Bubble & Icon */}
                   <div className="flex justify-between items-center mb-6">
-                    <div className="w-11 h-11 rounded-2xl bg-slate-950 flex items-center justify-center text-limeGreen border border-slate-800 group-hover:scale-110 transition-transform">
+                    <div className="w-11 h-11 rounded-2xl bg-background dark:bg-slate-950 flex items-center justify-center text-limeGreen border border-slate-200 dark:border-slate-800 group-hover:scale-110 transition-transform">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <span className="text-2xl font-black text-slate-800 font-mono group-hover:text-limeGreen/10 transition-colors">
+                    <span className="text-2xl font-black text-slate-300 dark:text-slate-800 font-mono group-hover:text-limeGreen/10 transition-colors">
                       {step.num}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-white mb-2.5 group-hover:text-limeGreen transition-colors">
+                  <h3 className="text-lg font-bold text-foreground dark:text-white mb-2.5 group-hover:text-limeGreen transition-colors">
                     {step.title}
                   </h3>
-                  <p className="text-slate-450 text-xs sm:text-sm leading-relaxed">
+                  <p className="text-slate-605 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
                     {step.desc}
                   </p>
                 </div>
 
                 {/* Requirement tag */}
-                <div className="mt-6 pt-4 border-t border-slate-950 flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-slate-650 font-mono">Requisito</span>
-                  <span className="text-[9px] px-2 py-0.5 bg-slate-950 text-slate-400 rounded-md font-bold font-mono">
+                <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-950 flex justify-between items-center">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-650 font-mono">Requisito</span>
+                  <span className="text-[9px] px-2 py-0.5 bg-slate-100 dark:bg-slate-950 text-slate-650 dark:text-slate-400 rounded-md font-bold font-mono">
                     {step.requirement}
                   </span>
                 </div>

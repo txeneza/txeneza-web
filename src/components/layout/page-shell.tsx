@@ -9,7 +9,7 @@ interface PageShellProps {
 
 export const PageShell: React.FC<PageShellProps> = ({ children, showSidebar = false }) => {
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-screen bg-background text-foreground dark:bg-grey900 dark:text-grey50">
       <Header />
       <div className="flex flex-1">
         {showSidebar && <Sidebar />}

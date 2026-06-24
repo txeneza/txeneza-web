@@ -8,7 +8,7 @@ import { PlusCircle, Flame, ArrowDown } from "lucide-react";
 
 export const HeroSection: React.FC = () => {
   return (
-    <section className="relative min-h-[95vh] pt-28 md:pt-36 pb-16 flex items-center overflow-hidden bg-gradient-to-b from-forestGreen via-slate-950 to-slate-900 text-white">
+    <section className="relative min-h-[95vh] pt-28 md:pt-36 pb-16 flex items-center overflow-hidden bg-gradient-to-b from-forestGreen via-background to-background dark:via-grey900 dark:to-grey900 text-foreground dark:text-grey50">
       {/* Background Graphic Patterns */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-limeGreen/10 via-transparent to-transparent -z-10 pointer-events-none" />
       <div className="absolute top-[20%] left-[-10%] w-[45%] aspect-square rounded-full bg-forestGreen/30 filter blur-3xl -z-10 pointer-events-none" />
@@ -48,7 +48,7 @@ export const HeroSection: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg sm:text-2xl font-semibold text-slate-200 leading-snug"
+              className="text-lg sm:text-2xl font-semibold text-slate-700 dark:text-slate-200 leading-snug"
             >
               Por uma Beira mais limpa e saudável. Denuncie, mapeie e transforme a sua comunidade.
             </motion.p>
@@ -57,7 +57,7 @@ export const HeroSection: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-sm sm:text-base text-slate-400 max-w-xl mx-auto lg:mx-0 leading-relaxed"
+              className="text-sm sm:text-base text-slate-650 dark:text-slate-400 max-w-xl mx-auto lg:mx-0 leading-relaxed"
             >
               Uma plataforma colaborativa que permite aos cidadãos reportar focos de lixo acumulado em segundos pelo telemóvel e ajuda o Município a priorizar as equipas de recolha.
             </motion.p>
@@ -79,7 +79,7 @@ export const HeroSection: React.FC = () => {
               
               <a
                 href="#mapa-preview"
-                className="flex items-center justify-center gap-2.5 w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold bg-slate-900/80 text-white border border-slate-800 hover:border-slate-700 hover:bg-slate-850 hover:scale-[1.02] active:scale-95 transition-all"
+                className="flex items-center justify-center gap-2.5 w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold bg-slate-100/80 text-slate-800 border border-slate-200 hover:bg-slate-250/80 dark:bg-slate-900/80 dark:text-white dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-850 hover:scale-[1.02] active:scale-95 transition-all"
               >
                 <Flame className="w-5 h-5 text-orange-500 fill-orange-500/20" />
                 Ver mapa de calor

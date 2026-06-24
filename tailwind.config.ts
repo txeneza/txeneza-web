@@ -8,6 +8,8 @@ const config: Config = {
     extend: {
       colors: {
         ...appColors,
+        background: appColors.grey50,
+        foreground: appColors.grey900,
         light: lightColors,
         dark: darkColors,
       },
