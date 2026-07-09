@@ -49,10 +49,10 @@ export const ProblemSection: React.FC = () => {
           {/* Card 1: 1000 Tons/dia */}
           <motion.div
             variants={itemVariants}
-            className="p-8 rounded-3xl bg-background/80 dark:bg-slate-900/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
+            className="p-8 rounded-3xl bg-background/80 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
           >
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-limeGreen group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-grey900/90 flex items-center justify-center text-limeGreen group-hover:scale-110 transition-transform">
                 <Trash2 className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold mt-6 text-foreground dark:text-white group-hover:text-limeGreen transition-colors">
@@ -69,7 +69,7 @@ export const ProblemSection: React.FC = () => {
                 <span>Taxa de Recolha</span>
                 <span className="text-red-500">~50% Acumulado na Cidade</span>
               </div>
-              <div className="w-full h-3 bg-slate-150 dark:bg-slate-900 rounded-full overflow-hidden">
+              <div className="w-full h-3 bg-slate-150 dark:bg-grey900/90 rounded-full overflow-hidden">
                 <div className="w-1/2 h-full bg-gradient-to-r from-red-500 to-amber-500 rounded-full" />
               </div>
             </div>
@@ -78,10 +78,10 @@ export const ProblemSection: React.FC = () => {
           {/* Card 2: Bairros Afetados */}
           <motion.div
             variants={itemVariants}
-            className="p-8 rounded-3xl bg-background/80 dark:bg-slate-900/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
+            className="p-8 rounded-3xl bg-background/80 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
           >
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-grey900/90 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
                 <ShieldAlert className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold mt-6 text-foreground dark:text-white group-hover:text-amber-500 transition-colors">
@@ -99,7 +99,7 @@ export const ProblemSection: React.FC = () => {
                 {["Munhava", "Chota", "Matacuane", "Inhamizua"].map((bairro, idx) => (
                   <span
                     key={idx}
-                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-xs font-bold text-slate-705 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-amber-500/30 transition-colors"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-grey900/90 text-xs font-bold text-slate-705 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-amber-500/30 transition-colors"
                   >
                     {bairro}
                   </span>
@@ -111,10 +111,10 @@ export const ProblemSection: React.FC = () => {
           {/* Card 3: Doenças e Malária */}
           <motion.div
             variants={itemVariants}
-            className="p-8 rounded-3xl bg-background/80 dark:bg-slate-900/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
+            className="p-8 rounded-3xl bg-background/80 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
           >
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-grey900/90 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
                 <HeartPulse className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold mt-6 text-foreground dark:text-white group-hover:text-red-500 transition-colors">
@@ -137,10 +137,10 @@ export const ProblemSection: React.FC = () => {
           {/* Card 4: Inundações / Ciclone Idai */}
           <motion.div
             variants={itemVariants}
-            className="p-8 rounded-3xl bg-background/80 dark:bg-slate-900/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
+            className="p-8 rounded-3xl bg-background/80 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
           >
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-grey900/90 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
                 <CloudRain className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold mt-6 text-foreground dark:text-white group-hover:text-blue-500 transition-colors">

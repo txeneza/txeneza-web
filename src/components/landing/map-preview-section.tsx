@@ -107,7 +107,7 @@ export const MapPreviewSection: React.FC = () => {
           
           {/* Left Description Column */}
           <div className="lg:col-span-4 flex flex-col justify-between gap-6">
-            <div className="p-6 sm:p-8 rounded-3xl bg-background/80 dark:bg-slate-900/50 border border-slate-205 dark:border-slate-850 flex flex-col gap-5">
+            <div className="p-6 sm:p-8 rounded-3xl bg-background/80 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-850 flex flex-col gap-5">
               <span className="flex items-center gap-2 text-xs font-bold text-limeGreen">
                 <Sparkles className="w-4 h-4" />
                 Destaque do Sistema
@@ -145,7 +145,7 @@ export const MapPreviewSection: React.FC = () => {
                 )}
               </AnimatePresence>
 
-              <div className="h-[1px] bg-slate-100 dark:bg-slate-900 my-1" />
+              <div className="h-[1px] bg-slate-100 dark:bg-grey900/90 my-1" />
 
               <div className="flex flex-col gap-2.5">
                 <div className="flex items-center gap-3 text-xs text-slate-605 dark:text-slate-350">
@@ -174,7 +174,7 @@ export const MapPreviewSection: React.FC = () => {
           <div className="lg:col-span-8 bg-background dark:bg-slate-950 rounded-3xl border border-slate-205 dark:border-slate-800 overflow-hidden flex flex-col h-[480px] sm:h-[520px] shadow-2xl relative">
             
             {/* Map Header Panel */}
-            <div className="px-5 py-3.5 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-850 flex items-center justify-between text-xs font-semibold">
+            <div className="px-5 py-3.5 bg-slate-50 dark:bg-grey900/90 border-b border-slate-100 dark:border-slate-850 flex items-center justify-between text-xs font-semibold">
               <div className="flex items-center gap-2 text-slate-605 dark:text-slate-300">
                 <Map className="w-4.5 h-4.5 text-limeGreen" />
                 <span>Consola Pública de Monitoramento • Beira, MZ</span>
@@ -259,7 +259,7 @@ export const MapPreviewSection: React.FC = () => {
                         <div className={`w-4.5 h-4.5 rounded-full border border-white flex items-center justify-center shadow-lg relative ${
                           pin.gravidade === "Crítico" ? "bg-red-600" : "bg-orange-500"
                         }`}>
-                          <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                          <div className="w-1.5 h-1.5 bg-light-background dark:bg-dark-background rounded-full" />
                         </div>
                       </motion.button>
                     ))}
@@ -274,7 +274,7 @@ export const MapPreviewSection: React.FC = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: 20, opacity: 0 }}
-                    className="absolute bottom-6 left-6 right-6 bg-background/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-205 dark:border-slate-800 p-4 rounded-2xl shadow-2xl z-50 flex flex-col gap-3"
+                    className="absolute bottom-6 left-6 right-6 bg-background/95 dark:bg-grey900/90/95 backdrop-blur-md border border-slate-205 dark:border-slate-800 p-4 rounded-2xl shadow-2xl z-50 flex flex-col gap-3"
                   >
                     {(() => {
                       const pin = mockOccurrences.find((p) => p.id === selectedPin);

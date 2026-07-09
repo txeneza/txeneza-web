@@ -1,0 +1,263 @@
+// ============================================================================
+// Txeneza — schema.prisma
+// Plataforma de mapeamento georreferenciado e denúncia de resíduos sólidos
+// Backend: Supabase (PostgreSQL + PostGIS + Auth + Storage)
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ----------------------------------------------------------------------------
+// ENUMS
+// ----------------------------------------------------------------------------
+
+enum TipoUtilizador {
+  morador
+  administrador
+}
+
+enum EstadoConta {
+  activo
+  inactivo
+}
+
+enum Gravidade {
+  baixa
+  media
+  alta
+  critica
+}
+
+enum EstadoOcorrencia {
+  pendente
+  em_analise
+  resolvida
+  reaberta
+}
+
+enum ModoClassificacao {
+  gemini
+  tflite
+  manual
+}
+
+enum ModoIA {
+  gemini
+  tflite
+}
+
+enum TipoFotografia {
+  denuncia
+  verificacao
+}
+
+enum ResultadoVerificacao {
+  resolvida
+  nao_resolvida
+}
+
+enum EstadoPonto {
+  activo
+  inactivo
+}
+
+// ----------------------------------------------------------------------------
+// UTILIZADOR
+// ----------------------------------------------------------------------------
+
+model Utilizador {
+  id_utilizador  String         @id @default(uuid()) @db.Uuid
+  nome           String         @db.VarChar(100)
+  email          String         @unique @db.VarChar(150)
+  telefone       String?        @unique @db.VarChar(20)
+  palavra_passe  String         @db.VarChar(255)
+  bairro         String         @db.VarChar(80)
+  tipo           TipoUtilizador @default(morador)
+  foto_perfil    String?
+  data_registo   DateTime       @default(now())
+  estado         EstadoConta    @default(activo)
+
+  ocorrencias    Ocorrencia[]
+  verificacoes   VerificacaoResolucao[]
+  conversas      ConversacaoXeni[]
+  notificacoes   Notificacao[]
+
+  @@map("utilizador")
+}
+
+// ----------------------------------------------------------------------------
+// OCORRÊNCIA
+// ----------------------------------------------------------------------------
+
+model Ocorrencia {
+  id_ocorrencia      String            @id @default(uuid()) @db.Uuid
+  id_utilizador      String            @db.Uuid
+  id_categoria       String            @db.Uuid
+  id_ponto_recolha   String?           @db.Uuid
+
+  // NOTA DE DESIGN: campo adicionado para fechar a lacuna de proveniência
+  // identificada na revisão do modelo ER. Liga a ocorrência à classificação
+  // de IA (se existir) que efectivamente originou id_categoria/gravidade.
+  // Fica NULL quando a categoria foi atribuída manualmente pelo morador.
+  id_classificacao   String?           @db.Uuid
+
+  descricao          String?
+  latitude           Decimal           @db.Decimal(10, 7)
+  longitude          Decimal           @db.Decimal(10, 7)
+  gravidade          Gravidade
+  estado             EstadoOcorrencia  @default(pendente)
+  modo_classificacao ModoClassificacao
+  sincronizado       Boolean           @default(false)
+  data_hora_registo  DateTime
+  data_hora_sync     DateTime?
+
+  utilizador     Utilizador             @relation(fields: [id_utilizador], references: [id_utilizador])
+  categoria      CategoriaResiduo       @relation(fields: [id_categoria], references: [id_categoria])
+  ponto_recolha  PontoRecolha?          @relation(fields: [id_ponto_recolha], references: [id_ponto])
+  classificacao  ClassificacaoIA?       @relation(fields: [id_classificacao], references: [id_classificacao])
+
+  fotografias    Fotografia[]
+  verificacoes   VerificacaoResolucao[]
+  notificacoes   Notificacao[]
+
+  @@map("ocorrencia")
+}
+
+// ----------------------------------------------------------------------------
+// FOTOGRAFIA
+// ----------------------------------------------------------------------------
+
+model Fotografia {
+  id_fotografia     String         @id @default(uuid()) @db.Uuid
+  id_ocorrencia     String         @db.Uuid
+  caminho_ficheiro  String
+  tipo              TipoFotografia
+  data_hora         DateTime
+
+  ocorrencia        Ocorrencia            @relation(fields: [id_ocorrencia], references: [id_ocorrencia])
+  classificacao     ClassificacaoIA?
+  verificacao_como  VerificacaoResolucao?
+
+  @@map("fotografia")
+}
+
+// ----------------------------------------------------------------------------
+// CATEGORIA DE RESÍDUO
+// ----------------------------------------------------------------------------
+
+model CategoriaResiduo {
+  id_categoria  String  @id @default(uuid()) @db.Uuid
+  nome          String  @unique @db.VarChar(80)
+  descricao     String?
+  icone         String? @db.VarChar(50)
+
+  ocorrencias      Ocorrencia[]
+  classificacoes   ClassificacaoIA[]
+
+  @@map("categoria_residuo")
+}
+
+// ----------------------------------------------------------------------------
+// CLASSIFICAÇÃO IA
+// ----------------------------------------------------------------------------
+
+model ClassificacaoIA {
+  id_classificacao    String    @id @default(uuid()) @db.Uuid
+  id_fotografia       String    @unique @db.Uuid
+
+  // CORRECÇÃO APLICADA: no modelo original este campo era VARCHAR(80) livre,
+  // duplicando o conceito já coberto por CategoriaResiduo. Passa a ser FK.
+  id_categoria        String    @db.Uuid
+
+  confianca           Decimal   @db.Decimal(5, 2)
+  gravidade_sugerida  Gravidade
+  modo                ModoIA
+  tempo_resposta_ms   Int
+  data_hora           DateTime
+
+  fotografia   Fotografia        @relation(fields: [id_fotografia], references: [id_fotografia])
+  categoria    CategoriaResiduo  @relation(fields: [id_categoria], references: [id_categoria])
+  ocorrencias  Ocorrencia[]
+
+  @@map("classificacao_ia")
+}
+
+// ----------------------------------------------------------------------------
+// VERIFICAÇÃO DE RESOLUÇÃO
+// ----------------------------------------------------------------------------
+
+model VerificacaoResolucao {
+  id_verificacao        String               @id @default(uuid()) @db.Uuid
+  id_ocorrencia         String               @db.Uuid
+  id_utilizador         String               @db.Uuid
+  id_foto_verificacao   String               @unique @db.Uuid
+  resultado             ResultadoVerificacao
+  confianca_comparacao  Decimal              @db.Decimal(5, 2)
+  observacoes           String?
+  data_hora             DateTime
+
+  ocorrencia     Ocorrencia @relation(fields: [id_ocorrencia], references: [id_ocorrencia])
+  utilizador     Utilizador @relation(fields: [id_utilizador], references: [id_utilizador])
+  fotografia     Fotografia @relation(fields: [id_foto_verificacao], references: [id_fotografia])
+
+  @@map("verificacao_resolucao")
+}
+
+// ----------------------------------------------------------------------------
+// PONTO DE RECOLHA
+// ----------------------------------------------------------------------------
+
+model PontoRecolha {
+  id_ponto   String      @id @default(uuid()) @db.Uuid
+  nome       String      @db.VarChar(100)
+  latitude   Decimal     @db.Decimal(10, 7)
+  longitude  Decimal     @db.Decimal(10, 7)
+  bairro     String      @db.VarChar(80)
+  horario    String?     @db.VarChar(100)
+  estado     EstadoPonto @default(activo)
+
+  ocorrencias  Ocorrencia[]
+
+  @@map("ponto_recolha")
+}
+
+// ----------------------------------------------------------------------------
+// CONVERSAÇÃO XENI
+// ----------------------------------------------------------------------------
+
+model ConversacaoXeni {
+  id_mensagem          String   @id @default(uuid()) @db.Uuid
+  id_utilizador        String   @db.Uuid
+  mensagem_utilizador  String
+  resposta_xeni        String
+  modo                 ModoIA
+  data_hora            DateTime
+
+  utilizador  Utilizador @relation(fields: [id_utilizador], references: [id_utilizador])
+
+  @@map("conversacao_xeni")
+}
+
+// ----------------------------------------------------------------------------
+// NOTIFICAÇÃO
+// ----------------------------------------------------------------------------
+
+model Notificacao {
+  id_notificacao  String   @id @default(uuid()) @db.Uuid
+  id_utilizador   String   @db.Uuid
+  id_ocorrencia   String?  @db.Uuid
+  tipo            String   @db.VarChar(50)
+  mensagem        String
+  lida            Boolean  @default(false)
+  data_hora       DateTime
+
+  utilizador  Utilizador  @relation(fields: [id_utilizador], references: [id_utilizador])
+  ocorrencia  Ocorrencia? @relation(fields: [id_ocorrencia], references: [id_ocorrencia])
+
+  @@map("notificacao")
+}

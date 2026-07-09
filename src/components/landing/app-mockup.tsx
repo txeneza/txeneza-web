@@ -13,7 +13,7 @@ export const AppMockup: React.FC = () => {
       {/* Phone Case */}
       <div className="w-full h-full rounded-[42px] border-[10px] border-slate-900 bg-slate-950 p-2.5 shadow-2xl relative flex flex-col overflow-hidden">
         {/* Notch / Speaker */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-50 flex items-center justify-center gap-1.5">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-grey900/90 rounded-b-2xl z-50 flex items-center justify-center gap-1.5">
           <div className="w-12 h-1 bg-slate-800 rounded-full" />
           <div className="w-2.5 h-2.5 bg-slate-950 rounded-full border border-slate-800" />
         </div>
@@ -35,7 +35,7 @@ export const AppMockup: React.FC = () => {
           {/* App Header inside Mockup */}
           <div className="px-4 py-2 bg-forestGreen border-b border-forestGreen/20 flex justify-between items-center z-40">
             <div className="flex items-center gap-1.5">
-              <div className="w-5 h-5 rounded-md overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0">
+              <div className="w-5 h-5 rounded-md overflow-hidden bg-grey900/90 border border-slate-800 flex items-center justify-center shrink-0">
                 <img src="/icons/TXENEZA.svg" alt="Txeneza Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-extrabold text-[13px] tracking-tight text-white">Txeneza</span>
@@ -116,7 +116,7 @@ export const AppMockup: React.FC = () => {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 1 }}
-              className="absolute bottom-4 left-4 right-16 bg-white/95 backdrop-blur-md border border-slate-200 rounded-2xl p-2.5 shadow-xl z-40"
+              className="absolute bottom-4 left-4 right-16 bg-light-background dark:bg-dark-background/95 backdrop-blur-md border border-slate-200 rounded-2xl p-2.5 shadow-xl z-40"
             >
               <div className="flex gap-2 items-start">
                 <div className="w-7 h-7 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center text-red-500 shrink-0 mt-0.5">
@@ -135,7 +135,7 @@ export const AppMockup: React.FC = () => {
           </div>
 
           {/* Quick Stats Overlay (Shows success) */}
-          <div className="absolute top-14 left-4 right-4 py-1.5 px-3 bg-white/90 backdrop-blur-md border border-slate-200 rounded-full flex items-center justify-between shadow-lg z-40">
+          <div className="absolute top-14 left-4 right-4 py-1.5 px-3 bg-light-background dark:bg-dark-background/90 backdrop-blur-md border border-slate-200 rounded-full flex items-center justify-between shadow-lg z-40">
             <div className="flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 text-forestGreen" />
               <span className="text-[9px] font-semibold text-slate-800">Denúncia enviada com sucesso!</span>

@@ -13,6 +13,11 @@ const config: Config = {
         light: lightColors,
         dark: darkColors,
       },
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "var(--font-roboto)", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "monospace"],
+        roboto: ["var(--font-roboto)", "sans-serif"],
+      },
     },
   },
   plugins: [],

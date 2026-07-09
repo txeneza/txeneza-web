@@ -1,11 +1,28 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+// @ts-ignore
+import Map, { Marker, Popup } from "react-map-gl/mapbox";
 import { Occurrence } from "@/features/occurrences/occurrences.types";
+import { MapPin, Clock, Info } from "lucide-react";
+import { env } from "@/core/env";
+import { useTheme } from "@/hooks/use-theme";
+
+import "mapbox-gl/dist/mapbox-gl.css";
+
+export interface PontoRecolhaMapData {
+  id: string;
+  nome: string;
+  latitude: number;
+  longitude: number;
+  bairro: string;
+  horario: string | null;
+  estado: "activo" | "inactivo";
+}
 
 interface MapViewProps {
   markers?: Occurrence[];
-  heatmapData?: { lat: number; lng: number; intensity: number }[];
+  collectionPoints?: PontoRecolhaMapData[];
   center?: [number, number];
   zoom?: number;
   onMarkerClick?: (occ: Occurrence) => void;
@@ -13,12 +30,14 @@ interface MapViewProps {
 
 export const MapView: React.FC<MapViewProps> = ({
   markers = [],
-  heatmapData = [],
+  collectionPoints = [],
   center = [-19.8272, 34.8384],
-  zoom = 13,
+  zoom = 12,
   onMarkerClick,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const [selectedPoint, setSelectedPoint] = useState<PontoRecolhaMapData | null>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     setIsMounted(true);
@@ -26,39 +45,106 @@ export const MapView: React.FC<MapViewProps> = ({
 
   if (!isMounted) {
     return (
-      <div className="w-full h-[500px] bg-gray-100 dark:bg-gray-800 animate-pulse rounded-xl flex items-center justify-center">
-        <span className="text-gray-400">A carregar mapa...</span>
+      <div className="w-full h-[550px] bg-grey100 dark:bg-grey950 animate-pulse rounded-2xl flex items-center justify-center border border-grey200 dark:border-grey800">
+        <span className="text-grey600 dark:text-grey500 text-sm">A carregar mapa...</span>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-[500px] bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-      {/* 
-        Nota: Em produção, importar Leaflet e React-Leaflet dinamicamente ou diretamente aqui:
-        import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-      */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
-        <p className="text-lg font-bold text-gray-700 dark:text-gray-200 mb-2">
-          Mapa Interativo da Beira (Txeneza)
-        </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mb-4">
-          Visualização de {markers.length} marcadores ativos e {heatmapData.length} pontos de calor de ocorrências.
-        </p>
-        
-        {/* Lista visual simples de simulação de marcadores */}
-        <div className="flex flex-wrap gap-2 justify-center max-w-xl">
-          {markers.map((occ) => (
-            <button
-              key={occ.id}
-              onClick={() => onMarkerClick?.(occ)}
-              className="px-3 py-1.5 text-xs bg-white dark:bg-gray-900 shadow rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 transition-colors"
-            >
-              📍 {occ.title} ({occ.category})
+    <div className="relative w-full h-[550px] bg-grey100 dark:bg-grey950 rounded-2xl overflow-hidden border border-grey200 dark:border-grey800 shadow-sm transition-all duration-300">
+      <Map
+        initialViewState={{
+          latitude: center[0],
+          longitude: center[1],
+          zoom: zoom,
+        }}
+        style={{ width: "100%", height: "100%" }}
+        mapStyle={theme === "dark" ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11"}
+        mapboxAccessToken={env.mapboxToken}
+      >
+        {/* Marcadores de Ocorrências */}
+        {markers.map((occ) => (
+          <Marker
+            key={occ.id}
+            latitude={occ.latitude}
+            longitude={occ.longitude}
+            anchor="bottom"
+            onClick={(e: any) => {
+              e.originalEvent.stopPropagation();
+              onMarkerClick?.(occ);
+            }}
+          >
+            <button className="cursor-pointer p-1.5 bg-grey900/90 border border-limeGreen/40 rounded-xl shadow-xl hover:scale-110 transition-all duration-200">
+              <MapPin className="w-4 h-4 text-red-500" />
             </button>
-          ))}
-        </div>
-      </div>
+          </Marker>
+        ))}
+
+        {/* Marcadores de Pontos de Recolha */}
+        {collectionPoints.map((point) => (
+          <Marker
+            key={point.id}
+            latitude={point.latitude}
+            longitude={point.longitude}
+            anchor="bottom"
+            onClick={(e: any) => {
+              e.originalEvent.stopPropagation();
+              setSelectedPoint(point);
+            }}
+          >
+            <button className="cursor-pointer p-1 bg-forestGreen border border-limeGreen rounded-full shadow-2xl hover:scale-110 transition-all duration-200 w-8 h-8 flex items-center justify-center">
+              <img
+                src="/icons/TXENEZA.svg"
+                alt="Logo Ponto"
+                className="w-5 h-5 object-contain filter brightness-110"
+              />
+            </button>
+          </Marker>
+        ))}
+
+        {/* Popup de detalhes do Ponto de Recolha */}
+        {selectedPoint && (
+          <Popup
+            latitude={selectedPoint.latitude}
+            longitude={selectedPoint.longitude}
+            anchor="top"
+            onClose={() => setSelectedPoint(null)}
+            closeOnClick={false}
+          >
+            <div className="p-2 flex flex-col gap-1.5 min-w-[200px] text-xs">
+              <div className="flex items-center gap-1.5 font-bold text-sm text-forestGreen dark:text-limeGreen border-b border-grey200 dark:border-grey800 pb-1">
+                <img src="/icons/TXENEZA.svg" className="w-4.5 h-4.5" alt="logo" />
+                {selectedPoint.nome}
+              </div>
+              <div className="flex items-center gap-1 text-grey600 dark:text-grey400">
+                <Info className="w-3.5 h-3.5 shrink-0" />
+                <span>Bairro: <b>{selectedPoint.bairro}</b></span>
+              </div>
+              {selectedPoint.horario && (
+                <div className="flex items-center gap-1 text-grey600 dark:text-grey400">
+                  <Clock className="w-3.5 h-3.5 shrink-0" />
+                  <span>Horário: {selectedPoint.horario}</span>
+                </div>
+              )}
+              <div className="mt-1 flex justify-between items-center">
+                <span className="text-[10px] text-grey400 dark:text-grey500 font-mono">
+                  {selectedPoint.latitude.toFixed(4)}, {selectedPoint.longitude.toFixed(4)}
+                </span>
+                {selectedPoint.estado === "activo" ? (
+                  <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    Operante
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-bold bg-red-500/10 text-red-500 px-2 py-0.5 rounded-full border border-red-500/20">
+                    Inativo
+                  </span>
+                )}
+              </div>
+            </div>
+          </Popup>
+        )}
+      </Map>
     </div>
   );
 };

@@ -47,7 +47,7 @@ export const InstitutionalSection: React.FC = () => {
             </p>
 
             {/* Disclaimer Alert */}
-            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex gap-4 items-start">
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-grey900/90 border border-slate-200 dark:border-slate-800 flex gap-4 items-start">
               <Landmark className="w-5 h-5 text-limeGreen shrink-0 mt-0.5" />
               <div className="text-xs">
                 <h4 className="font-extrabold text-foreground dark:text-slate-200">Delimitação de Integração</h4>
@@ -68,7 +68,7 @@ export const InstitutionalSection: React.FC = () => {
                 ].map((ent, idx) => (
                   <span
                     key={idx}
-                    className="px-3.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-202 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-355"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-50 dark:bg-grey900/90 border border-slate-202 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-355"
                   >
                     🏛️ {ent}
                   </span>
@@ -93,7 +93,7 @@ export const InstitutionalSection: React.FC = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: idx * 0.15 }}
-                    className="p-6 rounded-3xl bg-slate-50/40 dark:bg-slate-900/40 border border-slate-202 dark:border-slate-850 hover:border-limeGreen/10 flex gap-5 items-start group transition-all"
+                    className="p-6 rounded-3xl bg-slate-50/40 dark:bg-grey900/90/40 border border-slate-202 dark:border-slate-850 hover:border-limeGreen/10 flex gap-5 items-start group transition-all"
                   >
                     {/* Badge ODS */}
                     <div className={`w-14 h-14 rounded-2xl ${ods.color} flex flex-col items-center justify-center shrink-0 text-white font-mono shadow-lg relative`}>

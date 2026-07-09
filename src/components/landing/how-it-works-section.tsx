@@ -88,7 +88,7 @@ export const HowItWorksSection: React.FC = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-slate-50/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-850 hover:border-limeGreen/20 rounded-3xl p-6 relative group transition-all duration-300 flex flex-col justify-between"
+                className="bg-slate-50/60 dark:bg-grey900/90/60 border border-slate-200 dark:border-slate-850 hover:border-limeGreen/20 rounded-3xl p-6 relative group transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   {/* Step Bubble & Icon */}

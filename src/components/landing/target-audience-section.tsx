@@ -73,7 +73,7 @@ export const TargetAudienceSection: React.FC = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-slate-50/50 dark:bg-slate-900/50 border border-slate-205 dark:border-slate-850 hover:border-limeGreen/20 rounded-3xl p-8 relative flex flex-col justify-between group transition-all duration-300"
+                className="bg-slate-50/50 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-850 hover:border-limeGreen/20 rounded-3xl p-8 relative flex flex-col justify-between group transition-all duration-300"
               >
                 <div>
                   {/* Header */}

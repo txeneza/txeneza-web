@@ -50,7 +50,7 @@ export const LandingFooter: React.FC = () => {
               <a
                 href="/downloads/txeneza.apk"
                 download
-                className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-slate-950 text-white hover:bg-slate-900 border border-slate-800 shadow-lg text-xs font-bold transition-all hover:scale-[1.02] active:scale-95"
+                className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-slate-950 text-white hover:bg-grey900/90 border border-slate-800 shadow-lg text-xs font-bold transition-all hover:scale-[1.02] active:scale-95"
               >
                 <Download className="w-5 h-5 text-limeGreen shrink-0" />
                 <div className="text-left">
@@ -64,7 +64,7 @@ export const LandingFooter: React.FC = () => {
         </div>
 
         {/* Footer Divider */}
-        <div className="h-[1px] bg-white/10 w-full my-8" />
+        <div className="h-[1px] bg-light-background dark:bg-dark-background/10 w-full my-8" />
 
         {/* Bottom Bar: Copyright and Discrete Admin Link */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-slate-400">
@@ -76,7 +76,7 @@ export const LandingFooter: React.FC = () => {
           <div className="flex items-center gap-5">
             <Link
               href="/login"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 hover:bg-white/5 text-[11px] font-bold text-slate-300 transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 hover:bg-light-background dark:bg-dark-background/5 text-[11px] font-bold text-slate-300 transition-all"
             >
               <Shield className="w-3.5 h-3.5 text-limeGreen" />
               Portal CMB (Administração)

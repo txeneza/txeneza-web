@@ -24,7 +24,7 @@ export const LandingNav: React.FC = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 py-3 shadow-lg"
+          ? "bg-grey900/90/90 backdrop-blur-md border-b border-slate-800/80 py-3 shadow-lg"
           : "bg-transparent py-5"
       }`}
     >
@@ -32,7 +32,7 @@ export const LandingNav: React.FC = () => {
         <div className="flex items-center justify-between h-12">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg border border-slate-800 bg-slate-900 group-hover:scale-105 transition-all">
+            <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg border border-slate-800 bg-grey900/90 group-hover:scale-105 transition-all">
               <img src="/icons/TXENEZA.svg" alt="Txeneza Logo" className="w-full h-full object-cover" />
             </div>
             <span className="text-xl font-black tracking-tight text-white group-hover:text-limeGreen transition-colors">
@@ -100,7 +100,7 @@ export const LandingNav: React.FC = () => {
 
       {/* Mobile Menu Panel */}
       {isOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-6 flex flex-col gap-4 shadow-xl">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-grey900/90 border-b border-slate-800 px-4 pt-2 pb-6 flex flex-col gap-4 shadow-xl">
           <a
             href="#problema"
             onClick={() => setIsOpen(false)}
