@@ -7,6 +7,7 @@ export interface Occurrence {
   category: string;
   latitude: number;
   longitude: number;
+  bairro?: string;
   status: OccurrenceStatus;
   createdAt: Date | string;
   updatedAt?: Date | string;

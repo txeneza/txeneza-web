@@ -111,33 +111,40 @@ export const MapView: React.FC<MapViewProps> = ({
             anchor="top"
             onClose={() => setSelectedPoint(null)}
             closeOnClick={false}
+            maxWidth="260px"
           >
-            <div className="p-2 flex flex-col gap-1.5 min-w-[200px] text-xs">
-              <div className="flex items-center gap-1.5 font-bold text-sm text-forestGreen dark:text-limeGreen border-b border-grey200 dark:border-grey800 pb-1">
-                <img src="/icons/TXENEZA.svg" className="w-4.5 h-4.5" alt="logo" />
-                {selectedPoint.nome}
+            {/* O container do popup do Mapbox é sempre branco — cores fixas para legibilidade. */}
+            <div className="p-1 flex flex-col gap-2 min-w-[210px] text-xs text-grey800">
+              <div className="flex items-center gap-2 font-bold text-sm text-forestGreen border-b border-grey200 pb-1.5">
+                <span className="p-1 bg-forestGreen rounded-full w-6 h-6 flex items-center justify-center shrink-0">
+                  <img src="/icons/TXENEZA.svg" className="w-3.5 h-3.5" alt="logo" />
+                </span>
+                <span className="leading-tight">{selectedPoint.nome}</span>
               </div>
-              <div className="flex items-center gap-1 text-grey600 dark:text-grey400">
+              <div className="flex items-center gap-1.5 text-grey600">
                 <Info className="w-3.5 h-3.5 shrink-0" />
-                <span>Bairro: <b>{selectedPoint.bairro}</b></span>
+                <span>Bairro: <b className="text-grey800">{selectedPoint.bairro}</b></span>
               </div>
               {selectedPoint.horario && (
-                <div className="flex items-center gap-1 text-grey600 dark:text-grey400">
+                <div className="flex items-center gap-1.5 text-grey600">
                   <Clock className="w-3.5 h-3.5 shrink-0" />
-                  <span>Horário: {selectedPoint.horario}</span>
+                  <span>Recolha: <b className="text-grey800">{selectedPoint.horario}</b></span>
                 </div>
               )}
-              <div className="mt-1 flex justify-between items-center">
-                <span className="text-[10px] text-grey400 dark:text-grey500 font-mono">
+              <div className="flex items-center gap-1.5 text-grey600">
+                <MapPin className="w-3.5 h-3.5 shrink-0" />
+                <span className="font-mono text-[10px] text-grey600">
                   {selectedPoint.latitude.toFixed(4)}, {selectedPoint.longitude.toFixed(4)}
                 </span>
+              </div>
+              <div className="mt-0.5 pt-1.5 border-t border-grey200">
                 {selectedPoint.estado === "activo" ? (
-                  <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                    Operante
+                  <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    ● Operacional
                   </span>
                 ) : (
-                  <span className="text-[10px] font-bold bg-red-500/10 text-red-500 px-2 py-0.5 rounded-full border border-red-500/20">
-                    Inativo
+                  <span className="text-[10px] font-bold bg-red-500/10 text-red-600 px-2 py-0.5 rounded-full border border-red-500/20">
+                    ● Inativo
                   </span>
                 )}
               </div>

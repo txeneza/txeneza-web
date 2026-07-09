@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 // @ts-ignore
-import Map, { Source, Layer, Marker } from "react-map-gl/mapbox";
-import { Flame, Layers, TrendingUp } from "lucide-react";
+import Map, { Source, Layer, NavigationControl, ScaleControl } from "react-map-gl/mapbox";
+import { Flame, Radio } from "lucide-react";
 import { env } from "@/core/env";
 import { useTheme } from "@/hooks/use-theme";
 
@@ -20,6 +20,38 @@ interface HeatmapViewProps {
   center?: [number, number];
   zoom?: number;
 }
+
+// Rampa de calor: verde-floresta (baixa) → lima (média) → âmbar/vermelho (crítica).
+// Baixo/médio mantêm a identidade da marca; o pico usa cores de urgência para
+// sinalizar as zonas mais críticas de forma imediata e realista.
+const HEAT_STOPS = [
+  { d: 0.0, color: "rgba(1, 64, 58, 0)" },
+  { d: 0.15, color: "rgba(1, 64, 58, 0.35)" },
+  { d: 0.3, color: "rgba(173, 217, 184, 0.55)" },
+  { d: 0.45, color: "rgba(181, 242, 48, 0.75)" },
+  { d: 0.6, color: "rgba(250, 204, 21, 0.85)" },
+  { d: 0.8, color: "rgba(234, 88, 12, 0.9)" },
+  { d: 1.0, color: "#DC2626" },
+];
+
+const heatmapColor: any = [
+  "interpolate",
+  ["linear"],
+  ["heatmap-density"],
+  ...HEAT_STOPS.flatMap((s) => [s.d, s.color]),
+];
+
+// Cor dos pontos individuais (visíveis ao aproximar), em função da intensidade.
+const circleColor: any = [
+  "interpolate",
+  ["linear"],
+  ["get", "intensity"],
+  0.2, "#ADD9B8",
+  0.45, "#B5F230",
+  0.6, "#FACC15",
+  0.8, "#EA580C",
+  1.0, "#DC2626",
+];
 
 export const HeatmapView: React.FC<HeatmapViewProps> = ({
   data = [],
@@ -57,35 +89,48 @@ export const HeatmapView: React.FC<HeatmapViewProps> = ({
 
   return (
     <div className="relative w-full h-[600px] bg-grey100 dark:bg-grey950 rounded-2xl overflow-hidden border border-grey200 dark:border-grey800 shadow-sm transition-all duration-300">
-      
-      {/* Badge flutuante Premium & Enterprise */}
-      <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-2 bg-forestGreen/90 dark:bg-grey900/80 backdrop-blur-md rounded-xl border border-limeGreen/30 shadow-lg">
+
+      {/* Badge flutuante — identificação da camada */}
+      <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-2 bg-forestGreen/90 dark:bg-grey900/85 backdrop-blur-md rounded-xl border border-limeGreen/25 shadow-lg">
         <Flame className="w-4 h-4 text-limeGreen" />
         <span className="text-xs font-black text-white uppercase tracking-wider">Mapa de Calor</span>
         <span className="text-[8px] tracking-wider uppercase px-1.5 py-0.5 bg-limeGreen/20 text-limeGreen rounded-md font-black border border-limeGreen/20">
-          Premium & Enterprise
+          Densidade estimada
         </span>
       </div>
 
       {/* Legenda flutuante */}
-      <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-1.5 px-3 py-2.5 bg-light-background/80 dark:bg-grey900/80 backdrop-blur-md rounded-xl border border-grey200 dark:border-grey800/80 shadow-lg">
-        <span className="text-[10px] font-bold text-grey600 dark:text-grey400 uppercase tracking-wider">Intensidade</span>
+      <div className="absolute bottom-8 left-4 z-10 flex flex-col gap-1.5 px-3 py-2.5 bg-light-background/85 dark:bg-grey900/85 backdrop-blur-md rounded-xl border border-grey200 dark:border-grey800/80 shadow-lg">
+        <span className="text-[10px] font-bold text-grey600 dark:text-grey400 uppercase tracking-wider">
+          Densidade de resíduos
+        </span>
         <div className="flex items-center gap-1.5">
-          <div className="h-2 w-24 rounded-full" style={{ background: "linear-gradient(to right, #01403A, #ADD9B8, #CEF2C4, #CBF277, #B5F230)" }} />
+          <div
+            className="h-2 w-32 rounded-full"
+            style={{
+              background:
+                "linear-gradient(to right, #01403A, #ADD9B8, #B5F230, #FACC15, #EA580C, #DC2626)",
+            }}
+          />
         </div>
         <div className="flex justify-between text-[9px] text-grey600 dark:text-grey500 font-mono">
           <span>Baixa</span>
-          <span>Alta</span>
+          <span>Moderada</span>
+          <span>Crítica</span>
         </div>
       </div>
 
-      {/* Estatísticas flutuantes */}
-      <div className="absolute top-4 right-4 z-10 flex flex-col gap-1 px-3 py-2 bg-light-background/80 dark:bg-grey900/80 backdrop-blur-md rounded-xl border border-grey200 dark:border-grey800/80 shadow-lg">
+      {/* Estatística flutuante — pontos monitorizados */}
+      <div className="absolute top-4 right-14 z-10 flex flex-col gap-0.5 px-3 py-2 bg-light-background/85 dark:bg-grey900/85 backdrop-blur-md rounded-xl border border-grey200 dark:border-grey800/80 shadow-lg">
         <div className="flex items-center gap-1.5">
-          <TrendingUp className="w-3.5 h-3.5 text-limeGreen" />
-          <span className="text-[10px] font-bold text-grey900 dark:text-grey50 uppercase tracking-wider">Pontos Ativos</span>
+          <Radio className="w-3.5 h-3.5 text-limeGreen" />
+          <span className="text-[10px] font-bold text-grey900 dark:text-grey50 uppercase tracking-wider">
+            Pontos monitorizados
+          </span>
         </div>
-        <span className="text-lg font-black text-forestGreen dark:text-limeGreen">{data.length}</span>
+        <span className="text-lg font-black text-forestGreen dark:text-limeGreen leading-none">
+          {data.length}
+        </span>
       </div>
 
       <Map
@@ -97,32 +142,44 @@ export const HeatmapView: React.FC<HeatmapViewProps> = ({
         style={{ width: "100%", height: "100%" }}
         mapStyle={theme === "dark" ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11"}
         mapboxAccessToken={env.mapboxToken}
+        attributionControl={false}
       >
+        <NavigationControl position="top-right" showCompass={false} />
+        <ScaleControl position="bottom-right" maxWidth={120} unit="metric" />
+
         <Source id="heatmap-source" type="geojson" data={geojsonSource}>
+          {/* Camada de calor — domina em vista afastada */}
           <Layer
             id="heatmap-layer"
             type="heatmap"
-            maxzoom={15}
+            maxzoom={16}
             paint={{
               "heatmap-weight": ["interpolate", ["linear"], ["get", "intensity"], 0, 0, 1, 1],
-              "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 1, 9, 3],
-              "heatmap-color": [
+              "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 8, 1, 15, 3],
+              "heatmap-color": heatmapColor,
+              "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 8, 18, 13, 34, 16, 56],
+              // Desvanece à medida que se aproxima, dando lugar aos pontos individuais.
+              "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], 13, 0.9, 16, 0],
+            }}
+          />
+
+          {/* Camada de pontos — surge em vista aproximada */}
+          <Layer
+            id="heatmap-points"
+            type="circle"
+            minzoom={13}
+            paint={{
+              "circle-radius": [
                 "interpolate",
                 ["linear"],
-                ["heatmap-density"],
-                0,
-                "rgba(1, 64, 58, 0)",
-                0.2,
-                "rgba(173, 217, 184, 0.4)",
-                0.4,
-                "rgba(206, 242, 196, 0.7)",
-                0.7,
-                "rgba(203, 242, 119, 0.9)",
-                1.0,
-                "#B5F230"
+                ["zoom"],
+                13, ["interpolate", ["linear"], ["get", "intensity"], 0, 2, 1, 6],
+                18, ["interpolate", ["linear"], ["get", "intensity"], 0, 6, 1, 20],
               ],
-              "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 0, 4, 9, 24],
-              "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], 7, 0.95, 15, 0.6]
+              "circle-color": circleColor,
+              "circle-stroke-color": "rgba(255,255,255,0.85)",
+              "circle-stroke-width": 1,
+              "circle-opacity": ["interpolate", ["linear"], ["zoom"], 13, 0, 15, 0.85],
             }}
           />
         </Source>
