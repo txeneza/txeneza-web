@@ -32,8 +32,9 @@ export const TimelineAreaChart: React.FC<TimelineAreaChartProps> = ({ data }) =>
         },
       },
     ],
-    axes: [
-      {
+    // AG Charts v14: `axes` é um dicionário { x, y }, não um array.
+    axes: {
+      x: {
         type: "category",
         position: "bottom",
         label: {
@@ -43,7 +44,7 @@ export const TimelineAreaChart: React.FC<TimelineAreaChartProps> = ({ data }) =>
           stroke: "#334155",
         },
       },
-      {
+      y: {
         type: "number",
         position: "left",
         label: {
@@ -58,7 +59,7 @@ export const TimelineAreaChart: React.FC<TimelineAreaChartProps> = ({ data }) =>
           ],
         },
       },
-    ],
+    },
   };
 
   return (

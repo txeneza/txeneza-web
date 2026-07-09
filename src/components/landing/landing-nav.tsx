@@ -2,13 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Map } from "lucide-react";
+import { Menu, X, Map, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 export const LandingNav: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => {
       if (window.scrollY > 20) {
         setScrolled(true);
@@ -19,6 +23,8 @@ export const LandingNav: React.FC = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const ThemeIcon = mounted && theme === "dark" ? Sun : Moon;
 
   return (
     <nav
@@ -74,8 +80,16 @@ export const LandingNav: React.FC = () => {
             </a>
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:flex items-center">
+          {/* CTA Button + Theme Toggle */}
+          <div className="hidden md:flex items-center gap-3">
+            <button
+              onClick={toggleTheme}
+              aria-label="Alternar modo claro/escuro"
+              title={theme === "dark" ? "Modo claro" : "Modo escuro"}
+              className="p-2 rounded-lg text-slate-300 hover:text-limeGreen hover:bg-white/10 transition-colors"
+            >
+              <ThemeIcon className="w-5 h-5" />
+            </button>
             <Link
               href="/map"
               className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold bg-limeGreen text-forestGreen hover:bg-lightLime hover:scale-[1.02] shadow-lg shadow-limeGreen/10 active:scale-95 transition-all"
@@ -84,6 +98,15 @@ export const LandingNav: React.FC = () => {
               Ver Mapa
             </Link>
           </div>
+
+          {/* Mobile: Theme Toggle (junto ao botão do menu) */}
+          <button
+            onClick={toggleTheme}
+            aria-label="Alternar modo claro/escuro"
+            className="md:hidden ml-auto mr-1 p-2 rounded-lg text-slate-300 hover:text-limeGreen hover:bg-white/10 transition-colors"
+          >
+            <ThemeIcon className="w-5 h-5" />
+          </button>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">

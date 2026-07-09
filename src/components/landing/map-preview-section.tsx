@@ -107,7 +107,7 @@ export const MapPreviewSection: React.FC = () => {
           
           {/* Left Description Column */}
           <div className="lg:col-span-4 flex flex-col justify-between gap-6">
-            <div className="p-6 sm:p-8 rounded-3xl bg-background/80 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-850 flex flex-col gap-5">
+            <div className="p-6 sm:p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-205 dark:border-slate-800 flex flex-col gap-5">
               <span className="flex items-center gap-2 text-xs font-bold text-limeGreen">
                 <Sparkles className="w-4 h-4" />
                 Destaque do Sistema
@@ -148,15 +148,15 @@ export const MapPreviewSection: React.FC = () => {
               <div className="h-[1px] bg-slate-100 dark:bg-grey900/90 my-1" />
 
               <div className="flex flex-col gap-2.5">
-                <div className="flex items-center gap-3 text-xs text-slate-605 dark:text-slate-350">
+                <div className="flex items-center gap-3 text-xs text-slate-605 dark:text-slate-300">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-650 shrink-0" />
                   <span>Crítico (Ações imediatas CMB)</span>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-slate-605 dark:text-slate-350">
+                <div className="flex items-center gap-3 text-xs text-slate-605 dark:text-slate-300">
                   <div className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0" />
                   <span>Alta gravidade (Programação semanal)</span>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-slate-605 dark:text-slate-350">
+                <div className="flex items-center gap-3 text-xs text-slate-605 dark:text-slate-300">
                   <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
                   <span>Média gravidade (Monitorização)</span>
                 </div>
@@ -174,7 +174,7 @@ export const MapPreviewSection: React.FC = () => {
           <div className="lg:col-span-8 bg-background dark:bg-slate-950 rounded-3xl border border-slate-205 dark:border-slate-800 overflow-hidden flex flex-col h-[480px] sm:h-[520px] shadow-2xl relative">
             
             {/* Map Header Panel */}
-            <div className="px-5 py-3.5 bg-slate-50 dark:bg-grey900/90 border-b border-slate-100 dark:border-slate-850 flex items-center justify-between text-xs font-semibold">
+            <div className="px-5 py-3.5 bg-slate-50 dark:bg-grey900/90 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold">
               <div className="flex items-center gap-2 text-slate-605 dark:text-slate-300">
                 <Map className="w-4.5 h-4.5 text-limeGreen" />
                 <span>Consola Pública de Monitoramento • Beira, MZ</span>
@@ -274,7 +274,7 @@ export const MapPreviewSection: React.FC = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: 20, opacity: 0 }}
-                    className="absolute bottom-6 left-6 right-6 bg-background/95 dark:bg-grey900/90/95 backdrop-blur-md border border-slate-205 dark:border-slate-800 p-4 rounded-2xl shadow-2xl z-50 flex flex-col gap-3"
+                    className="absolute bottom-6 left-6 right-6 bg-background/95 dark:bg-grey900/95 backdrop-blur-md border border-slate-205 dark:border-slate-800 p-4 rounded-2xl shadow-2xl z-50 flex flex-col gap-3"
                   >
                     {(() => {
                       const pin = mockOccurrences.find((p) => p.id === selectedPin);
@@ -298,7 +298,7 @@ export const MapPreviewSection: React.FC = () => {
                               Fechar
                             </button>
                           </div>
-                          <p className="text-xs text-slate-605 dark:text-slate-355 leading-relaxed">{pin.desc}</p>
+                          <p className="text-xs text-slate-605 dark:text-slate-400 leading-relaxed">{pin.desc}</p>
                           <div className="flex items-center justify-between mt-1 text-[10px]">
                             <div className="flex gap-2">
                               <span className="px-2 py-0.5 bg-red-500/20 text-red-450 rounded-full font-bold">

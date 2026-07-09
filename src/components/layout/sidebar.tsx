@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ClipboardList, Map, MapPin, Flame, X } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Map, MapPin, Flame, X, FileSpreadsheet } from "lucide-react";
 import { useUIStore } from "@/features/ui/ui.store";
 
 interface NavItem {
@@ -18,6 +18,7 @@ const MAIN_ITEMS: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
   { href: "/admin/occurrences", label: "Ocorrências", icon: <ClipboardList className="w-4 h-4" /> },
   { href: "/admin/collection-points", label: "Pontos de Recolha", icon: <MapPin className="w-4 h-4" /> },
+  { href: "/admin/reports", label: "Relatórios", icon: <FileSpreadsheet className="w-4 h-4" /> },
 ];
 
 const VIEW_ITEMS: NavItem[] = [

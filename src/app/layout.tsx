@@ -31,6 +31,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-MZ" className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable}`}>
+      <head>
+        {/* Aplica o tema guardado antes da pintura para evitar o "flash" de tema errado.
+            Modo claro é o padrão; escuro apenas quando explicitamente escolhido. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(localStorage.getItem('theme')==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="antialiased">
         {children}
         <CookieConsent />

@@ -73,7 +73,7 @@ export const TargetAudienceSection: React.FC = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-slate-50/50 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-850 hover:border-limeGreen/20 rounded-3xl p-8 relative flex flex-col justify-between group transition-all duration-300"
+                className="bg-slate-50/50 dark:bg-white/5 border border-slate-205 dark:border-slate-800 hover:border-limeGreen/20 rounded-3xl p-8 relative flex flex-col justify-between group transition-all duration-300"
               >
                 <div>
                   {/* Header */}
@@ -92,7 +92,7 @@ export const TargetAudienceSection: React.FC = () => {
                 </div>
 
                 {/* Subtag */}
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-955 flex justify-between items-center text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-900 flex justify-between items-center text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                   <span>Papel</span>
                   <span className="text-limeGreen font-semibold">{group.role}</span>
                 </div>

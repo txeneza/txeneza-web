@@ -8,10 +8,10 @@ export function useTheme() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Modo claro é o padrão; o modo escuro é opcional e memorizado por escolha do utilizador.
     const saved = localStorage.getItem("theme");
-    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initialTheme = saved === "dark" || (!saved && systemPrefersDark) ? "dark" : "light";
-    
+    const initialTheme = saved === "dark" ? "dark" : "light";
+
     setTheme(initialTheme);
     
     if (initialTheme === "dark") {

@@ -3,21 +3,21 @@
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useOccurrences } from "@/hooks/use-occurrences";
-import { useExport } from "@/hooks/use-export";
 import { OccurrenceTable } from "@/components/occurrences/occurrence-table";
 import { OccurrenceStatus } from "@/features/occurrences/occurrences.types";
 import {
   OCCURRENCE_STATUS_META,
   OCCURRENCE_STATUS_ORDER,
 } from "@/features/occurrences/occurrence-status";
-import { ClipboardList, Search, Download, AlertCircle, Inbox } from "lucide-react";
+import { ClipboardList, Search, Download, AlertCircle, Inbox, FileText, FileSpreadsheet, Loader2 } from "lucide-react";
 
 type StatusFiltro = "todas" | OccurrenceStatus;
 
 export default function AdminOccurrencesPage() {
   const router = useRouter();
   const { occurrences, loading, error } = useOccurrences();
-  const { exportData, exporting } = useExport();
+  const [exporting, setExporting] = useState(false);
+  const [exportingFormat, setExportingFormat] = useState<string | null>(null);
 
   const [search, setSearch] = useState("");
   const [statusFiltro, setStatusFiltro] = useState<StatusFiltro>("todas");
@@ -43,17 +43,32 @@ export default function AdminOccurrencesPage() {
     });
   }, [occurrences, search, statusFiltro]);
 
-  const handleExport = async () => {
-    const rows = filtered.map((o) => ({
-      Título: o.title,
-      Categoria: o.category,
-      Bairro: o.bairro || "",
-      Estado: OCCURRENCE_STATUS_META[o.status].label,
-      Latitude: o.latitude,
-      Longitude: o.longitude,
-      Data: new Date(o.createdAt).toLocaleDateString("pt-PT"),
-    }));
-    await exportData(rows, "ocorrencias-beira.csv");
+  const handleExport = async (format: "pdf" | "excel") => {
+    setExporting(true);
+    setExportingFormat(format);
+    try {
+      const ids = filtered.map((o) => o.id);
+      const res = await fetch("/api/reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "occurrences", format, filters: { ids } }),
+      });
+      if (!res.ok) throw new Error("Erro ao exportar dados.");
+      const report = await res.json();
+      
+      const link = document.createElement("a");
+      link.href = report.url;
+      link.setAttribute("download", report.filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao exportar dados do servidor.");
+    } finally {
+      setExporting(false);
+      setExportingFormat(null);
+    }
   };
 
   const filters: { key: StatusFiltro; label: string }[] = [
@@ -79,14 +94,32 @@ export default function AdminOccurrencesPage() {
           </div>
         </div>
 
-        <button
-          onClick={handleExport}
-          disabled={exporting || filtered.length === 0}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-forestGreen/5 dark:bg-limeGreen/5 border border-forestGreen/10 dark:border-limeGreen/10 text-forestGreen dark:text-limeGreen hover:bg-forestGreen/10 dark:hover:bg-limeGreen/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Download className="w-4 h-4" />
-          {exporting ? "A exportar..." : "Exportar CSV"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => handleExport("pdf")}
+            disabled={exporting || filtered.length === 0}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {exportingFormat === "pdf" ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <FileText className="w-3.5 h-3.5" />
+            )}
+            Exportar PDF
+          </button>
+          <button
+            onClick={() => handleExport("excel")}
+            disabled={exporting || filtered.length === 0}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {exportingFormat === "excel" ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <FileSpreadsheet className="w-3.5 h-3.5" />
+            )}
+            Exportar Excel
+          </button>
+        </div>
       </div>
 
       {/* Métricas por estado */}

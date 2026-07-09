@@ -9,6 +9,7 @@ import {
   OCCURRENCE_STATUS_META,
   OCCURRENCE_STATUS_ORDER,
 } from "@/features/occurrences/occurrence-status";
+import { ConfirmDialog, ConfirmTone } from "@/components/ui/confirm-dialog";
 import {
   ArrowLeft,
   MapPin,
@@ -19,6 +20,13 @@ import {
   Map as MapIcon,
   Loader2,
 } from "lucide-react";
+
+const STATUS_TONE: Record<OccurrenceStatus, ConfirmTone> = {
+  pendente: "warning",
+  "em-progresso": "info",
+  resolvido: "success",
+  rejeitado: "danger",
+};
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -32,6 +40,7 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
   const [occurrence, setOccurrence] = useState<Occurrence | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<OccurrenceStatus | null>(null);
+  const [pendingStatus, setPendingStatus] = useState<OccurrenceStatus | null>(null);
   const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
@@ -43,12 +52,13 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
     load();
   }, [id]);
 
-  const handleUpdateStatus = async (status: OccurrenceStatus) => {
-    if (!occurrence) return;
-    setUpdating(status);
+  const handleUpdateStatus = async () => {
+    if (!occurrence || !pendingStatus) return;
+    setUpdating(pendingStatus);
     try {
-      const updated = await occurrencesService.updateStatus(occurrence.id, status);
+      const updated = await occurrencesService.updateStatus(occurrence.id, pendingStatus);
       setOccurrence({ ...updated });
+      setPendingStatus(null);
     } finally {
       setUpdating(null);
     }
@@ -176,7 +186,7 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
             return (
               <button
                 key={s}
-                onClick={() => handleUpdateStatus(s)}
+                onClick={() => setPendingStatus(s)}
                 disabled={isCurrent || updating !== null}
                 className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-all disabled:cursor-not-allowed ${
                   isCurrent
@@ -195,6 +205,28 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
           })}
         </div>
       </div>
+
+      {/* Confirmação de alteração de estado */}
+      <ConfirmDialog
+        open={pendingStatus !== null}
+        tone={pendingStatus ? STATUS_TONE[pendingStatus] : "brand"}
+        title="Alterar estado da ocorrência"
+        description={
+          pendingStatus ? (
+            <>
+              Confirma a alteração do estado para{" "}
+              <b className="text-grey900 dark:text-grey50">
+                «{OCCURRENCE_STATUS_META[pendingStatus].label}»
+              </b>
+              ? O munícipe poderá ser notificado desta mudança.
+            </>
+          ) : null
+        }
+        confirmLabel="Confirmar alteração"
+        loading={updating !== null}
+        onConfirm={handleUpdateStatus}
+        onCancel={() => setPendingStatus(null)}
+      />
     </div>
   );
 }

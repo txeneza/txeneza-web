@@ -82,7 +82,7 @@ export const SocialProofSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
-              className="p-8 rounded-3xl bg-background/80 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-850 flex flex-col md:flex-row items-center gap-8 group hover:border-limeGreen/20 transition-all duration-300"
+              className="p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-205 dark:border-slate-800 flex flex-col md:flex-row items-center gap-8 group hover:border-limeGreen/20 transition-all duration-300"
             >
               {/* SVG Ring Progress */}
               <div className="relative w-32 h-32 flex items-center justify-center shrink-0">

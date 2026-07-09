@@ -79,7 +79,7 @@ export const HeroSection: React.FC = () => {
               
               <a
                 href="#mapa-preview"
-                className="flex items-center justify-center gap-2.5 w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold bg-slate-100/80 text-slate-800 border border-slate-200 hover:bg-slate-250/80 dark:bg-grey900/90/80 dark:text-white dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-850 hover:scale-[1.02] active:scale-95 transition-all"
+                className="flex items-center justify-center gap-2.5 w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold bg-slate-100/80 text-slate-800 border border-slate-200 hover:bg-slate-250/80 dark:bg-white/5 dark:text-white dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-white/10 hover:scale-[1.02] active:scale-95 transition-all"
               >
                 <Flame className="w-5 h-5 text-orange-500 fill-orange-500/20" />
                 Ver mapa de calor

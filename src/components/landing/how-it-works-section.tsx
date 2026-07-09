@@ -88,7 +88,7 @@ export const HowItWorksSection: React.FC = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-slate-50/60 dark:bg-grey900/90/60 border border-slate-200 dark:border-slate-850 hover:border-limeGreen/20 rounded-3xl p-6 relative group transition-all duration-300 flex flex-col justify-between"
+                className="bg-slate-50/60 dark:bg-white/5 border border-slate-200 dark:border-slate-800 hover:border-limeGreen/20 rounded-3xl p-6 relative group transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   {/* Step Bubble & Icon */}
@@ -111,7 +111,7 @@ export const HowItWorksSection: React.FC = () => {
 
                 {/* Requirement tag */}
                 <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-950 flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-650 font-mono">Requisito</span>
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 font-mono">Requisito</span>
                   <span className="text-[9px] px-2 py-0.5 bg-slate-100 dark:bg-slate-950 text-slate-650 dark:text-slate-400 rounded-md font-bold font-mono">
                     {step.requirement}
                   </span>

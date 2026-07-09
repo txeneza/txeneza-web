@@ -1,0 +1,42 @@
+[
+  {
+    "id": "exp-1783600930151",
+    "filename": "relatorio_heatmap_20260709124210.xlsx",
+    "type": "heatmap",
+    "format": "excel",
+    "createdAt": "2026-07-09T12:42:10.151Z",
+    "sizeBytes": 8477,
+    "url": "/reports/relatorio_heatmap_20260709124210.xlsx",
+    "filters": {}
+  },
+  {
+    "id": "exp-1783600882330",
+    "filename": "relatorio_heatmap_20260709124122.pdf",
+    "type": "heatmap",
+    "format": "pdf",
+    "createdAt": "2026-07-09T12:41:22.330Z",
+    "sizeBytes": 15198,
+    "url": "/reports/relatorio_heatmap_20260709124122.pdf",
+    "filters": {}
+  },
+  {
+    "id": "exp-1783600488374",
+    "filename": "relatorio_heatmap_20260709123448.pdf",
+    "type": "heatmap",
+    "format": "pdf",
+    "createdAt": "2026-07-09T12:34:48.374Z",
+    "sizeBytes": 5432,
+    "url": "/reports/relatorio_heatmap_20260709123448.pdf",
+    "filters": {}
+  },
+  {
+    "id": "exp-1783600314316",
+    "filename": "relatorio_occurrences_20260709123154.pdf",
+    "type": "occurrences",
+    "format": "pdf",
+    "createdAt": "2026-07-09T12:31:54.316Z",
+    "sizeBytes": 5238,
+    "url": "/reports/relatorio_occurrences_20260709123154.pdf",
+    "filters": {}
+  }
+]

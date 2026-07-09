@@ -49,7 +49,7 @@ export const ProblemSection: React.FC = () => {
           {/* Card 1: 1000 Tons/dia */}
           <motion.div
             variants={itemVariants}
-            className="p-8 rounded-3xl bg-background/80 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
+            className="p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
           >
             <div>
               <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-grey900/90 flex items-center justify-center text-limeGreen group-hover:scale-110 transition-transform">
@@ -78,7 +78,7 @@ export const ProblemSection: React.FC = () => {
           {/* Card 2: Bairros Afetados */}
           <motion.div
             variants={itemVariants}
-            className="p-8 rounded-3xl bg-background/80 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
+            className="p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
           >
             <div>
               <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-grey900/90 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
@@ -111,7 +111,7 @@ export const ProblemSection: React.FC = () => {
           {/* Card 3: Doenças e Malária */}
           <motion.div
             variants={itemVariants}
-            className="p-8 rounded-3xl bg-background/80 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
+            className="p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
           >
             <div>
               <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-grey900/90 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
@@ -137,7 +137,7 @@ export const ProblemSection: React.FC = () => {
           {/* Card 4: Inundações / Ciclone Idai */}
           <motion.div
             variants={itemVariants}
-            className="p-8 rounded-3xl bg-background/80 dark:bg-grey900/90/50 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
+            className="p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
           >
             <div>
               <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-grey900/90 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">

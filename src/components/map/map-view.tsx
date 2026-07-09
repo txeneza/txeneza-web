@@ -37,6 +37,7 @@ export const MapView: React.FC<MapViewProps> = ({
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<PontoRecolhaMapData | null>(null);
+  const [connectionWarning, setConnectionWarning] = useState<string | null>(null);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -53,6 +54,19 @@ export const MapView: React.FC<MapViewProps> = ({
 
   return (
     <div className="relative w-full h-[550px] bg-grey100 dark:bg-grey950 rounded-2xl overflow-hidden border border-grey200 dark:border-grey800 shadow-sm transition-all duration-300">
+      {/* Aviso de Baixa Conectividade (TCC Scope Context) */}
+      {connectionWarning && (
+        <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between gap-3 px-4 py-2.5 bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl backdrop-blur-md text-xs font-bold animate-fadeIn">
+          <span>⚠️ Contexto de Baixa Conectividade: Texturas do mapa indisponíveis. Exibindo dados de cache local de Beira.</span>
+          <button 
+            onClick={() => setConnectionWarning(null)}
+            className="px-2 py-0.5 hover:bg-amber-500/20 rounded-md transition-colors"
+          >
+            Fechar
+          </button>
+        </div>
+      )}
+
       <Map
         initialViewState={{
           latitude: center[0],
@@ -62,6 +76,11 @@ export const MapView: React.FC<MapViewProps> = ({
         style={{ width: "100%", height: "100%" }}
         mapStyle={theme === "dark" ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11"}
         mapboxAccessToken={env.mapboxToken}
+        onError={() => {
+          if (!connectionWarning) {
+            setConnectionWarning("Conexão instável");
+          }
+        }}
       >
         {/* Marcadores de Ocorrências */}
         {markers.map((occ) => (

@@ -39,7 +39,7 @@ export const GravityDonutChart: React.FC<GravityDonutChartProps> = ({ data }) =>
         },
         sectorLabel: {
           color: "#ffffff",
-          fontWeight: "black",
+          fontWeight: 900,
         },
       },
     ],

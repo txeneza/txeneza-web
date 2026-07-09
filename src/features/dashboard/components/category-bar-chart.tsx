@@ -29,10 +29,11 @@ export const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ data }) => {
         },
       },
     ],
-    axes: [
-      {
+    // AG Charts v14: `axes` é um dicionário { x, y }, não um array.
+    axes: {
+      x: {
         type: "category",
-        position: "left",
+        position: "bottom",
         label: {
           color: "#94a3b8",
         },
@@ -40,9 +41,9 @@ export const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ data }) => {
           stroke: "#334155",
         },
       },
-      {
+      y: {
         type: "number",
-        position: "bottom",
+        position: "left",
         label: {
           color: "#94a3b8",
         },
@@ -55,7 +56,7 @@ export const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ data }) => {
           ],
         },
       },
-    ],
+    },
   };
 
   return (

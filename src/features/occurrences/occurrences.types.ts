@@ -13,6 +13,7 @@ export interface Occurrence {
   updatedAt?: Date | string;
   reportedBy?: string;
   imageUrl?: string;
+  gravidade?: "baixa" | "media" | "alta" | "critica";
 }
 
 export interface OccurrenceFilter {

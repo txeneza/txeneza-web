@@ -3,9 +3,7 @@ import { Occurrence, OccurrenceFilter } from "./occurrences.types";
 // CRUD + subscrição Firestore/Supabase. Mocks iniciais implementados.
 
 // Datas relativas a "hoje" para dar realismo à listagem.
-const daysAgo = (n: number) => new Date(Date.now() - n * 86_400_000).toISOString();
-
-let mockOccurrences: Occurrence[] = [
+const daysAgo = (n: number) => new Date(Date.now() - n * 86_400_000).toISOString();let mockOccurrences: Occurrence[] = [
   {
     id: "1",
     title: "Lixo acumulado junto ao Mercado Central",
@@ -19,6 +17,7 @@ let mockOccurrences: Occurrence[] = [
     reportedBy: "Munícipe — Baixa",
     imageUrl: "https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&w=800&q=60",
     createdAt: daysAgo(1),
+    gravidade: "critica",
   },
   {
     id: "2",
@@ -33,6 +32,7 @@ let mockOccurrences: Occurrence[] = [
     reportedBy: "Munícipe — Munhava",
     imageUrl: "https://images.unsplash.com/photo-1558624232-75ee22af7db5?auto=format&fit=crop&w=800&q=60",
     createdAt: daysAgo(2),
+    gravidade: "alta",
   },
   {
     id: "3",
@@ -47,6 +47,7 @@ let mockOccurrences: Occurrence[] = [
     reportedBy: "Munícipe — Goto",
     imageUrl: "https://images.unsplash.com/photo-1528190336454-13cd56b45b5a?auto=format&fit=crop&w=800&q=60",
     createdAt: daysAgo(3),
+    gravidade: "media",
   },
   {
     id: "4",
@@ -61,6 +62,7 @@ let mockOccurrences: Occurrence[] = [
     reportedBy: "Munícipe — Chaimite",
     imageUrl: "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=800&q=60",
     createdAt: daysAgo(4),
+    gravidade: "baixa",
   },
   {
     id: "5",
@@ -75,6 +77,7 @@ let mockOccurrences: Occurrence[] = [
     reportedBy: "Munícipe — Esturro",
     imageUrl: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=60",
     createdAt: daysAgo(5),
+    gravidade: "critica",
   },
   {
     id: "6",
@@ -89,6 +92,7 @@ let mockOccurrences: Occurrence[] = [
     reportedBy: "Munícipe — Macúti",
     imageUrl: "https://images.unsplash.com/photo-1618477462146-050d2767eac4?auto=format&fit=crop&w=800&q=60",
     createdAt: daysAgo(6),
+    gravidade: "alta",
   },
   {
     id: "7",
@@ -104,6 +108,7 @@ let mockOccurrences: Occurrence[] = [
     imageUrl: "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=800&q=60",
     createdAt: daysAgo(9),
     updatedAt: daysAgo(2),
+    gravidade: "baixa",
   },
 ];
 

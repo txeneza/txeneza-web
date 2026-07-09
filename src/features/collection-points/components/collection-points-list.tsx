@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { PontoRecolhaData, EstadoFiltro } from "../hooks/use-collection-points";
-import { CheckCircle2, XCircle, Clock, MapPin, Inbox, Search, Pencil, Trash2 } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, MapPin, Inbox, Search, Pencil, Trash2, FileText, FileSpreadsheet, Loader2 } from "lucide-react";
 
 interface CollectionPointsListProps {
   points: PontoRecolhaData[];
@@ -35,20 +35,77 @@ export const CollectionPointsList: React.FC<CollectionPointsListProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const [exporting, setExporting] = useState(false);
+  const [exportingFormat, setExportingFormat] = useState<string | null>(null);
+
+  const handleExport = async (format: "pdf" | "excel") => {
+    setExporting(true);
+    setExportingFormat(format);
+    try {
+      const ids = points.map((p) => p.id);
+      const res = await fetch("/api/reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "collection-points", format, filters: { ids } }),
+      });
+      if (!res.ok) throw new Error("Erro ao exportar dados.");
+      const report = await res.json();
+      
+      const link = document.createElement("a");
+      link.href = report.url;
+      link.setAttribute("download", report.filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao exportar dados do servidor.");
+    } finally {
+      setExporting(false);
+      setExportingFormat(null);
+    }
+  };
+
   return (
     <div className="bg-light-background dark:bg-dark-background border border-grey200 dark:border-grey800 rounded-2xl shadow-sm overflow-hidden flex flex-col h-[560px]">
       {/* Cabeçalho + controlos */}
       <div className="p-5 border-b border-grey200 dark:border-grey800 flex flex-col gap-4">
-        <div className="flex justify-between items-center gap-3">
+        <div className="flex justify-between items-start gap-3">
           <div>
             <h3 className="font-bold text-grey900 dark:text-grey50">Pontos Oficiais</h3>
             <p className="text-xs text-grey600 dark:text-grey400 mt-0.5">
               Locais autorizados de recolha de resíduos sólidos.
             </p>
           </div>
-          <span className="text-xs font-bold bg-forestGreen/10 dark:bg-limeGreen/10 text-forestGreen dark:text-limeGreen px-2.5 py-1 rounded-full border border-forestGreen/10 dark:border-limeGreen/10 shrink-0">
-            {totalCount} {totalCount === 1 ? "Ponto" : "Pontos"}
-          </span>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-xs font-bold bg-forestGreen/10 dark:bg-limeGreen/10 text-forestGreen dark:text-limeGreen px-2.5 py-1 rounded-full border border-forestGreen/10 dark:border-limeGreen/10">
+              {totalCount} {totalCount === 1 ? "Ponto" : "Pontos"}
+            </span>
+            <button
+              onClick={() => handleExport("pdf")}
+              disabled={exporting || points.length === 0}
+              className="p-1.5 rounded-lg text-red-600 dark:text-red-400 bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 transition-all disabled:opacity-50"
+              title="Exportar PDF Filtrado"
+            >
+              {exportingFormat === "pdf" ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <FileText className="w-3.5 h-3.5" />
+              )}
+            </button>
+            <button
+              onClick={() => handleExport("excel")}
+              disabled={exporting || points.length === 0}
+              className="p-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/10 transition-all disabled:opacity-50"
+              title="Exportar Excel Filtrado"
+            >
+              {exportingFormat === "excel" ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+              )}
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
