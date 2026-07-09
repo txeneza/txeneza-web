@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 // @ts-ignore
 import Map, { Marker, Popup } from "react-map-gl/mapbox";
 import { Occurrence } from "@/features/occurrences/occurrences.types";
-import { MapPin, Clock, Info } from "lucide-react";
+import { MapPin, Clock, Info, AlertTriangle } from "lucide-react";
 import { env } from "@/core/env";
 import { useTheme } from "@/hooks/use-theme";
 
@@ -56,13 +56,16 @@ export const MapView: React.FC<MapViewProps> = ({
     <div className="relative w-full h-[550px] bg-grey100 dark:bg-grey950 rounded-2xl overflow-hidden border border-grey200 dark:border-grey800 shadow-sm transition-all duration-300">
       {/* Aviso de Baixa Conectividade (TCC Scope Context) */}
       {connectionWarning && (
-        <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between gap-3 px-4 py-2.5 bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl backdrop-blur-md text-xs font-bold animate-fadeIn">
-          <span>⚠️ Contexto de Baixa Conectividade: Texturas do mapa indisponíveis. Exibindo dados de cache local de Beira.</span>
+        <div className="absolute top-4 left-4 right-4 z-20 flex items-start gap-2.5 p-3.5 bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl backdrop-blur-md text-xs font-bold animate-fadeIn">
+          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+          <div className="flex-1 leading-normal">
+            Contexto de Baixa Conectividade: Texturas do mapa indisponíveis devido a oscilações de rede. As localizações georreferenciadas (pontos de recolha e focos de lixo) continuam visíveis sobre a grelha de cache local.
+          </div>
           <button 
             onClick={() => setConnectionWarning(null)}
-            className="px-2 py-0.5 hover:bg-amber-500/20 rounded-md transition-colors"
+            className="px-2 py-1 hover:bg-amber-500/20 rounded-lg transition-colors shrink-0 text-[10px] font-black uppercase"
           >
-            Fechar
+            Dispensar
           </button>
         </div>
       )}

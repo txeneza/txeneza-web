@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 // @ts-ignore
 import Map, { Source, Layer, NavigationControl, ScaleControl } from "react-map-gl/mapbox";
-import { Flame, Radio } from "lucide-react";
+import { Flame, Radio, AlertTriangle } from "lucide-react";
 import { env } from "@/core/env";
 import { useTheme } from "@/hooks/use-theme";
 
@@ -59,6 +59,7 @@ export const HeatmapView: React.FC<HeatmapViewProps> = ({
   zoom = 12,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const [connectionWarning, setConnectionWarning] = useState(false);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -89,6 +90,22 @@ export const HeatmapView: React.FC<HeatmapViewProps> = ({
 
   return (
     <div className="relative w-full h-[600px] bg-grey100 dark:bg-grey950 rounded-2xl overflow-hidden border border-grey200 dark:border-grey800 shadow-sm transition-all duration-300">
+      
+      {/* Banner de Conectividade Instável */}
+      {connectionWarning && (
+        <div className="absolute top-16 left-4 right-4 z-20 flex items-start gap-2.5 p-3.5 bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl backdrop-blur-md text-xs font-bold animate-fadeIn">
+          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+          <div className="flex-1 leading-normal">
+            Contexto de Baixa Conectividade: Texturas do mapa (ruas e relevo) indisponíveis devido a oscilações de rede. A camada térmica do mapa de calor de Beira continua operacional com dados em cache local.
+          </div>
+          <button 
+            onClick={() => setConnectionWarning(false)}
+            className="px-2 py-1 hover:bg-amber-500/20 rounded-lg transition-colors shrink-0 text-[10px] font-black uppercase"
+          >
+            Dispensar
+          </button>
+        </div>
+      )}
 
       {/* Badge flutuante — identificação da camada */}
       <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-2 bg-forestGreen/90 dark:bg-grey900/85 backdrop-blur-md rounded-xl border border-limeGreen/25 shadow-lg">
@@ -143,6 +160,11 @@ export const HeatmapView: React.FC<HeatmapViewProps> = ({
         mapStyle={theme === "dark" ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11"}
         mapboxAccessToken={env.mapboxToken}
         attributionControl={false}
+        onError={() => {
+          if (!connectionWarning) {
+            setConnectionWarning(true);
+          }
+        }}
       >
         <NavigationControl position="top-right" showCompass={false} />
         <ScaleControl position="bottom-right" maxWidth={120} unit="metric" />

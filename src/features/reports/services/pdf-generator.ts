@@ -1,6 +1,5 @@
-// src/features/reports/services/pdf-generator.ts
-
 import PDFDocument from "pdfkit";
+import path from "path";
 import { ReportFilters } from "../types";
 import { PDF_COLORS, drawHeader, drawFooters, drawPDFTable } from "../templates/pdf-template";
 
