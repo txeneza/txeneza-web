@@ -29,7 +29,7 @@ export const ProblemSection: React.FC = () => {
         {/* Section Title */}
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
           <span className="text-xs font-black tracking-widest text-limeGreen uppercase">Estudo de Viabilidade</span>
-          <h2 className="text-3.5xl sm:text-5xl font-black tracking-tight mt-3">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mt-3">
             O Desafio dos Resíduos Sólidos na Beira
           </h2>
           <p className="text-slate-605 dark:text-slate-400 mt-4 text-base sm:text-lg leading-relaxed">

@@ -59,7 +59,7 @@ export const HowItWorksSection: React.FC = () => {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
           <span className="text-xs font-black tracking-widest text-limeGreen uppercase">Fluxo de Reporte</span>
-          <h2 className="text-3.5xl sm:text-5xl font-black tracking-tight mt-3">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mt-3">
             Como Funciona o Txeneza?
           </h2>
           <p className="text-slate-650 dark:text-slate-400 mt-4 text-base sm:text-lg leading-relaxed">
@@ -73,7 +73,7 @@ export const HowItWorksSection: React.FC = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative"
+          className="flex lg:grid overflow-x-auto lg:overflow-x-visible flex-nowrap lg:flex-wrap lg:grid-cols-4 gap-6 lg:gap-8 relative snap-x snap-mandatory pb-6 lg:pb-0 scrollbar-none"
         >
           {/* Connector Line (Desktop only) */}
           <div className="hidden lg:block absolute top-[2.25rem] left-[10%] right-[10%] h-[2px] bg-slate-200 dark:bg-slate-800 -z-10" />
@@ -84,7 +84,7 @@ export const HowItWorksSection: React.FC = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-slate-50/60 dark:bg-white/5 border border-slate-200 dark:border-slate-800 hover:border-limeGreen/20 rounded-3xl p-6 relative group transition-all duration-300 flex flex-col justify-between"
+                className="min-w-[85%] sm:min-w-[45%] lg:min-w-0 snap-center bg-slate-50/60 dark:bg-white/5 border border-slate-200 dark:border-slate-800 hover:border-limeGreen/20 rounded-3xl p-6 relative group transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   {/* Step Bubble & Icon */}

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, Map, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const LandingNav: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +31,7 @@ export const LandingNav: React.FC = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-grey900/90/90 backdrop-blur-md border-b border-slate-800/80 py-3 shadow-lg"
+          ? "bg-forestGreen/95 dark:bg-grey900/95 backdrop-blur-md border-b border-slate-800/80 py-3 shadow-lg"
           : "bg-transparent py-5"
       }`}
     >
@@ -122,53 +123,52 @@ export const LandingNav: React.FC = () => {
       </div>
 
       {/* Mobile Menu Panel */}
-      {isOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-grey900/90 border-b border-slate-800 px-4 pt-2 pb-6 flex flex-col gap-4 shadow-xl">
-          <a
-            href="#problema"
-            onClick={() => setIsOpen(false)}
-            className="text-base font-medium text-slate-300 hover:text-limeGreen py-1.5 border-b border-slate-850"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="md:hidden absolute top-full left-0 right-0 bg-forestGreen/98 dark:bg-grey900/98 backdrop-blur-lg border-b border-slate-800 px-6 py-8 flex flex-col gap-4 shadow-2xl overflow-hidden"
           >
-            O Problema
-          </a>
-          <a
-            href="#funcionamento"
-            onClick={() => setIsOpen(false)}
-            className="text-base font-medium text-slate-300 hover:text-limeGreen py-1.5 border-b border-slate-850"
-          >
-            Como Funciona
-          </a>
-          <a
-            href="#mapa-preview"
-            onClick={() => setIsOpen(false)}
-            className="text-base font-medium text-slate-300 hover:text-limeGreen py-1.5 border-b border-slate-850"
-          >
-            O Mapa
-          </a>
-          <a
-            href="#para-quem-e"
-            onClick={() => setIsOpen(false)}
-            className="text-base font-medium text-slate-300 hover:text-limeGreen py-1.5 border-b border-slate-850"
-          >
-            Público-Alvo
-          </a>
-          <a
-            href="#ods"
-            onClick={() => setIsOpen(false)}
-            className="text-base font-medium text-slate-300 hover:text-limeGreen py-1.5 border-b border-slate-850"
-          >
-            Alinhamento ODS
-          </a>
-          <Link
-            href="/map"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-base font-bold bg-limeGreen text-forestGreen hover:bg-lightLime shadow-lg shadow-limeGreen/10 transition-colors"
-          >
-            <Map className="w-5 h-5 stroke-[2.5]" />
-            Ver Mapa
-          </Link>
-        </div>
-      )}
+            {[
+              { href: "#problema", label: "O Problema" },
+              { href: "#funcionamento", label: "Como Funciona" },
+              { href: "#mapa-preview", label: "O Mapa" },
+              { href: "#para-quem-e", label: "Público-Alvo" },
+              { href: "#ods", label: "Alinhamento ODS" },
+            ].map((link, i) => (
+              <motion.a
+                key={link.href}
+                initial={{ opacity: 0, x: -15 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="text-base font-bold text-slate-100 hover:text-limeGreen py-2 border-b border-white/5 transition-colors"
+              >
+                {link.label}
+              </motion.a>
+            ))}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="pt-2"
+            >
+              <Link
+                href="/map"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-base font-bold bg-limeGreen text-forestGreen hover:bg-lightLime shadow-lg shadow-limeGreen/10 active:scale-95 transition-all"
+              >
+                <Map className="w-5 h-5 stroke-[2.5]" />
+                Ver Mapa
+              </Link>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

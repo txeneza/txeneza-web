@@ -39,7 +39,7 @@ export const InstitutionalSection: React.FC = () => {
           {/* Left Column: Partnerships & Delimitation */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <span className="text-xs font-black tracking-widest text-limeGreen uppercase">Enquadramento Institucional</span>
-            <h2 className="text-3.5xl sm:text-4.5xl font-black tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
               Apoio à Gestão e Sustentabilidade Urbana
             </h2>
             <p className="text-slate-605 dark:text-slate-400 text-sm sm:text-base leading-relaxed">

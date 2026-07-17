@@ -51,7 +51,7 @@ export const TargetAudienceSection: React.FC = () => {
         {/* Title */}
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
           <span className="text-xs font-black tracking-widest text-limeGreen uppercase">Impacto Social</span>
-          <h2 className="text-3.5xl sm:text-5xl font-black tracking-tight mt-3">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mt-3">
             Para Quem é o Txeneza?
           </h2>
           <p className="text-slate-605 dark:text-slate-400 mt-4 text-base sm:text-lg leading-relaxed">
@@ -65,7 +65,7 @@ export const TargetAudienceSection: React.FC = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          className="flex md:grid overflow-x-auto md:overflow-x-visible flex-nowrap md:flex-wrap md:grid-cols-3 gap-6 md:gap-8 snap-x snap-mandatory pb-6 md:pb-0 scrollbar-none"
         >
           {groups.map((group, index) => {
             const Icon = group.icon;
@@ -73,7 +73,7 @@ export const TargetAudienceSection: React.FC = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-slate-50/50 dark:bg-white/5 border border-slate-205 dark:border-slate-800 hover:border-limeGreen/20 rounded-3xl p-8 relative flex flex-col justify-between group transition-all duration-300"
+                className="min-w-[85%] sm:min-w-[45%] md:min-w-0 snap-center bg-slate-50/50 dark:bg-white/5 border border-slate-200 dark:border-slate-800 hover:border-limeGreen/20 rounded-3xl p-8 relative flex flex-col justify-between group transition-all duration-300"
               >
                 <div>
                   {/* Header */}
