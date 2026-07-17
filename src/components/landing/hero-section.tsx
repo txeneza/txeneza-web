@@ -161,20 +161,20 @@ export const HeroSection: React.FC = () => {
       <AnimatePresence>
         {showToast && (
           <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.95 }}
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-24 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4"
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[92%] sm:w-full max-w-md"
           >
             <div className="bg-forestGreen/95 dark:bg-grey900/95 backdrop-blur-md border border-limeGreen/30 shadow-2xl rounded-2xl p-4 flex gap-3.5 items-start text-white">
               <div className="p-2 rounded-xl bg-limeGreen/10 border border-limeGreen/20 text-limeGreen shrink-0">
                 <Info className="w-5 h-5" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <h5 className="text-xs font-black uppercase tracking-wider text-limeGreen">
                   Aplicação não detetada
                 </h5>
-                <p className="text-xs text-slate-200 mt-1 leading-relaxed font-sans">
+                <p className="text-xs text-slate-200 mt-1 leading-relaxed font-sans break-words">
                   Para efetuar uma denúncia, necessita da aplicação Txeneza. A encaminhar para a secção de descarregamento abaixo...
                 </p>
               </div>
