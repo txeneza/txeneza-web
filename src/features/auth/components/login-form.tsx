@@ -1,6 +1,6 @@
 import React from "react";
 import { useLogin } from "../hooks/use-login";
-import { Mail, Lock, AlertCircle, ShieldCheck } from "lucide-react";
+import { Mail, Lock, AlertCircle, ShieldCheck, Eye, EyeOff } from "lucide-react";
 
 export const LoginForm: React.FC = () => {
   const {
@@ -12,6 +12,8 @@ export const LoginForm: React.FC = () => {
     loading,
     handleLoginSubmit,
   } = useLogin();
+
+  const [showPassword, setShowPassword] = React.useState(false);
 
   return (
     <div className="w-full max-w-[420px] bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/30 rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden transition-all duration-300 hover:border-limeGreen/30">
@@ -25,14 +27,14 @@ export const LoginForm: React.FC = () => {
         </div>
         <div>
           <h2 className="text-2xl font-black tracking-tight text-white">
-            Painel de Gestão
+            Protótipo de Gestão
           </h2>
           <p className="text-xs text-limeGreen/80 font-bold uppercase tracking-wider mt-1.5 flex items-center justify-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-limeGreen" />
-            Vereação de Higiene e Salubridade
+            Uso Potencial: Vereação de Higiene e Salubridade
           </p>
           <p className="text-[10px] text-grey300 font-medium uppercase mt-0.5">
-            Conselho Municipal da Beira
+            Proposta Tecnológica — CMB
           </p>
         </div>
       </div>
@@ -81,14 +83,21 @@ export const LoginForm: React.FC = () => {
               <Lock className="w-4 h-4" />
             </div>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
-              className="w-full bg-grey900/60 border border-forestGreen/40 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder-grey600 focus:outline-none focus:border-limeGreen/40 focus:ring-4 focus:ring-limeGreen/5 transition-all duration-200 disabled:opacity-50"
+              className="w-full bg-grey900/60 border border-forestGreen/40 rounded-xl py-3 pl-11 pr-10 text-sm text-white placeholder-grey600 focus:outline-none focus:border-limeGreen/40 focus:ring-4 focus:ring-limeGreen/5 transition-all duration-200 disabled:opacity-50"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-grey600 hover:text-white transition-colors"
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 
@@ -111,7 +120,7 @@ export const LoginForm: React.FC = () => {
 
       {/* Footer tip */}
       <div className="mt-8 text-center text-[10px] text-grey600">
-        Apenas acessível a funcionários autorizados da CMB. Todas as tentativas de acesso são registadas para auditoria de segurança.
+        Protótipo de demonstração concebido para simulação de uso potencial pela CMB. Trabalho Acadêmico de Conclusão de Curso.
       </div>
     </div>
   );

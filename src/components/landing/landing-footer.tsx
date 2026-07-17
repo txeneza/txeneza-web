@@ -79,7 +79,7 @@ export const LandingFooter: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 hover:bg-light-background dark:bg-dark-background/5 text-[11px] font-bold text-slate-300 transition-all"
             >
               <Shield className="w-3.5 h-3.5 text-limeGreen" />
-              Portal CMB (Administração)
+              Painel de Gestão (Proposta CMB)
             </Link>
           </div>
         </div>
