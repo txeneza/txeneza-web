@@ -69,7 +69,7 @@ export const SocialProofSection: React.FC = () => {
             Aceitação Comunitária Validada
           </h2>
           <p className="text-slate-605 dark:text-slate-400 mt-4 text-base sm:text-lg leading-relaxed">
-            Realizámos um inquérito de opinião aos moradores das zonas afetadas da Beira para validar o interesse no projeto. A resposta foi extremamente favorável.
+            Realizámos um inquérito de opinião aos moradores das zonas afectadas da Beira para validar o interesse no projecto. A resposta foi extremamente favorável.
           </p>
         </div>
 
@@ -82,7 +82,7 @@ export const SocialProofSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
-              className="p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-205 dark:border-slate-800 flex flex-col md:flex-row items-center gap-8 group hover:border-limeGreen/20 transition-all duration-300"
+              className="p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center gap-8 group hover:border-limeGreen/20 transition-all duration-300"
             >
               {/* SVG Ring Progress */}
               <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
@@ -136,7 +136,7 @@ export const SocialProofSection: React.FC = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto pt-8 border-t border-slate-205 dark:border-slate-800/80"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto pt-8 border-t border-slate-200 dark:border-slate-800/80"
         >
           {secondaryStats.map((item, index) => {
             const Icon = item.icon;

@@ -68,7 +68,7 @@ export const InstitutionalSection: React.FC = () => {
                 ].map((ent, idx) => (
                   <span
                     key={idx}
-                    className="px-3.5 py-1.5 rounded-xl bg-slate-50 dark:bg-grey900/90 border border-slate-202 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-50 dark:bg-grey900/90 border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400"
                   >
                     🏛️ {ent}
                   </span>
@@ -80,7 +80,7 @@ export const InstitutionalSection: React.FC = () => {
           {/* Right Column: ODS blocks */}
           <div className="lg:col-span-7 flex flex-col gap-6">
             <span className="text-[11px] font-extrabold tracking-widest text-limeGreen uppercase block mb-1">
-              Alinhamento com Objetivos da ONU (ODS)
+              Alinhamento com Objectivos da ONU (ODS)
             </span>
 
             <div className="flex flex-col gap-6">
@@ -93,7 +93,7 @@ export const InstitutionalSection: React.FC = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: idx * 0.15 }}
-                    className="p-6 rounded-3xl bg-slate-50/40 dark:bg-white/5 border border-slate-202 dark:border-slate-800 hover:border-limeGreen/10 flex gap-5 items-start group transition-all"
+                    className="p-6 rounded-3xl bg-slate-50/40 dark:bg-white/5 border border-slate-200 dark:border-slate-800 hover:border-limeGreen/10 flex gap-5 items-start group transition-all"
                   >
                     {/* Badge ODS */}
                     <div className={`w-14 h-14 rounded-2xl ${ods.color} flex flex-col items-center justify-center shrink-0 text-white font-mono shadow-lg relative`}>

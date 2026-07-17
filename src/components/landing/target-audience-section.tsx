@@ -22,7 +22,7 @@ export const TargetAudienceSection: React.FC = () => {
     },
     {
       title: "Vendedores Ambulantes",
-      desc: "Trabalham diariamente nos mercados informais e vias públicas. Estão diretamente expostos aos focos de resíduos não recolhidos que prejudicam as suas vendas e ameaçam a higiene dos produtos alimentares.",
+      desc: "Trabalham diariamente nos mercados informais e vias públicas. Estão directamente expostos aos focos de resíduos não recolhidos que prejudicam as suas vendas e ameaçam a higiene dos produtos alimentares.",
       icon: Store,
       role: "Higiene no Comércio de Rua",
       color: "amber-500",

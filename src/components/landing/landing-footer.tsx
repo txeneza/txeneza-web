@@ -24,7 +24,7 @@ export const LandingFooter: React.FC = () => {
               </span>
             </Link>
             <p className="text-xs sm:text-sm text-slate-300/90 leading-relaxed max-w-sm">
-              Saneamento colaborativo digital para a Cidade da Beira. Mapeando e reportando focos de lixo urbano para um ambiente mais sustentável and saudável.
+              Saneamento colaborativo digital para a Cidade da Beira. Mapeando e reportando focos de lixo urbano para um ambiente mais sustentável e saudável.
             </p>
           </div>
 
@@ -35,14 +35,14 @@ export const LandingFooter: React.FC = () => {
             <a href="#funcionamento" className="text-xs text-slate-300 hover:text-limeGreen transition-colors">Como Funciona</a>
             <a href="#mapa-preview" className="text-xs text-slate-300 hover:text-limeGreen transition-colors">O Mapa Público</a>
             <a href="#para-quem-e" className="text-xs text-slate-300 hover:text-limeGreen transition-colors">Público Beneficiário</a>
-            <a href="#ods" className="text-xs text-slate-300 hover:text-limeGreen transition-colors font-semibold">Objetivos ODS</a>
+            <a href="#ods" className="text-xs text-slate-300 hover:text-limeGreen transition-colors font-semibold">Objectivos ODS</a>
           </div>
 
           {/* Download Column */}
           <div className="md:col-span-5 flex flex-col gap-4">
-            <h4 className="text-xs font-black uppercase text-white tracking-widest mb-1">Aplicativo Móvel</h4>
+            <h4 className="text-xs font-black uppercase text-white tracking-widest mb-1">Aplicação Móvel</h4>
             <p className="text-xs text-slate-300/95 max-w-xs leading-relaxed">
-              Reporte lixo diretamente da rua usando o GPS e câmera do seu smartphone. Compatível com Android 8.0 ou superior.
+              Reporte lixo directamente da rua usando o GPS e câmera do seu smartphone. Compatível com Android 8.0 ou superior.
             </p>
             
             {/* APK Download with Select */}
@@ -50,7 +50,7 @@ export const LandingFooter: React.FC = () => {
               <div className="relative flex items-center bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 shadow-lg hover:border-limeGreen/30 transition-all">
                 <Download className="w-5 h-5 text-limeGreen shrink-0 mr-3" />
                 <div className="flex-1">
-                  <span className="block text-[8px] text-limeGreen uppercase font-bold tracking-widest leading-none mb-1">Baixar Aplicativo</span>
+                  <span className="block text-[8px] text-limeGreen uppercase font-bold tracking-widest leading-none mb-1">Descarregar Aplicação</span>
                   <select
                     onChange={(e) => {
                       const url = e.target.value;

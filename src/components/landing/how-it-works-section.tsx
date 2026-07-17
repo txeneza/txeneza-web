@@ -9,7 +9,7 @@ export const HowItWorksSection: React.FC = () => {
     {
       num: "01",
       title: "Fotografar",
-      desc: "Abra o aplicativo e capture uma foto nítida do ponto de lixo acumulado. A imagem ajuda a verificar as dimensões e o tipo de resíduo.",
+      desc: "Abra a aplicação e capture uma foto nítida do ponto de lixo acumulado. A imagem ajuda a verificar as dimensões e o tipo de resíduo.",
       icon: Camera,
       color: "limeGreen",
     },

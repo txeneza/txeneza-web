@@ -75,10 +75,10 @@ export const ProblemSection: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Card 2: Bairros Afetados */}
+          {/* Card 2: Bairros Afectados */}
           <motion.div
             variants={itemVariants}
-            className="p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
+            className="p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-200 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
           >
             <div>
               <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-grey900/90 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
@@ -88,7 +88,7 @@ export const ProblemSection: React.FC = () => {
                 Bairros Vulneráveis e Críticos
               </h3>
               <p className="text-slate-605 dark:text-slate-400 mt-3 text-sm leading-relaxed">
-                A vulnerabilidade urbana e a distribuição de contentores criam disparidades. Os bairros periféricos e de alta densidade populacional são os mais afetados pela falta de infraestruturas de saneamento básico.
+                A vulnerabilidade urbana e a distribuição de contentores criam disparidades. Os bairros periféricos e de alta densidade populacional são os mais afectados pela falta de infraestruturas de saneamento básico.
               </p>
             </div>
             
@@ -111,7 +111,7 @@ export const ProblemSection: React.FC = () => {
           {/* Card 3: Doenças e Malária */}
           <motion.div
             variants={itemVariants}
-            className="p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-205 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
+            className="p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-200 dark:border-slate-800/80 hover:border-limeGreen/30 hover:bg-background dark:hover:bg-slate-950 transition-all duration-300 flex flex-col justify-between group"
           >
             <div>
               <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-grey900/90 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
@@ -121,7 +121,7 @@ export const ProblemSection: React.FC = () => {
                 Vetores de Doenças e Saúde Pública
               </h3>
               <p className="text-slate-605 dark:text-slate-400 mt-3 text-sm leading-relaxed">
-                O lixo acumulado nas valas de drenagem atrai mosquitos e parasitas. Segundo o questionário oficial do nosso estudo, <strong className="text-foreground dark:text-white">69% dos residentes</strong> entrevistados correlacionam diretamente o acúmulo inadequado de resíduos à proliferação de doenças infeciosas, com foco na <strong className="text-red-500 font-bold">Malária</strong>.
+                O lixo acumulado nas valas de drenagem atrai mosquitos e parasitas. Segundo o questionário oficial do nosso estudo, <strong className="text-foreground dark:text-white">69% dos residentes</strong> entrevistados correlacionam directamente o acúmulo inadequado de resíduos à proliferação de doenças infeciosas, com foco na <strong className="text-red-500 font-bold">Malária</strong>.
               </p>
             </div>
             
@@ -129,7 +129,7 @@ export const ProblemSection: React.FC = () => {
             <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-900 flex items-center gap-5">
               <span className="text-4xl sm:text-5xl font-black text-red-500 font-mono">69%</span>
               <div className="text-xs text-slate-605 dark:text-slate-400 leading-tight">
-                Dos residentes associam o lixo diretamente ao aumento de casos de malária e diarreias.
+                Dos residentes associam o lixo directamente ao aumento de casos de malária e diarreias.
               </div>
             </div>
           </motion.div>
