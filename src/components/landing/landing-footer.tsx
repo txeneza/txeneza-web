@@ -6,7 +6,7 @@ import { Download, Landmark, ArrowRight, Shield } from "lucide-react";
 
 export const LandingFooter: React.FC = () => {
   return (
-    <footer className="bg-forestGreen border-t border-forestGreen/20 text-slate-300 py-16 px-4 relative overflow-hidden">
+    <footer id="download-app" className="bg-forestGreen border-t border-forestGreen/20 text-slate-300 py-16 px-4 relative overflow-hidden">
       {/* Glow */}
       <div className="absolute bottom-0 right-0 w-[20%] aspect-square rounded-full bg-limeGreen/10 filter blur-3xl pointer-events-none" />
 

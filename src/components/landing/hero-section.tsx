@@ -7,6 +7,32 @@ import { AppMockup } from "./app-mockup";
 import { PlusCircle, Flame, ArrowDown } from "lucide-react";
 
 export const HeroSection: React.FC = () => {
+  const handleReportClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const appUri = "txeneza://";
+    const fallbackTimeout = 1200;
+    
+    let appOpened = false;
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        appOpened = true;
+      }
+    };
+    
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.location.href = appUri;
+    
+    setTimeout(() => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (!appOpened) {
+        const downloadSection = document.getElementById("download-app");
+        if (downloadSection) {
+          downloadSection.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }, fallbackTimeout);
+  };
+
   return (
     <section className="relative min-h-[95vh] pt-28 md:pt-36 pb-16 flex items-center overflow-hidden bg-gradient-to-b from-forestGreen via-background to-background dark:via-grey900 dark:to-grey900 text-foreground dark:text-grey50">
       {/* Background Graphic Patterns */}
@@ -69,13 +95,13 @@ export const HeroSection: React.FC = () => {
               transition={{ duration: 0.7, delay: 0.4 }}
               className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-4"
             >
-              <Link
-                href="/map"
+              <button
+                onClick={handleReportClick}
                 className="flex items-center justify-center gap-2.5 w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold bg-limeGreen text-forestGreen hover:bg-lightLime hover:scale-[1.02] shadow-xl shadow-limeGreen/20 active:scale-95 transition-all"
               >
                 <PlusCircle className="w-5 h-5 stroke-[2.5]" />
                 Denunciar um ponto de lixo
-              </Link>
+              </button>
               
               <a
                 href="#mapa-preview"
