@@ -45,19 +45,37 @@ export const LandingFooter: React.FC = () => {
               Reporte lixo diretamente da rua usando o GPS e câmera do seu smartphone. Compatível com Android 8.0 ou superior.
             </p>
             
-            {/* APK Download Button */}
-            <div className="flex flex-wrap gap-3">
-              <a
-                href="/downloads/txeneza.apk"
-                download
-                className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-slate-950 text-white hover:bg-grey900/90 border border-slate-800 shadow-lg text-xs font-bold transition-all hover:scale-[1.02] active:scale-95"
-              >
-                <Download className="w-5 h-5 text-limeGreen shrink-0" />
-                <div className="text-left">
-                  <span className="block text-[8px] text-limeGreen uppercase font-bold tracking-widest leading-none mb-0.5">Baixar APK</span>
-                  <span className="text-xs font-extrabold text-white">Android 8.0+ (Estático)</span>
+            {/* APK Download with Select */}
+            <div className="flex flex-col gap-2 w-full max-w-sm">
+              <div className="relative flex items-center bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 shadow-lg hover:border-limeGreen/30 transition-all">
+                <Download className="w-5 h-5 text-limeGreen shrink-0 mr-3" />
+                <div className="flex-1">
+                  <span className="block text-[8px] text-limeGreen uppercase font-bold tracking-widest leading-none mb-1">Baixar Aplicativo</span>
+                  <select
+                    onChange={(e) => {
+                      const url = e.target.value;
+                      if (url) {
+                        window.open(url, "_blank");
+                        e.target.value = "";
+                      }
+                    }}
+                    className="w-full bg-transparent text-xs font-extrabold text-white focus:outline-none cursor-pointer pr-6 appearance-none"
+                    defaultValue=""
+                  >
+                    <option value="" disabled className="bg-slate-950 text-slate-400">Selecionar versão...</option>
+                    <option value="https://www.mediafire.com/file/81hjrat7w2cs4g1/txeneza-arm64-v8a.apk/file" className="bg-slate-950 text-white">
+                      Android ARM64-v8a (Celulares modernos)
+                    </option>
+                    <option value="https://www.mediafire.com/file/cg6dd9wato8y0uh/txeneza-armeabi-v7a.apk/file" className="bg-slate-950 text-white">
+                      Android ARMeabi-v7a (Celulares antigos)
+                    </option>
+                    <option value="https://www.mediafire.com/file/inanxln0nz5d7in/txeneza-x86_64.apk/file" className="bg-slate-950 text-white">
+                      Android Emulator x86_64 (PC)
+                    </option>
+                  </select>
                 </div>
-              </a>
+                <div className="absolute right-4 pointer-events-none text-slate-500 text-[10px]">▼</div>
+              </div>
             </div>
           </div>
 
