@@ -38,6 +38,7 @@ enum EstadoOcorrencia {
   em_analise
   resolvida
   reaberta
+  rejeitada
 }
 
 enum ModoClassificacao {
@@ -75,7 +76,7 @@ model Utilizador {
   nome           String         @db.VarChar(100)
   email          String         @unique @db.VarChar(150)
   telefone       String?        @unique @db.VarChar(20)
-  palavra_passe  String         @db.VarChar(255)
+  // palavra_passe  String         @db.VarChar(255)
   bairro         String         @db.VarChar(80)
   tipo           TipoUtilizador @default(morador)
   foto_perfil    String?

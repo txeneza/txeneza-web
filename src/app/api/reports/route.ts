@@ -6,7 +6,6 @@ import path from "path";
 import { generatePDFReport } from "@/features/reports/services/pdf-generator";
 import { generateExcelReport } from "@/features/reports/services/excel-generator";
 import { generateCSV } from "@/lib/csv";
-import { occurrencesService } from "@/features/occurrences/occurrences.service";
 import { prisma } from "@/lib/prisma";
 import { getBeiraHeatmapStats, BEIRA_BAIRROS } from "@/features/map/beira-heatmap.data";
 import { ReportFilters, ExportHistoryItem } from "@/features/reports/types";
@@ -37,7 +36,7 @@ async function ensureInitialized() {
 
     // Gerar relatórios reais para que os downloads do histórico inicial funcionem
     try {
-      const occurrences = await occurrencesService.getAll();
+      const occurrences = await getDatabaseOccurrences();
       const points = await getCollectionPoints();
 
       // 1. Relatório Ocorrências PDF
@@ -77,6 +76,56 @@ async function ensureInitialized() {
     }
 
     fs.writeFileSync(HISTORY_FILE, JSON.stringify(defaultHistory, null, 2), "utf8");
+  }
+}
+
+/**
+ * Obtém as ocorrências da base de dados reais com seus relacionamentos mapeados
+ */
+async function getDatabaseOccurrences() {
+  try {
+    const databaseOccurrences = await prisma.ocorrencia.findMany({
+      include: {
+        utilizador: true,
+        categoria: true,
+        fotografias: {
+          take: 1,
+          orderBy: { data_hora: "desc" },
+        },
+      },
+      orderBy: { data_hora_registo: "desc" },
+    });
+
+    return databaseOccurrences.map((o) => {
+      let status: "pendente" | "em-progresso" | "resolvido" | "rejeitado" = "pendente";
+      if ((o.estado as string) === "em_analise") status = "em-progresso";
+      else if ((o.estado as string) === "resolvida") status = "resolvido";
+      else if ((o.estado as string) === "rejeitada") status = "rejeitado";
+
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://qixdkjsdurbzmpxlimdy.supabase.co";
+      const imageUrl = o.fotografias[0]?.caminho_ficheiro
+        ? `${supabaseUrl}/storage/v1/object/public/denuncias/${o.fotografias[0].caminho_ficheiro}`
+        : undefined;
+
+      return {
+        id: o.id_ocorrencia,
+        title: `Ocorrência de ${o.categoria.nome}`,
+        description: o.descricao || "",
+        category: o.categoria.nome,
+        latitude: Number(o.latitude),
+        longitude: Number(o.longitude),
+        bairro: o.utilizador.bairro,
+        status,
+        createdAt: o.data_hora_registo.toISOString(),
+        updatedAt: o.data_hora_sync ? o.data_hora_sync.toISOString() : undefined,
+        reportedBy: o.utilizador.nome,
+        imageUrl,
+        gravidade: o.gravidade,
+      };
+    });
+  } catch (err) {
+    console.error("Erro ao obter ocorrências do banco:", err);
+    return [];
   }
 }
 
@@ -185,7 +234,7 @@ export async function POST(request: NextRequest) {
     let stats: any = {};
 
     if (type === "occurrences" || type === "summary") {
-      const allOccurrences = await occurrencesService.getAll();
+      const allOccurrences = await getDatabaseOccurrences();
       filteredData = filterOccurrences(allOccurrences, filters);
       
       const targetIds = filters.ids;
@@ -235,20 +284,35 @@ export async function POST(request: NextRequest) {
         filteredData = filteredData.filter(p => targetIds.includes(p.id));
       }
     } else if (type === "heatmap") {
-      // Estatísticas determinísticas baseadas nos bairros da Beira
-      const baseStats = getBeiraHeatmapStats();
-      const bairrosDensity = BEIRA_BAIRROS.map((b) => ({
-        bairro: b.name,
-        count: b.count,
-        weight: b.weight
+      const allOccurrences = await getDatabaseOccurrences();
+      const filteredOccs = filterOccurrences(allOccurrences, filters);
+      
+      const bairrosMap = new Map<string, number>();
+      let totalPoints = 0;
+      filteredOccs.forEach((o) => {
+        if (o.status === "pendente" || o.status === "em-progresso") {
+          totalPoints++;
+          const bairro = o.bairro || "Outros";
+          bairrosMap.set(bairro, (bairrosMap.get(bairro) || 0) + 1);
+        }
+      });
+
+      const bairrosDensity = Array.from(bairrosMap.entries()).map(([name, count]) => ({
+        bairro: name,
+        count: count,
+        weight: count
       })).sort((a, b) => b.count - a.count);
 
+      const criticalZone = bairrosDensity[0]?.bairro || "Nenhum";
+      const bairrosCount = bairrosDensity.length;
+
       stats = {
-        totalPoints: baseStats.totalPoints,
-        bairrosCount: baseStats.bairrosCount,
-        criticalZone: baseStats.criticalZone,
+        totalPoints,
+        bairrosCount,
+        criticalZone,
         bairrosDensity
       };
+      filteredData = bairrosDensity;
     }
 
     // 2. Gerar o Buffer do ficheiro
@@ -292,8 +356,8 @@ export async function POST(request: NextRequest) {
         }));
         csvContent = generateCSV(rows);
       } else if (type === "heatmap") {
-        const rows = BEIRA_BAIRROS.map((b) => ({
-          Bairro: b.name,
+        const rows = filteredData.map((b) => ({
+          Bairro: b.bairro,
           FocosAmostrados: b.count,
           PesoDensidade: b.weight,
         }));

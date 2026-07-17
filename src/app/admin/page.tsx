@@ -32,22 +32,16 @@ export default function AdminDashboardPage() {
     await exportData(exportRows, "distribuicao-categorias.csv");
   };
 
-  // Dados simulados para preencher os gráficos dinamicamente com base nas estatísticas
-  const gravityData = {
-    baixa: Math.round((stats?.total || 15) * 0.2) || 3,
-    media: Math.round((stats?.total || 15) * 0.4) || 6,
-    alta: Math.round((stats?.total || 15) * 0.3) || 4,
-    critica: Math.round((stats?.total || 15) * 0.1) || 2,
+  // Dados de gravidade reais vindos do serviço de estatísticas
+  const gravityData = stats?.gravityDistribution || {
+    baixa: 0,
+    media: 0,
+    alta: 0,
+    critica: 0,
   };
 
-  const timelineData = [
-    { date: "Jan", count: 4 },
-    { date: "Fev", count: 7 },
-    { date: "Mar", count: 5 },
-    { date: "Abr", count: 12 },
-    { date: "Mai", count: 18 },
-    { date: "Jun", count: stats?.total || 25 },
-  ];
+  // Dados temporais reais vindos do serviço de estatísticas
+  const timelineData = stats?.timelineData || [];
 
   return (
     <div className="flex flex-col gap-6">

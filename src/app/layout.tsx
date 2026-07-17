@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-MZ" className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable}`}>
+    <html lang="pt-MZ" className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         {/* Aplica o tema guardado antes da pintura para evitar o "flash" de tema errado.
             Modo claro é o padrão; escuro apenas quando explicitamente escolhido. */}
