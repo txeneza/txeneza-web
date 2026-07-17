@@ -70,7 +70,7 @@ export const InstitutionalSection: React.FC = () => {
                     key={idx}
                     className="px-3.5 py-1.5 rounded-xl bg-slate-50 dark:bg-grey900/90 border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400"
                   >
-                    🏛️ {ent}
+                    {ent}
                   </span>
                 ))}
               </div>
