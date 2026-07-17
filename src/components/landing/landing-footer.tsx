@@ -63,7 +63,7 @@ export const LandingFooter: React.FC = () => {
                     defaultValue=""
                   >
                     <option value="" disabled className="bg-slate-950 text-slate-400">Selecionar versão...</option>
-                    <option value="https://www.mediafire.com/file/81hjrat7w2cs4g1/txeneza-arm64-v8a.apk/file" className="bg-slate-950 text-white">
+                    <option value="https://download1980.mediafire.com/37949wi6fvsgbgCLo44x8LM9qCQ94Iuvr5vj4MWn4Fk-b6vi8g4-ifqUj4-0gOGHPeqpb-T4GpKUTnCQ_CKPMRiSkglII-zZ0Sf2ZnmTBU-XcT5yPlU3AhqioVT56QE0Z8qzhAvTMKEHZCwJqrjtUpcLFVlRmaJATic_Hg1NA8rPFo8/81hjrat7w2cs4g1/txeneza-arm64-v8a.apk" className="bg-slate-950 text-white">
                       Android ARM64-v8a (Celulares modernos)
                     </option>
                     <option value="https://www.mediafire.com/file/cg6dd9wato8y0uh/txeneza-armeabi-v7a.apk/file" className="bg-slate-950 text-white">
