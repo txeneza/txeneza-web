@@ -21,7 +21,37 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: "Txeneza - Gestão de Ocorrências Urbanas da Beira",
-  description: "Plataforma interativa para reporte, visualização e gestão de ocorrências e incidentes na Cidade da Beira.",
+  description: "Plataforma colaborativa para mapeamento georreferenciado e denúncia de resíduos sólidos nos bairros periféricos da Beira.",
+  icons: {
+    icon: [
+      { url: "/icons/TXENEZA.svg", type: "image/svg+xml" },
+      { url: "/image/TXENEZA.png", type: "image/png" }
+    ],
+    shortcut: "/icons/TXENEZA.svg",
+    apple: "/image/TXENEZA.png"
+  },
+  openGraph: {
+    title: "Txeneza - Gestão de Ocorrências Urbanas da Beira",
+    description: "Plataforma colaborativa para mapeamento georreferenciado e denúncia de resíduos sólidos nos bairros periféricos da Beira.",
+    url: "https://txeneza.org",
+    siteName: "Txeneza",
+    images: [
+      {
+        url: "/image/TXENEZA.png",
+        width: 512,
+        height: 512,
+        alt: "Logo Txeneza",
+      }
+    ],
+    locale: "pt_MZ",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Txeneza - Gestão de Ocorrências Urbanas da Beira",
+    description: "Plataforma colaborativa para mapeamento georreferenciado e denúncia de resíduos sólidos nos bairros periféricos da Beira.",
+    images: ["/image/TXENEZA.png"],
+  }
 };
 
 export default function RootLayout({
