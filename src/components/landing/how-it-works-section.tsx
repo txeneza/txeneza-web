@@ -10,7 +10,6 @@ export const HowItWorksSection: React.FC = () => {
       num: "01",
       title: "Fotografar",
       desc: "Abra o aplicativo e capture uma foto nítida do ponto de lixo acumulado. A imagem ajuda a verificar as dimensões e o tipo de resíduo.",
-      requirement: "RF01 / RF02",
       icon: Camera,
       color: "limeGreen",
     },
@@ -18,7 +17,6 @@ export const HowItWorksSection: React.FC = () => {
       num: "02",
       title: "Localizar",
       desc: "O GPS do seu telemóvel deteta a localização geográfica exata de forma automática. Não precisa de digitar moradas ou saber nomes de ruas.",
-      requirement: "RF11",
       icon: MapPin,
       color: "sageGreen",
     },
@@ -26,7 +24,6 @@ export const HowItWorksSection: React.FC = () => {
       num: "03",
       title: "Classificar",
       desc: "Indique o nível de gravidade aproximado (pequeno, médio ou crítico) para ajudar as equipas de limpeza a priorizar as ocorrências.",
-      requirement: "RF09",
       icon: Sliders,
       color: "amber-500",
     },
@@ -34,7 +31,6 @@ export const HowItWorksSection: React.FC = () => {
       num: "04",
       title: "Confirmar",
       desc: "Submeta o relatório. A ocorrência é guardada, aparece instantaneamente no mapa público e fica pronta para análise municipal.",
-      requirement: "RF03",
       icon: CheckCircle,
       color: "emerald-550",
     },
@@ -109,13 +105,7 @@ export const HowItWorksSection: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Requirement tag */}
-                <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-950 flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 font-mono">Requisito</span>
-                  <span className="text-[9px] px-2 py-0.5 bg-slate-100 dark:bg-slate-950 text-slate-650 dark:text-slate-400 rounded-md font-bold font-mono">
-                    {step.requirement}
-                  </span>
-                </div>
+                
               </motion.div>
             );
           })}

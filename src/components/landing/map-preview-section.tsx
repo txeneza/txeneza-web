@@ -83,7 +83,7 @@ export const MapPreviewSection: React.FC = () => {
               }`}
             >
               <MapPin className="w-4 h-4" />
-              Marcadores Públicos (RF03)
+              Marcadores Públicos
             </button>
             <button
               onClick={() => {
@@ -97,7 +97,7 @@ export const MapPreviewSection: React.FC = () => {
               }`}
             >
               <Flame className="w-4 h-4 text-orange-500 fill-orange-500/20" />
-              Mapa de Calor (RF04)
+              Mapa de Calor
             </button>
           </div>
         </div>

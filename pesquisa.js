@@ -1,80 +1,46 @@
 const fs = require('fs');
 const path = require('path');
 
-// RegExp to match emojis in ES6 (Node 10+)
-const EMOJI_REGEX = /\p{Emoji_Presentation}/gu;
+const targetDir = path.join(__dirname, 'src', 'components', 'landing');
 
-// Directory to scan
-const TARGET_DIR = path.join(__dirname, 'src');
+function processFile(filePath) {
+  let content = fs.readFileSync(filePath, 'utf8');
+  let original = content;
 
-// Common emojis used in the project and their suggested realistic Lucide React replacements
-const REPLACEMENTS = {
-  '📍': { icon: 'MapPin', component: 'import { MapPin } from "lucide-react";', label: 'Ponto no Mapa' },
-  '🏛️': { icon: 'Landmark', component: 'import { Landmark } from "lucide-react";', label: 'Edifício Público / CMB' },
-  '🗑️': { icon: 'Trash2', component: 'import { Trash2 } from "lucide-react";', label: 'Lixo / Contentor' },
-  '👥': { icon: 'Users', component: 'import { Users } from "lucide-react";', label: 'Comunidade' },
-  '🔥': { icon: 'Flame', component: 'import { Flame } from "lucide-react";', label: 'Mapa de Calor' },
-  '⚙️': { icon: 'Settings', component: 'import { Settings } from "lucide-react";', label: 'Definições' },
-  '👤': { icon: 'User', component: 'import { User } from "lucide-react";', label: 'Utilizador' },
-  '🚨': { icon: 'ShieldAlert', component: 'import { ShieldAlert } from "lucide-react";', label: 'Alerta / Ocorrência' },
-  '📷': { icon: 'Camera', component: 'import { Camera } from "lucide-react";', label: 'Câmara / Foto' },
-};
+  // 1. Tratamento específico para o how-it-works-section.tsx
+  if (filePath.endsWith('how-it-works-section.tsx')) {
+    // Remove "requirement: ...," ou 'requirement: ...,'
+    content = content.replace(/\s*requirement:\s*["'][^"']+["'],?/g, '');
+    
+    // Remove o bloco do HTML de requisitos (comentário do requisito até a tag de fechamento div)
+    const reqTagRegex = /\{\/\*\s*Requirement tag\s*\*\/\}[\s\S]*?<div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-950 flex justify-between items-center">[\s\S]*?<\/div>/g;
+    content = content.replace(reqTagRegex, '');
+  }
 
-function getFilesRecursively(dir, fileList = []) {
+  // 2. Remove ocorrências gerais do padrão (RFXX)
+  content = content.replace(/\s*\(RF\d+\)/g, '');
+  // Remove padrões isolados do tipo RFXX / RFYY
+  content = content.replace(/\bRF\d+\s*(?:\/\s*RF\d+)*\b/g, '');
+
+  if (content !== original) {
+    fs.writeFileSync(filePath, content, 'utf8');
+    console.log(`Atualizado: ${path.basename(filePath)}`);
+  }
+}
+
+function traverse(dir) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
-    const filePath = path.join(dir, file);
-    const stat = fs.statSync(filePath);
+    const fullPath = path.join(dir, file);
+    const stat = fs.statSync(fullPath);
     if (stat.isDirectory()) {
-      getFilesRecursively(filePath, fileList);
-    } else if (filePath.endsWith('.ts') || filePath.endsWith('.tsx') || filePath.endsWith('.css')) {
-      fileList.push(filePath);
+      traverse(fullPath);
+    } else if (stat.isFile() && (file.endsWith('.tsx') || file.endsWith('.ts') || file.endsWith('.js'))) {
+      processFile(fullPath);
     }
   }
-  return fileList;
 }
 
-function scanFiles() {
-  console.log(`\n🔍 A pesquisar emojis em: ${TARGET_DIR} ...\n`);
-  
-  const files = getFilesRecursively(TARGET_DIR);
-  let totalMatches = 0;
-  
-  files.forEach((file) => {
-    const content = fs.readFileSync(file, 'utf-8');
-    const lines = content.split('\n');
-    let fileReported = false;
-    
-    lines.forEach((lineContent, index) => {
-      const matches = lineContent.match(EMOJI_REGEX);
-      if (matches) {
-        if (!fileReported) {
-          console.log(`📁 Arquivo: ${path.relative(__dirname, file)}`);
-          fileReported = true;
-        }
-        
-        matches.forEach((emoji) => {
-          totalMatches++;
-          const replacement = REPLACEMENTS[emoji];
-          const lineNum = index + 1;
-          
-          console.log(`   └─ Linha ${lineNum}: Encontrado [ ${emoji} ]`);
-          console.log(`      Conteúdo: "${lineContent.trim()}"`);
-          if (replacement) {
-            console.log(`      💡 Sugestão: Substituir por <${replacement.icon} className="w-4 h-4" />`);
-            console.log(`         Importação: ${replacement.component}`);
-          } else {
-            console.log(`      💡 Sugestão: Substituir por um ícone da biblioteca 'lucide-react'.`);
-          }
-          console.log();
-        });
-      }
-    });
-  });
-  
-  console.log(`----------------------------------------------------------------`);
-  console.log(`✅ Pesquisa concluída. Total de emojis encontrados: ${totalMatches}`);
-  console.log(`Para realizar substituições, use a biblioteca 'lucide-react' já instalada no projecto.`);
-}
-
-scanFiles();
+console.log('Pesquisando e removendo requisitos RF01/RF02 etc na pasta landing...');
+traverse(targetDir);
+console.log('Fim do processamento!');
