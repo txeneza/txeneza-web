@@ -283,7 +283,7 @@ export default function AdminReportsPage() {
                   }`}
                 >
                   <FileText className="w-5 h-5 text-red-500" />
-                  PDF Premium
+                  PDF
                 </button>
                 <button
                   type="button"

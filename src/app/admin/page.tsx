@@ -104,7 +104,7 @@ export default function AdminDashboardPage() {
             />
           </div>
 
-          {/* AG Charts Enterprise Visualization Section */}
+          {/* AG Charts Visualization Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
             <GravityDonutChart data={gravityData} />
             <CategoryBarChart data={stats?.categoryDistribution || []} />
