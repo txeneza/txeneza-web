@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import Map, { Source, Layer, NavigationControl, ScaleControl } from "react-map-gl/mapbox";
 import { Flame, Radio, AlertTriangle } from "lucide-react";
 import { env } from "@/core/env";
-import { useTheme } from "@/hooks/use-theme";
+import { MapStyleToggle, MapStyleMode } from "./map-style-toggle";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -60,7 +60,7 @@ export const HeatmapView: React.FC<HeatmapViewProps> = ({
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [connectionWarning, setConnectionWarning] = useState(false);
-  const { theme } = useTheme();
+  const [styleMode, setStyleMode] = useState<MapStyleMode>("normal");
 
   useEffect(() => {
     setIsMounted(true);
@@ -150,6 +150,11 @@ export const HeatmapView: React.FC<HeatmapViewProps> = ({
         </span>
       </div>
 
+      {/* Alternância de estilo do mapa (Normal / Satélite) */}
+      <div className="absolute bottom-8 right-4 z-20">
+        <MapStyleToggle mode={styleMode} onChange={setStyleMode} />
+      </div>
+
       <Map
         initialViewState={{
           latitude: center[0],
@@ -157,7 +162,7 @@ export const HeatmapView: React.FC<HeatmapViewProps> = ({
           zoom: zoom,
         }}
         style={{ width: "100%", height: "100%" }}
-        mapStyle={theme === "dark" ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11"}
+        mapStyle={styleMode === "satellite" ? env.mapboxStyles.satellite : env.mapboxStyles.normal}
         mapboxAccessToken={env.mapboxToken}
         attributionControl={false}
         onError={() => {

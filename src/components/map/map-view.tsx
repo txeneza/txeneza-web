@@ -6,6 +6,7 @@ import Map, { Marker, Popup } from "react-map-gl/mapbox";
 import { Occurrence } from "@/features/occurrences/occurrences.types";
 import { MapPin, Clock, Info, AlertTriangle } from "lucide-react";
 import { env } from "@/core/env";
+import { MapStyleToggle, MapStyleMode } from "./map-style-toggle";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -37,6 +38,7 @@ export const MapView: React.FC<MapViewProps> = ({
   const [isMounted, setIsMounted] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<PontoRecolhaMapData | null>(null);
   const [connectionWarning, setConnectionWarning] = useState<string | null>(null);
+  const [styleMode, setStyleMode] = useState<MapStyleMode>("normal");
 
   useEffect(() => {
     setIsMounted(true);
@@ -68,6 +70,11 @@ export const MapView: React.FC<MapViewProps> = ({
         </div>
       )}
 
+      {/* Alternância de estilo do mapa (Normal / Satélite) */}
+      <div className="absolute top-4 right-4 z-20">
+        <MapStyleToggle mode={styleMode} onChange={setStyleMode} />
+      </div>
+
       <Map
         initialViewState={{
           latitude: center[0],
@@ -75,9 +82,7 @@ export const MapView: React.FC<MapViewProps> = ({
           zoom: zoom,
         }}
         style={{ width: "100%", height: "100%" }}
-        // O mapa de ocorrências deve manter-se sempre "limpo" (estilo claro),
-        // independentemente do modo claro/escuro escolhido no resto do site.
-        mapStyle="mapbox://styles/mapbox/light-v11"
+        mapStyle={styleMode === "satellite" ? env.mapboxStyles.satellite : env.mapboxStyles.normal}
         mapboxAccessToken={env.mapboxToken}
         onError={() => {
           if (!connectionWarning) {
