@@ -10,6 +10,10 @@ import {
   OCCURRENCE_STATUS_ORDER,
 } from "@/features/occurrences/occurrence-status";
 import { ConfirmDialog, ConfirmTone } from "@/components/ui/confirm-dialog";
+import { ResolutionProofModal } from "@/features/occurrences/components/resolution-proof-modal";
+import { ResolutionGallery } from "@/features/occurrences/components/resolution-gallery";
+import { resolutionVerificationService } from "@/features/occurrences/resolution-verification.service";
+import { ResolutionVerification } from "@/features/occurrences/resolution-verification.types";
 import {
   ArrowLeft,
   MapPin,
@@ -42,11 +46,15 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
   const [updating, setUpdating] = useState<OccurrenceStatus | null>(null);
   const [pendingStatus, setPendingStatus] = useState<OccurrenceStatus | null>(null);
   const [imgError, setImgError] = useState(false);
+  const [verifications, setVerifications] = useState<ResolutionVerification[]>([]);
+  const [proofModalOpen, setProofModalOpen] = useState(false);
+  const [savingProof, setSavingProof] = useState(false);
 
   useEffect(() => {
     async function load() {
       const data = await occurrencesService.getById(id);
       setOccurrence(data);
+      setVerifications(await resolutionVerificationService.getByOccurrence(id));
       setLoading(false);
     }
     load();
@@ -62,6 +70,28 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
     } finally {
       setUpdating(null);
     }
+  };
+
+  const handleConfirmProof = async (photoFile: File, notes: string) => {
+    if (!occurrence) return;
+    setSavingProof(true);
+    try {
+      const verification = await resolutionVerificationService.create({
+        occurrenceId: occurrence.id,
+        photoFile,
+        notes: notes || undefined,
+      });
+      setVerifications((prev) => [verification, ...prev]);
+      await handleUpdateStatus();
+      setProofModalOpen(false);
+    } finally {
+      setSavingProof(false);
+    }
+  };
+
+  const handleCancelProof = () => {
+    setProofModalOpen(false);
+    setPendingStatus(null);
   };
 
   if (loading) {
@@ -174,6 +204,9 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
         </Link>
       </div>
 
+      {/* Provas de resolução já registadas */}
+      <ResolutionGallery verifications={verifications} />
+
       {/* Ações de gestão */}
       <div className="p-6 bg-light-background dark:bg-dark-background border border-grey200 dark:border-grey800 rounded-2xl">
         <h3 className="text-xs font-bold text-grey600 dark:text-grey400 uppercase tracking-wider mb-4">
@@ -186,7 +219,10 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
             return (
               <button
                 key={s}
-                onClick={() => setPendingStatus(s)}
+                onClick={() => {
+                  setPendingStatus(s);
+                  if (s === "resolvido") setProofModalOpen(true);
+                }}
                 disabled={isCurrent || updating !== null}
                 className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-all disabled:cursor-not-allowed ${
                   isCurrent
@@ -206,9 +242,9 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Confirmação de alteração de estado */}
+      {/* Confirmação de alteração de estado (exceto "Resolvido", que exige prova fotográfica) */}
       <ConfirmDialog
-        open={pendingStatus !== null}
+        open={pendingStatus !== null && pendingStatus !== "resolvido"}
         tone={pendingStatus ? STATUS_TONE[pendingStatus] : "brand"}
         title="Alterar estado da ocorrência"
         description={
@@ -226,6 +262,14 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
         loading={updating !== null}
         onConfirm={handleUpdateStatus}
         onCancel={() => setPendingStatus(null)}
+      />
+
+      {/* Prova fotográfica obrigatória para marcar como "Resolvido" */}
+      <ResolutionProofModal
+        open={proofModalOpen}
+        loading={savingProof || updating !== null}
+        onConfirm={handleConfirmProof}
+        onCancel={handleCancelProof}
       />
     </div>
   );
