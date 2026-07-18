@@ -197,6 +197,17 @@ export function drawFooters(doc: any) {
     const y = doc.page.height - 40;
     const pageW = doc.page.width;
 
+    // O texto do rodapé fica dentro da margem inferior da página (de
+    // propósito, para ficar "colado" ao fundo). Sem este ajuste, o PDFKit
+    // considera que o texto ultrapassa a área de escrita (maxY = page.height
+    // - margins.bottom) e insere automaticamente uma nova página a cada
+    // chamada a doc.text(), duplicando o cabeçalho em páginas extra e
+    // corrompendo a contagem "Página X de Y" (calculada antes desse efeito
+    // colateral). Reduzimos temporariamente a margem inferior só para estas
+    // escritas e repomos o valor logo a seguir.
+    const originalBottomMargin = doc.page.margins.bottom;
+    doc.page.margins.bottom = 0;
+
     doc.moveTo(MARGIN, y).lineTo(pageW - MARGIN, y).strokeColor(PDF_COLORS.border).lineWidth(0.5).stroke();
 
     // Marca à esquerda
@@ -210,7 +221,8 @@ export function drawFooters(doc: any) {
       .text(
         "Txeneza · Vereação de Higiene e Salubridade — Município da Beira",
         MARGIN + 12,
-        y + 8
+        y + 8,
+        { lineBreak: false }
       );
 
     // Número de página à direita
@@ -218,7 +230,13 @@ export function drawFooters(doc: any) {
       .font("Helvetica")
       .fontSize(7.5)
       .fillColor(PDF_COLORS.softText)
-      .text(`Página ${i + 1} de ${range.count}`, pageW - 150, y + 8, { align: "right", width: 110 });
+      .text(`Página ${i + 1} de ${range.count}`, pageW - 150, y + 8, {
+        align: "right",
+        width: 110,
+        lineBreak: false,
+      });
+
+    doc.page.margins.bottom = originalBottomMargin;
   }
 }
 
