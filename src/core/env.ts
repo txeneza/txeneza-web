@@ -3,6 +3,8 @@ export const env = {
   supabase: {
     url: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
     anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "",
+    // Apenas para uso no servidor (rotas /api). Nunca expor ao cliente.
+    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
   },
   mapboxToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "",
 } as const;

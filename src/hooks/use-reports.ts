@@ -47,14 +47,29 @@ export function useReports() {
       }
 
       const reportItem = (await res.json()) as ExportHistoryItem;
-      
-      // Forçar descarregamento imediato no navegador
-      const link = document.createElement("a");
-      link.href = reportItem.url;
-      link.setAttribute("download", reportItem.filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+
+      // Forçar descarregamento imediato no navegador.
+      // O ficheiro está agora no Supabase Storage (origem diferente da app),
+      // e o atributo `download` do <a> é ignorado pela maioria dos browsers
+      // em URLs de origem cruzada — por isso vamos buscar o conteúdo como
+      // blob e criar um URL local, que força o download de forma fiável.
+      try {
+        const fileRes = await fetch(reportItem.url);
+        if (!fileRes.ok) throw new Error("Não foi possível obter o ficheiro gerado.");
+        const blob = await fileRes.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.setAttribute("download", reportItem.filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+      } catch (downloadErr) {
+        // A geração foi bem-sucedida mesmo que o auto-download falhe;
+        // o ficheiro fica disponível no histórico para descarregar manualmente.
+        console.warn("Falha no auto-download, disponível no histórico:", downloadErr);
+      }
 
       setSuccess("Relatório gerado com sucesso!");
       

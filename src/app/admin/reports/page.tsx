@@ -76,6 +76,29 @@ export default function AdminReportsPage() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
   };
 
+  // O ficheiro fica no Supabase Storage (origem diferente da app), e o
+  // atributo `download` do <a> é ignorado pela maioria dos browsers em
+  // URLs de origem cruzada. Ir buscar o conteúdo como blob força o
+  // descarregamento de forma fiável em qualquer browser.
+  const handleDownload = async (url: string, filename: string) => {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Não foi possível obter o ficheiro.");
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Erro ao descarregar relatório:", err);
+      window.open(url, "_blank");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {/* Cabeçalho */}
@@ -387,15 +410,15 @@ export default function AdminReportsPage() {
                       </td>
                       <td className="py-3.5 px-5">
                         <div className="flex items-center justify-end">
-                          <a
-                            href={item.url}
-                            download={item.filename}
+                          <button
+                            type="button"
+                            onClick={() => handleDownload(item.url, item.filename)}
                             className="p-2 rounded-lg text-forestGreen dark:text-limeGreen hover:bg-forestGreen/10 dark:hover:bg-limeGreen/10 transition-colors flex items-center gap-1.5 font-bold"
                             title="Descarregar ficheiro"
                           >
                             <Download className="w-3.5 h-3.5" />
                             <span>Baixar</span>
-                          </a>
+                          </button>
                         </div>
                       </td>
                     </tr>

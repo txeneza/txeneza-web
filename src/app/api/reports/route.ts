@@ -1,18 +1,22 @@
 // src/app/api/reports/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 import { generatePDFReport } from "@/features/reports/services/pdf-generator";
 import { generateExcelReport } from "@/features/reports/services/excel-generator";
 import { generateCSV } from "@/lib/csv";
 import { prisma } from "@/lib/prisma";
+import { supabaseAdmin } from "@/core/supabase-admin";
 import { getBeiraHeatmapStats, BEIRA_BAIRROS } from "@/features/map/beira-heatmap.data";
 import { ReportFilters, ExportHistoryItem } from "@/features/reports/types";
 
-// Ficheiro de persistência do histórico
-const REPORTS_DIR = path.join(process.cwd(), "public", "reports");
-const HISTORY_FILE = path.join(REPORTS_DIR, "history.json");
+// Bucket público no Supabase Storage onde os relatórios gerados e o
+// índice de histórico (_history.json) são persistidos. Necessário porque
+// o sistema de ficheiros da app em produção (Vercel) é só de leitura —
+// escrever em public/ funciona em localhost mas falha silenciosamente
+// em runtime serverless.
+const REPORTS_BUCKET = "relatorios";
+const HISTORY_KEY = "_history.json";
+const MAX_HISTORY_ITEMS = 15;
 
 // Fallback de pontos de recolha para assegurar dados caso o DB local esteja sem sementes
 const MOCK_POINTS_FALLBACK = [
@@ -24,58 +28,32 @@ const MOCK_POINTS_FALLBACK = [
 ];
 
 /**
- * Garante a existência da diretoria e inicializa o histórico com dados funcionais na primeira execução.
+ * Lê o índice de histórico (_history.json) do Supabase Storage.
+ * Devolve lista vazia se ainda não existir (primeira utilização).
  */
-async function ensureInitialized() {
-  if (!fs.existsSync(REPORTS_DIR)) {
-    fs.mkdirSync(REPORTS_DIR, { recursive: true });
+async function readHistory(): Promise<ExportHistoryItem[]> {
+  const { data, error } = await supabaseAdmin.storage.from(REPORTS_BUCKET).download(HISTORY_KEY);
+  if (error || !data) return [];
+  try {
+    const text = await data.text();
+    const parsed = JSON.parse(text);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
   }
+}
 
-  if (!fs.existsSync(HISTORY_FILE)) {
-    const defaultHistory: ExportHistoryItem[] = [];
-
-    // Gerar relatórios reais para que os downloads do histórico inicial funcionem
-    try {
-      const occurrences = await getDatabaseOccurrences();
-      const points = await getCollectionPoints();
-
-      // 1. Relatório Ocorrências PDF
-      const pdfBuffer = await generatePDFReport("occurrences", occurrences, {}, {});
-      const pdfFilename = "relatorio_ocorrencias_geral_beira.pdf";
-      fs.writeFileSync(path.join(REPORTS_DIR, pdfFilename), pdfBuffer);
-
-      defaultHistory.push({
-        id: "exp-init-1",
-        filename: pdfFilename,
-        type: "occurrences",
-        format: "pdf",
-        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 dias atrás
-        sizeBytes: pdfBuffer.length,
-        url: `/reports/${pdfFilename}`,
-        filters: {}
-      });
-
-      // 2. Relatório Pontos Excel
-      const xlsxBuffer = await generateExcelReport("collection-points", points, { status: "activo" }, {});
-      const xlsxFilename = "inventario_contentores_ativos.xlsx";
-      fs.writeFileSync(path.join(REPORTS_DIR, xlsxFilename), xlsxBuffer);
-
-      defaultHistory.push({
-        id: "exp-init-2",
-        filename: xlsxFilename,
-        type: "collection-points",
-        format: "excel",
-        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 dias atrás
-        sizeBytes: xlsxBuffer.length,
-        url: `/reports/${xlsxFilename}`,
-        filters: { status: "activo" }
-      });
-
-    } catch (e) {
-      console.error("Erro ao gerar arquivos iniciais de histórico:", e);
-    }
-
-    fs.writeFileSync(HISTORY_FILE, JSON.stringify(defaultHistory, null, 2), "utf8");
+/**
+ * Grava o índice de histórico atualizado no Supabase Storage.
+ */
+async function writeHistory(history: ExportHistoryItem[]): Promise<void> {
+  const { error } = await supabaseAdmin.storage.from(REPORTS_BUCKET).upload(
+    HISTORY_KEY,
+    new Blob([JSON.stringify(history, null, 2)], { type: "application/json" }),
+    { contentType: "application/json", upsert: true }
+  );
+  if (error) {
+    throw new Error("Falha ao guardar histórico no Supabase Storage: " + error.message);
   }
 }
 
@@ -202,9 +180,7 @@ function filterCollectionPoints(items: any[], filters: ReportFilters) {
  */
 export async function GET() {
   try {
-    await ensureInitialized();
-    const historyData = fs.readFileSync(HISTORY_FILE, "utf8");
-    const history = JSON.parse(historyData);
+    const history = await readHistory();
     return NextResponse.json(history);
   } catch (error: any) {
     return NextResponse.json({ error: "Erro ao ler histórico: " + error.message }, { status: 500 });
@@ -216,8 +192,6 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
-    await ensureInitialized();
-
     const body = await request.json();
     const { type, format, filters = {} } = body as {
       type: "occurrences" | "collection-points" | "summary" | "heatmap";
@@ -370,15 +344,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Formato de arquivo não suportado." }, { status: 400 });
     }
 
-    // 3. Salvar ficheiro físico em public/reports/
+    // 3. Guardar o ficheiro no Supabase Storage (bucket público "relatorios")
     const dateStamp = new Date().toISOString().replace(/-/g, "").replace(/:/g, "").replace(/T/g, "").slice(0, 14);
     const filename = `relatorio_${type}_${dateStamp}.${extension}`;
-    const filePath = path.join(REPORTS_DIR, filename);
-    fs.writeFileSync(filePath, fileBuffer);
 
-    // 4. Registar no histórico
-    const historyData = fs.readFileSync(HISTORY_FILE, "utf8");
-    const historyList = JSON.parse(historyData) as ExportHistoryItem[];
+    const { error: uploadError } = await supabaseAdmin.storage
+      .from(REPORTS_BUCKET)
+      .upload(filename, fileBuffer, { contentType: mimeType, upsert: false });
+
+    if (uploadError) {
+      throw new Error("Falha ao guardar o relatório no Supabase Storage: " + uploadError.message);
+    }
+
+    const { data: publicUrlData } = supabaseAdmin.storage.from(REPORTS_BUCKET).getPublicUrl(filename);
+
+    // 4. Registar no histórico (também persistido no Supabase Storage)
+    const historyList = await readHistory();
 
     const newHistoryItem: ExportHistoryItem = {
       id: `exp-${Date.now()}`,
@@ -387,28 +368,24 @@ export async function POST(request: NextRequest) {
       format,
       createdAt: new Date().toISOString(),
       sizeBytes: fileBuffer.length,
-      url: `/reports/${filename}`,
+      url: publicUrlData.publicUrl,
       filters,
     };
 
     historyList.unshift(newHistoryItem);
-    // Limitar histórico recente a 15 itens para evitar inflar o ficheiro JSON
-    if (historyList.length > 15) {
-      const removedItems = historyList.splice(15);
-      // Apagar arquivos físicos removidos do histórico
-      removedItems.forEach((item) => {
-        try {
-          const pathToDelete = path.join(REPORTS_DIR, item.filename);
-          if (fs.existsSync(pathToDelete)) {
-            fs.unlinkSync(pathToDelete);
-          }
-        } catch (e) {
-          console.warn("Falha ao remover arquivo de relatório antigo:", e);
+    // Limitar histórico recente a MAX_HISTORY_ITEMS para não acumular ficheiros indefinidamente
+    if (historyList.length > MAX_HISTORY_ITEMS) {
+      const removedItems = historyList.splice(MAX_HISTORY_ITEMS);
+      const removedFilenames = removedItems.map((item) => item.filename);
+      if (removedFilenames.length > 0) {
+        const { error: removeError } = await supabaseAdmin.storage.from(REPORTS_BUCKET).remove(removedFilenames);
+        if (removeError) {
+          console.warn("Falha ao remover relatórios antigos do Storage:", removeError.message);
         }
-      });
+      }
     }
 
-    fs.writeFileSync(HISTORY_FILE, JSON.stringify(historyList, null, 2), "utf8");
+    await writeHistory(historyList);
 
     return NextResponse.json(newHistoryItem);
   } catch (error: any) {
