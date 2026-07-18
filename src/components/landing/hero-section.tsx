@@ -74,7 +74,7 @@ export const HeroSection: React.FC = () => {
                 className="w-14 h-18 sm:w-16 sm:h-20 object-contain shrink-0 filter drop-shadow-[0_8px_16px_rgba(181,242,48,0.15)]" 
               />
               <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-none">
-                <BrandName />
+                <BrandName variant="onDark" />
               </h1>
             </motion.div>
 

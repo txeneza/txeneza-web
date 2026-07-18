@@ -21,7 +21,7 @@ export const LandingFooter: React.FC = () => {
                 <img src="/image/TXENEZA.png" alt="Txeneza Logo" className="w-full h-full object-contain" />
               </div>
               <span className="text-xl font-black tracking-tight">
-                <BrandName />
+                <BrandName variant="onDark" />
               </span>
             </Link>
             <p className="text-xs sm:text-sm text-slate-300/90 leading-relaxed max-w-sm">
@@ -88,7 +88,7 @@ export const LandingFooter: React.FC = () => {
         {/* Bottom Bar: Copyright and Discrete Admin Link */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-slate-400">
           <div>
-            &copy; {new Date().getFullYear()} <BrandName />. Trabalho Acadêmico de Conclusão de Curso (Monografia) — Beira, Moçambique.
+            &copy; {new Date().getFullYear()} <BrandName variant="onDark" />. Trabalho Acadêmico de Conclusão de Curso (Monografia) — Beira, Moçambique.
           </div>
 
           {/* Discrete Admin Link (Login / W2) */}

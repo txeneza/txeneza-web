@@ -44,7 +44,7 @@ export const LandingNav: React.FC = () => {
               <img src="/icons/TXENEZA.svg" alt="Txeneza Logo" className="w-full h-full object-cover" />
             </div>
             <span className="text-xl font-black tracking-tight">
-              <BrandName />
+              <BrandName variant="onDark" />
             </span>
           </Link>
 
