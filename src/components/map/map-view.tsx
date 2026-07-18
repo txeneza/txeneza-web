@@ -6,7 +6,6 @@ import Map, { Marker, Popup } from "react-map-gl/mapbox";
 import { Occurrence } from "@/features/occurrences/occurrences.types";
 import { MapPin, Clock, Info, AlertTriangle } from "lucide-react";
 import { env } from "@/core/env";
-import { useTheme } from "@/hooks/use-theme";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -38,7 +37,6 @@ export const MapView: React.FC<MapViewProps> = ({
   const [isMounted, setIsMounted] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<PontoRecolhaMapData | null>(null);
   const [connectionWarning, setConnectionWarning] = useState<string | null>(null);
-  const { theme } = useTheme();
 
   useEffect(() => {
     setIsMounted(true);
@@ -46,18 +44,18 @@ export const MapView: React.FC<MapViewProps> = ({
 
   if (!isMounted) {
     return (
-      <div className="w-full h-[550px] bg-grey100 dark:bg-grey950 animate-pulse rounded-2xl flex items-center justify-center border border-grey200 dark:border-grey800">
-        <span className="text-grey600 dark:text-grey500 text-sm">A carregar mapa...</span>
+      <div className="w-full h-[550px] bg-grey100 animate-pulse rounded-2xl flex items-center justify-center border border-grey200">
+        <span className="text-grey600 text-sm">A carregar mapa...</span>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-[550px] bg-grey100 dark:bg-grey950 rounded-2xl overflow-hidden border border-grey200 dark:border-grey800 shadow-sm transition-all duration-300">
+    <div className="relative w-full h-[550px] bg-grey100 rounded-2xl overflow-hidden border border-grey200 shadow-sm">
       {/* Aviso de Baixa Conectividade (TCC Scope Context) */}
       {connectionWarning && (
-        <div className="absolute top-4 left-4 right-4 z-20 flex items-start gap-2.5 p-3.5 bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl backdrop-blur-md text-xs font-bold animate-fadeIn">
-          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+        <div className="absolute top-4 left-4 right-4 z-20 flex items-start gap-2.5 p-3.5 bg-amber-500/10 text-amber-600 border border-amber-500/30 rounded-xl backdrop-blur-md text-xs font-bold animate-fadeIn">
+          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
           <div className="flex-1 leading-normal">
             Contexto de Baixa Conectividade: Texturas do mapa indisponíveis devido a oscilações de rede. As localizações georreferenciadas (pontos de recolha e focos de lixo) continuam visíveis sobre a grelha de cache local.
           </div>
@@ -77,7 +75,9 @@ export const MapView: React.FC<MapViewProps> = ({
           zoom: zoom,
         }}
         style={{ width: "100%", height: "100%" }}
-        mapStyle={theme === "dark" ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11"}
+        // O mapa de ocorrências deve manter-se sempre "limpo" (estilo claro),
+        // independentemente do modo claro/escuro escolhido no resto do site.
+        mapStyle="mapbox://styles/mapbox/light-v11"
         mapboxAccessToken={env.mapboxToken}
         onError={() => {
           if (!connectionWarning) {
