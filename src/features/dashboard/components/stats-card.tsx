@@ -25,11 +25,11 @@ export const StatsCard: React.FC<StatsCardProps> = ({
       className={`p-6 bg-light-background dark:bg-dark-background dark:bg-grey900/60 backdrop-blur-md border border-grey200 dark:border-grey800 dark:border-grey800/80 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 group ${borderClass}`}
     >
       <div className="flex justify-between items-start">
-        <span className="text-xs text-grey600 dark:text-grey400 dark:text-grey300 dark:text-grey500 font-semibold uppercase tracking-wider">
+        <span className="text-xs text-grey600 dark:text-grey500 font-semibold uppercase tracking-wider">
           {title}
         </span>
         {icon && (
-          <div className="text-grey300 dark:text-grey500 dark:text-grey600 dark:text-grey400 group-hover:text-limeGreen transition-colors duration-300">
+          <div className="text-grey300 dark:text-grey400 group-hover:text-limeGreen transition-colors duration-300">
             {icon}
           </div>
         )}
@@ -44,7 +44,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
           <span className={trend.positive ? "text-emerald-500" : "text-rose-500"}>
             {trend.value}
           </span>
-          <span className="text-grey300 dark:text-grey500 dark:text-grey600 dark:text-grey400 font-normal">
+          <span className="text-grey300 dark:text-grey400 font-normal">
             em relação ao mês passado
           </span>
         </div>

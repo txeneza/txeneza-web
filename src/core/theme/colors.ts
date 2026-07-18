@@ -19,9 +19,14 @@ export const appColors = {
   grey100: "#F5F5F5",
   grey200: "#EEEEEE",
   grey300: "#E0E0E0",
+  grey400: "#BDBDBD",
+  grey500: "#9E9E9E",
   grey600: "#757575",
+  grey700: "#616161",
   grey800: "#424242",
+  grey850: "#303030",
   grey900: "#212121",
+  grey950: "#121212",
 
   // Status colors
   error: "#D32F2F",

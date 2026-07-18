@@ -60,8 +60,8 @@ export const CategoryBarChart: React.FC<CategoryBarChartProps> = ({ data }) => {
   };
 
   return (
-    <div className="p-6 bg-light-background dark:bg-dark-background dark:bg-grey900/60 backdrop-blur-md border border-grey200 dark:border-grey800 dark:border-grey800/80 rounded-2xl shadow-sm h-[320px] flex flex-col">
-      <h3 className="text-sm font-semibold text-grey600 dark:text-grey400 dark:text-grey300 dark:text-grey500 uppercase tracking-wider mb-2">
+    <div className="p-6 bg-light-background dark:bg-grey900/60 backdrop-blur-md border border-grey200 dark:border-grey800/80 rounded-2xl shadow-sm h-[320px] flex flex-col">
+      <h3 className="text-sm font-semibold text-grey600 dark:text-grey500 uppercase tracking-wider mb-2">
         Métricas por Categoria
       </h3>
       <div className="flex-1 min-h-0">

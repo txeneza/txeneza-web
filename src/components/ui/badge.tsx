@@ -13,7 +13,7 @@ export const Badge: React.FC<BadgeProps> = ({
   const baseStyle = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold leading-4";
   
   const variants = {
-    default: "bg-grey200 dark:bg-grey800/60 text-grey800 dark:text-grey100 dark:bg-gray-800 dark:text-gray-200",
+    default: "bg-grey200 dark:bg-grey800/60 text-grey800 dark:text-grey100",
     info: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200",
     success: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200",
     warning: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200",

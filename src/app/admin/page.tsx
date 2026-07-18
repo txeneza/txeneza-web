@@ -46,20 +46,20 @@ export default function AdminDashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Top Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-grey900 dark:text-grey50 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-grey900 dark:text-white">
             Painel Geral de Estatísticas
           </h1>
-          <p className="text-grey600 dark:text-grey400 dark:text-grey300 dark:text-grey500 mt-1">
+          <p className="text-sm sm:text-base text-grey600 dark:text-grey500 mt-1">
             Resumo quantitativo e análise de dados das ocorrências urbanas de Beira.
           </p>
         </div>
-        <Button onClick={handleExport} disabled={exporting || loading} variant="secondary">
+        <Button onClick={handleExport} disabled={exporting || loading} variant="secondary" className="w-full sm:w-auto shrink-0">
           {exporting ? (
             "A Exportar..."
           ) : (
-            <span className="flex items-center gap-2">
+            <span className="flex items-center justify-center gap-2">
               <Download className="w-4 h-4" /> Exportar Dados
             </span>
           )}
@@ -93,7 +93,7 @@ export default function AdminDashboardPage() {
               value={stats?.emProgresso || 0}
               icon={<Clock className="w-5 h-5 text-blue-500" />}
               borderClass="border-l-4 border-l-blue-500"
-              valueClass="text-forestGreen dark:text-limeGreen dark:text-blue-500"
+              valueClass="text-blue-600 dark:text-blue-500"
             />
             <StatsCard
               title="Resolvidas"

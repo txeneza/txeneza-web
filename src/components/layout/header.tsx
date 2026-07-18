@@ -28,7 +28,7 @@ export const Header: React.FC = () => {
   const userInitial = (user?.email || "U").charAt(0).toUpperCase();
 
   return (
-    <header className="w-full bg-light-background dark:bg-dark-background/80 dark:bg-grey900/80 backdrop-blur-md border-b border-grey200 dark:border-grey800 dark:border-grey800 py-4 px-6 flex items-center justify-between sticky top-0 z-50 transition-colors duration-300">
+    <header className="w-full bg-light-background dark:bg-grey900/80 backdrop-blur-md border-b border-grey200 dark:border-grey800 py-4 px-6 flex items-center justify-between sticky top-0 z-50 transition-colors duration-300">
       <div className="flex items-center gap-3">
         {/* Botão de menu — apenas mobile (a sidebar está oculta nesses ecrãs) */}
         {isAuthenticated && (
@@ -53,7 +53,7 @@ export const Header: React.FC = () => {
         {mounted && (
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl bg-grey100 dark:bg-grey900/40 dark:bg-grey950 border border-grey200 dark:border-grey800 dark:border-grey850 text-grey600 dark:text-grey400 dark:text-grey300 dark:text-grey500 hover:text-forestGreen dark:hover:text-limeGreen hover:scale-105 transition-all duration-200"
+            className="p-2 rounded-xl bg-grey100 dark:bg-grey950 border border-grey200 dark:border-grey850 text-grey600 dark:text-grey500 hover:text-forestGreen dark:hover:text-limeGreen hover:scale-105 transition-all duration-200"
             title={theme === "light" ? "Mudar para Modo Escuro" : "Mudar para Modo Claro"}
           >
             {theme === "light" ? (
