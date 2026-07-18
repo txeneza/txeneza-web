@@ -88,7 +88,7 @@ export const LandingFooter: React.FC = () => {
         {/* Bottom Bar: Copyright and Discrete Admin Link */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-slate-400">
           <div>
-            &copy; {new Date().getFullYear()} <BrandName variant="onDark" />. Trabalho Acadêmico de Conclusão de Curso (Monografia) — Beira, Moçambique.
+            &copy; {new Date().getFullYear()} <BrandName variant="onDark" />. Beira, Moçambique.
           </div>
 
           {/* Discrete Admin Link (Login / W2) */}

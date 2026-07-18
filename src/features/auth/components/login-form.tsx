@@ -120,7 +120,7 @@ export const LoginForm: React.FC = () => {
 
       {/* Footer tip */}
       <div className="mt-8 text-center text-[10px] text-grey500 dark:text-grey600">
-        Protótipo de demonstração concebido para simulação de uso potencial pela CMB. Trabalho Acadêmico de Conclusão de Curso.
+        Protótipo de demonstração concebido para simulação de uso potencial pela CMB.
       </div>
     </div>
   );
