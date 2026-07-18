@@ -79,7 +79,7 @@ export default function AdminDashboardPage() {
               title="Total Ocorrências"
               value={stats?.total || 0}
               icon={<BarChart2 className="w-5 h-5" />}
-              trend={{ value: "+12.5%", positive: true }}
+              trend={stats?.totalTrend ?? undefined}
             />
             <StatsCard
               title="Pendentes"
@@ -101,7 +101,6 @@ export default function AdminDashboardPage() {
               icon={<CheckCircle2 className="w-5 h-5 text-emerald-500" />}
               borderClass="border-l-4 border-l-emerald-500"
               valueClass="text-emerald-600 dark:text-emerald-500"
-              trend={{ value: "+40%", positive: true }}
             />
           </div>
 

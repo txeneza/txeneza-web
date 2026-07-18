@@ -15,6 +15,13 @@ export interface DashboardStats {
     critica: number;
   };
   timelineData: { date: string; count: number }[];
+  /**
+   * Variação percentual do total de ocorrências registadas no mês atual
+   * em relação ao mês anterior, calculada a partir de timelineData.
+   * `null` quando não há dados suficientes (ex.: mês anterior sem registos)
+   * para produzir uma percentagem real e não fabricada.
+   */
+  totalTrend: { value: string; positive: boolean } | null;
 }
 
 export const dashboardService = {
@@ -35,6 +42,7 @@ export const dashboardService = {
         critica: occurrences.filter(o => o.gravidade === "critica").length,
       },
       timelineData: [],
+      totalTrend: null,
     };
 
     // Mapeamento de categorias
@@ -73,6 +81,42 @@ export const dashboardService = {
     });
 
     stats.timelineData = last6MonthsList;
+
+    // Variação percentual real do total de ocorrências: mês atual vs mês anterior.
+    // Calculada a partir de datas precisas (ano + mês), não apenas do nome do mês,
+    // para evitar comparar meses de anos diferentes.
+    const now = new Date();
+    const currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`;
+    const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const prevMonthKey = `${prevDate.getFullYear()}-${prevDate.getMonth()}`;
+
+    let currentMonthCount = 0;
+    let prevMonthCount = 0;
+    occurrences.forEach((o) => {
+      if (!o.createdAt) return;
+      const d = new Date(o.createdAt);
+      const key = `${d.getFullYear()}-${d.getMonth()}`;
+      if (key === currentMonthKey) currentMonthCount++;
+      else if (key === prevMonthKey) prevMonthCount++;
+    });
+
+    if (prevMonthCount > 0) {
+      const change = ((currentMonthCount - prevMonthCount) / prevMonthCount) * 100;
+      const rounded = Math.round(change * 10) / 10;
+      stats.totalTrend = {
+        value: `${rounded >= 0 ? "+" : ""}${rounded}%`,
+        positive: rounded >= 0,
+      };
+    } else if (currentMonthCount > 0) {
+      // Sem registos no mês anterior para servir de base de comparação:
+      // reportar o crescimento absoluto em vez de uma percentagem fabricada.
+      stats.totalTrend = {
+        value: `+${currentMonthCount} este mês`,
+        positive: true,
+      };
+    } else {
+      stats.totalTrend = null;
+    }
 
     return stats;
   }
