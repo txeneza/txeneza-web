@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { MapPin, Plus, Loader2, Pencil, X, CheckCircle2, XCircle } from "lucide-react";
+import { MapPin, Plus, Loader2, Pencil, X, CheckCircle2, XCircle, AlertTriangle, ArrowLeftRight } from "lucide-react";
 import { Combobox } from "@/components/ui/combobox";
 import { BAIRROS_BEIRA_NOMES } from "@/core/geo/beira-bairros";
+import { LocationPickerMap } from "@/components/map/location-picker-map";
 
 interface CollectionPointFormProps {
   form: {
@@ -19,6 +20,13 @@ interface CollectionPointFormProps {
     setHorario: (v: string) => void;
     estado: "activo" | "inactivo";
     setEstado: (v: "activo" | "inactivo") => void;
+    handleSelectLocation: (lat: number, lng: number) => void;
+    handleSwapCoordinates: () => void;
+    isSwapSuspected: boolean;
+    isOutsideBounds: boolean;
+    confirmOutsideBounds: boolean;
+    setConfirmOutsideBounds: (v: boolean) => void;
+    editingId: string | null;
   };
   onSubmit: (e: React.FormEvent) => void;
   submitting: boolean;
@@ -39,11 +47,6 @@ export const CollectionPointForm: React.FC<CollectionPointFormProps> = ({
   isEditing,
   onCancel,
 }) => {
-  const fillBeiraCoordinates = () => {
-    form.setLatitude("-19.8272");
-    form.setLongitude("34.8384");
-  };
-
   return (
     <div className="p-6 bg-light-background dark:bg-dark-background border border-grey200 dark:border-grey800 rounded-2xl shadow-sm sticky top-24">
       <div className="flex items-center justify-between mb-5">
@@ -98,43 +101,76 @@ export const CollectionPointForm: React.FC<CollectionPointFormProps> = ({
           </span>
         </div>
 
-        {/* Coordenadas */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Latitude *</label>
-            <input
-              type="number"
-              step="any"
-              required
-              placeholder="-19.8272"
-              value={form.latitude}
-              onChange={(e) => form.setLatitude(e.target.value)}
-              disabled={submitting}
-              className={inputClass}
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Longitude *</label>
-            <input
-              type="number"
-              step="any"
-              required
-              placeholder="34.8384"
-              value={form.longitude}
-              onChange={(e) => form.setLongitude(e.target.value)}
-              disabled={submitting}
-              className={inputClass}
-            />
-          </div>
-        </div>
+        {/* Localização — mapa interativo (clique/arrasto do pin + pesquisa) */}
+        <div className="flex flex-col gap-1.5">
+          <label className={labelClass}>Localização *</label>
+          <LocationPickerMap
+            key={form.editingId ?? "new"}
+            latitude={form.latitude ? parseFloat(form.latitude) : null}
+            longitude={form.longitude ? parseFloat(form.longitude) : null}
+            onChange={form.handleSelectLocation}
+          />
 
-        <button
-          type="button"
-          onClick={fillBeiraCoordinates}
-          className="text-left text-[11px] font-bold text-forestGreen dark:text-limeGreen hover:opacity-80 transition-opacity -mt-1 self-start"
-        >
-          Inserir coordenadas padrão da Beira
-        </button>
+          {/* Coordenadas — só leitura, refletem o pin no mapa acima */}
+          <div className="grid grid-cols-2 gap-3 mt-1">
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-bold text-grey500 uppercase tracking-wider">Latitude</span>
+              <input
+                type="text"
+                readOnly
+                value={form.latitude}
+                placeholder="—"
+                className="w-full bg-grey100 dark:bg-grey950 border border-grey200 dark:border-grey800 rounded-lg py-2 px-3 text-xs font-mono text-grey700 dark:text-grey300 cursor-not-allowed"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-bold text-grey500 uppercase tracking-wider">Longitude</span>
+              <input
+                type="text"
+                readOnly
+                value={form.longitude}
+                placeholder="—"
+                className="w-full bg-grey100 dark:bg-grey950 border border-grey200 dark:border-grey800 rounded-lg py-2 px-3 text-xs font-mono text-grey700 dark:text-grey300 cursor-not-allowed"
+              />
+            </div>
+          </div>
+
+          {/* Aviso: coordenadas possivelmente trocadas */}
+          {form.isSwapSuspected && (
+            <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 text-xs text-amber-700 dark:text-amber-400">
+              <ArrowLeftRight className="w-4 h-4 shrink-0 mt-0.5" />
+              <div className="flex-1 leading-snug">
+                <p className="font-bold">Estes valores parecem trocados (latitude/longitude).</p>
+                <button
+                  type="button"
+                  onClick={form.handleSwapCoordinates}
+                  className="mt-1.5 px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 font-bold text-[11px] transition-colors"
+                >
+                  Trocar automaticamente
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Aviso: ponto fora dos limites da Beira — bloqueia o Guardar até confirmar */}
+          {form.isOutsideBounds && (
+            <div className="flex items-start gap-2.5 p-3 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 text-xs text-red-600 dark:text-red-400">
+              <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+              <div className="flex-1 leading-snug">
+                <p className="font-bold">Este ponto está fora dos limites da Beira. Confirma o local?</p>
+                <label className="flex items-center gap-2 mt-1.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={form.confirmOutsideBounds}
+                    onChange={(e) => form.setConfirmOutsideBounds(e.target.checked)}
+                    className="w-3.5 h-3.5 accent-red-600"
+                  />
+                  <span className="font-bold">Sim, confirmo — gravar mesmo assim</span>
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Horário */}
         <div className="flex flex-col gap-1.5">
@@ -183,7 +219,7 @@ export const CollectionPointForm: React.FC<CollectionPointFormProps> = ({
         {/* Submit */}
         <button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || (form.isOutsideBounds && !form.confirmOutsideBounds)}
           className="w-full mt-2 py-3 rounded-xl text-sm font-bold bg-limeGreen text-forestGreen hover:bg-lightLime active:scale-[0.99] shadow-lg shadow-limeGreen/10 flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {submitting ? (

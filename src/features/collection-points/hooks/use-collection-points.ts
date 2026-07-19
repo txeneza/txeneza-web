@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { getBairroCenter } from "@/core/geo/beira-bairros";
+import { isWithinBeira, detectSwappedCoordinates } from "@/lib/geo";
 
 export interface PontoRecolhaData {
   id: string;
@@ -38,6 +39,12 @@ export function useCollectionPoints() {
   const [horario, setHorario] = useState("");
   const [estado, setEstado] = useState<"activo" | "inactivo">("activo");
 
+  // Quando o ponto escolhido (no mapa, pesquisa, ou colagem manual futura)
+  // cai fora do polígono da Beira, o Guardar fica bloqueado até o admin
+  // confirmar explicitamente que quer mesmo gravar ali (bairro de fronteira,
+  // polígono impreciso, etc). Reinicia sempre que a localização muda.
+  const [confirmOutsideBounds, setConfirmOutsideBounds] = useState(false);
+
   const flashSuccess = (msg: string) => {
     setSuccess(msg);
     setTimeout(() => setSuccess(null), 3500);
@@ -72,6 +79,7 @@ export function useCollectionPoints() {
     setHorario("");
     setEstado("activo");
     setEditingId(null);
+    setConfirmOutsideBounds(false);
   };
 
   // Ao escolher um bairro, pré-preenche coordenadas se ainda estiverem vazias.
@@ -85,6 +93,31 @@ export function useCollectionPoints() {
       }
     }
   };
+
+  // Chamado pelo mapa interativo (clique/arrasto do pin) e pela barra de
+  // pesquisa de endereço/local — a origem principal de coordenadas agora.
+  const handleSelectLocation = (lat: number, lng: number) => {
+    setLatitude(String(lat));
+    setLongitude(String(lng));
+    setConfirmOutsideBounds(false);
+  };
+
+  // Botão "Trocar automaticamente" do aviso de coordenadas trocadas.
+  const handleSwapCoordinates = () => {
+    setLatitude(longitude);
+    setLongitude(latitude);
+    setConfirmOutsideBounds(false);
+  };
+
+  const parsedLatitude = parseFloat(latitude);
+  const parsedLongitude = parseFloat(longitude);
+  const hasValidCoordinates = Number.isFinite(parsedLatitude) && Number.isFinite(parsedLongitude);
+
+  const isSwapSuspected =
+    hasValidCoordinates && detectSwappedCoordinates(parsedLatitude, parsedLongitude);
+
+  const isOutsideBounds =
+    hasValidCoordinates && !isWithinBeira(parsedLatitude, parsedLongitude);
 
   const startEdit = (point: PontoRecolhaData) => {
     setEditingId(point.id);
@@ -104,6 +137,13 @@ export function useCollectionPoints() {
     e.preventDefault();
     if (!nome || !latitude || !longitude || !bairro) {
       setError("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    if (isOutsideBounds && !confirmOutsideBounds) {
+      setError(
+        "Este ponto está fora dos limites da Beira. Confirme o local antes de guardar."
+      );
       return;
     }
 
@@ -238,6 +278,13 @@ export function useCollectionPoints() {
       estado,
       setEstado,
       resetForm,
+      handleSelectLocation,
+      handleSwapCoordinates,
+      isSwapSuspected,
+      isOutsideBounds,
+      confirmOutsideBounds,
+      setConfirmOutsideBounds,
+      editingId,
     },
     startEdit,
     cancelEdit,
