@@ -18,15 +18,6 @@ const REPORTS_BUCKET = "relatorios";
 const HISTORY_KEY = "_history.json";
 const MAX_HISTORY_ITEMS = 15;
 
-// Fallback de pontos de recolha para assegurar dados caso o DB local esteja sem sementes
-const MOCK_POINTS_FALLBACK = [
-  { id: "p1", nome: "Contentor Mercado Central", bairro: "Baixa / Mercado", latitude: -19.8340, longitude: 34.8390, horario: "07:00 - 18:00", estado: "activo" },
-  { id: "p2", nome: "Ecoponto Munhava Principal", bairro: "Munhava", latitude: -19.8090, longitude: 34.8470, horario: "24h", estado: "activo" },
-  { id: "p3", nome: "Contentor Valas do Goto", bairro: "Goto", latitude: -19.8170, longitude: 34.8360, horario: "06:00 - 20:00", estado: "inactivo" },
-  { id: "p4", nome: "Contentor Largo Esturro", bairro: "Esturro", latitude: -19.8250, longitude: 34.8560, horario: "08:00 - 17:00", estado: "activo" },
-  { id: "p5", nome: "Contentor Marginal Macúti", bairro: "Macúti", latitude: -19.8270, longitude: 34.8720, horario: "Livre", estado: "activo" }
-];
-
 /**
  * Lê o índice de histórico (_history.json) do Supabase Storage.
  * Devolve lista vazia se ainda não existir (primeira utilização).
@@ -108,28 +99,28 @@ async function getDatabaseOccurrences() {
 }
 
 /**
- * Obtém os pontos de recolha da base de dados com fallback para os dados simulados
+ * Obtém os pontos de recolha reais da base de dados.
+ * Sem fallback simulado: se a BD estiver vazia ou a query falhar,
+ * devolve lista vazia — os relatórios não devem apresentar dados fictícios.
  */
 async function getCollectionPoints() {
   try {
     const databasePoints = await prisma.pontoRecolha.findMany({
       orderBy: { nome: "asc" },
     });
-    if (databasePoints.length > 0) {
-      return databasePoints.map((p) => ({
-        id: p.id_ponto,
-        nome: p.nome,
-        latitude: Number(p.latitude),
-        longitude: Number(p.longitude),
-        bairro: p.bairro,
-        horario: p.horario,
-        estado: p.estado,
-      }));
-    }
+    return databasePoints.map((p) => ({
+      id: p.id_ponto,
+      nome: p.nome,
+      latitude: Number(p.latitude),
+      longitude: Number(p.longitude),
+      bairro: p.bairro,
+      horario: p.horario,
+      estado: p.estado,
+    }));
   } catch (err) {
-    console.warn("Falha ao ler pontos de recolha do DB (usando fallback simulado):", err);
+    console.error("Falha ao ler pontos de recolha do DB:", err);
+    return [];
   }
-  return MOCK_POINTS_FALLBACK;
 }
 
 /**

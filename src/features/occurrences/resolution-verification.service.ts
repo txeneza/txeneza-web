@@ -53,7 +53,7 @@ export const resolutionVerificationService = {
     // return res.json();
 
     const record: ResolutionVerification = {
-      id: `mock-verif-${Date.now()}`,
+      id: `mock-verif-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       occurrenceId: input.occurrenceId,
       photoUrl: fileToObjectUrl(input.photoFile),
       result: input.result ?? "resolvida",
@@ -64,5 +64,25 @@ export const resolutionVerificationService = {
     const existing = mockStore.get(input.occurrenceId) ?? [];
     mockStore.set(input.occurrenceId, [record, ...existing]);
     return record;
+  },
+
+  /**
+   * Regista várias fotos de prova de uma só vez (uma ocorrência pode ter
+   * mais do que um ângulo/foto do local já limpo). No mock, cria um
+   * registo por foto; na integração real, o ideal é enviar todas as
+   * fotos numa única chamada FormData com `photos[]` e devolver a lista
+   * de registos criados numa só resposta.
+   */
+  async createMany(
+    occurrenceId: string,
+    photoFiles: File[],
+    notes?: string,
+    result?: ResolutionVerification["result"]
+  ): Promise<ResolutionVerification[]> {
+    const created: ResolutionVerification[] = [];
+    for (const photoFile of photoFiles) {
+      created.push(await this.create({ occurrenceId, photoFile, notes, result }));
+    }
+    return created;
   },
 };

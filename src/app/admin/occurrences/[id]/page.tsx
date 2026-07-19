@@ -72,16 +72,16 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
     }
   };
 
-  const handleConfirmProof = async (photoFile: File, notes: string) => {
-    if (!occurrence) return;
+  const handleConfirmProof = async (photoFiles: File[], notes: string) => {
+    if (!occurrence || photoFiles.length === 0) return;
     setSavingProof(true);
     try {
-      const verification = await resolutionVerificationService.create({
-        occurrenceId: occurrence.id,
-        photoFile,
-        notes: notes || undefined,
-      });
-      setVerifications((prev) => [verification, ...prev]);
+      const created = await resolutionVerificationService.createMany(
+        occurrence.id,
+        photoFiles,
+        notes || undefined
+      );
+      setVerifications((prev) => [...created, ...prev]);
       await handleUpdateStatus();
       setProofModalOpen(false);
     } finally {

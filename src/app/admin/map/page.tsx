@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 import { MapView, PontoRecolhaMapData } from "@/components/map/map-view";
 import { useMapStore } from "@/features/map/map.store";
 import { OccurrenceCard } from "@/components/occurrences/occurrence-card";
-import { BEIRA_COLLECTION_POINTS } from "@/features/map/beira-collection-points.data";
 import { Map as MapIcon, MapPin, Info, X, WifiOff } from "lucide-react";
 
 export default function AdminMapPage() {
   const { markers, fetchMapData, selectedOccurrence, setSelectedOccurrence } = useMapStore();
   const [collectionPoints, setCollectionPoints] = useState<PontoRecolhaMapData[]>([]);
+  const [pointsError, setPointsError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -24,19 +24,15 @@ export default function AdminMapPage() {
     const loadPoints = async () => {
       try {
         const res = await fetch("/api/pontos-recolha");
-        if (res.ok) {
-          const contentType = res.headers.get("content-type");
-          if (contentType && contentType.includes("application/json")) {
-            const data = await res.json();
-            // Usa os pontos reais da BD; se estiver vazia, recorre aos pontos oficiais de demonstração.
-            setCollectionPoints(Array.isArray(data) && data.length > 0 ? data : BEIRA_COLLECTION_POINTS);
-            return;
-          }
-        }
-        setCollectionPoints(BEIRA_COLLECTION_POINTS);
+        if (!res.ok) throw new Error(`API devolveu estado ${res.status}`);
+        const data = await res.json();
+        // Apenas pontos reais cadastrados na base de dados — sem dados de demonstração.
+        setCollectionPoints(Array.isArray(data) ? data : []);
+        setPointsError(null);
       } catch (error) {
         console.error("Erro ao carregar pontos de recolha:", error);
-        setCollectionPoints(BEIRA_COLLECTION_POINTS);
+        setCollectionPoints([]);
+        setPointsError("Não foi possível carregar os pontos de recolha da base de dados.");
       }
     };
     loadPoints();
@@ -114,6 +110,18 @@ export default function AdminMapPage() {
               <p className="text-xl font-black text-forestGreen dark:text-limeGreen">{collectionPoints.length}</p>
             </div>
           </div>
+
+          {pointsError ? (
+            <div className="flex items-center gap-2 p-3 bg-red-500/5 border border-red-500/15 rounded-xl text-xs text-red-700 dark:text-red-400">
+              <WifiOff className="w-4 h-4 shrink-0" />
+              <span>{pointsError}</span>
+            </div>
+          ) : collectionPoints.length === 0 ? (
+            <div className="flex items-center gap-2 p-3 bg-amber-500/5 border border-amber-500/15 rounded-xl text-xs text-amber-700 dark:text-amber-500">
+              <Info className="w-4 h-4 shrink-0" />
+              <span>Ainda não há pontos de recolha cadastrados na base de dados.</span>
+            </div>
+          ) : null}
 
           {/* Detalhe selecionado */}
           {selectedOccurrence ? (

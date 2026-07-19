@@ -6,13 +6,19 @@ import { Camera, Loader2, Upload, X } from "lucide-react";
 interface ResolutionProofModalProps {
   open: boolean;
   loading?: boolean;
-  onConfirm: (photoFile: File, notes: string) => void;
+  onConfirm: (photoFiles: File[], notes: string) => void;
   onCancel: () => void;
+}
+
+interface PreviewItem {
+  file: File;
+  url: string;
 }
 
 /**
  * Modal exigido antes de marcar uma ocorrência como "Resolvido":
- * o administrador tem de anexar uma fotografia do local já limpo.
+ * o administrador tem de anexar pelo menos uma fotografia do local já
+ * limpo (pode selecionar várias, da galeria ou tirando foto na hora).
  * Espelha o conceito de "verificacao" do modelo VerificacaoResolucao.
  */
 export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
@@ -21,27 +27,36 @@ export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [items, setItems] = useState<PreviewItem[]>([]);
   const [notes, setNotes] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   if (!open) return null;
 
-  const handleFileChange = (file: File | null) => {
-    setPhotoFile(file);
-    setPreviewUrl(file ? URL.createObjectURL(file) : null);
+  const handleFilesSelected = (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return;
+    const newItems = Array.from(fileList).map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
+    setItems((prev) => [...prev, ...newItems]);
+    // Permite voltar a escolher o mesmo ficheiro numa seleção seguinte.
+    if (inputRef.current) inputRef.current.value = "";
+  };
+
+  const removeItem = (index: number) => {
+    setItems((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleClose = () => {
-    handleFileChange(null);
+    setItems([]);
     setNotes("");
     onCancel();
   };
 
   const handleSubmit = () => {
-    if (!photoFile) return;
-    onConfirm(photoFile, notes.trim());
+    if (items.length === 0) return;
+    onConfirm(items.map((i) => i.file), notes.trim());
   };
 
   return (
@@ -50,7 +65,7 @@ export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={loading ? undefined : handleClose}
       />
-      <div className="relative w-full max-w-md bg-light-background dark:bg-grey900 border border-grey200 dark:border-grey800 rounded-2xl shadow-2xl p-6 flex flex-col gap-4">
+      <div className="relative w-full max-w-md bg-light-background dark:bg-grey900 border border-grey200 dark:border-grey800 rounded-2xl shadow-2xl p-6 flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-start justify-between">
           <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
             <Camera className="w-6 h-6" />
@@ -68,49 +83,53 @@ export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
         <div>
           <h3 className="text-lg font-bold text-grey900 dark:text-grey50">Prova de resolução</h3>
           <p className="text-sm text-grey600 dark:text-grey400 mt-1 leading-relaxed">
-            Para marcar como <b>Resolvido</b>, anexa uma fotografia do local já limpo. Esta prova
-            fica associada à ocorrência para consulta futura.
+            Para marcar como <b>Resolvido</b>, anexa pelo menos uma fotografia do local já limpo.
+            Podes selecionar várias fotos da galeria ou tirar uma foto na hora.
           </p>
         </div>
 
-        {/* Área de upload / pré-visualização */}
+        {/* Input de ficheiros — sem `capture`, para o browser mostrar a escolha
+            entre galeria (multi-seleção) e câmara, em vez de forçar a câmara. */}
         <input
           ref={inputRef}
           type="file"
           accept="image/*"
-          capture="environment"
+          multiple
           className="hidden"
-          onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
+          onChange={(e) => handleFilesSelected(e.target.files)}
         />
 
-        {previewUrl ? (
-          <div className="relative">
-            <img
-              src={previewUrl}
-              alt="Pré-visualização da prova de resolução"
-              className="w-full h-48 object-cover rounded-xl border border-grey200 dark:border-grey800"
-            />
-            <button
-              onClick={() => handleFileChange(null)}
-              disabled={loading}
-              className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/60 text-white hover:bg-black/80 transition-colors disabled:opacity-50"
-              aria-label="Remover fotografia"
-            >
-              <X className="w-4 h-4" />
-            </button>
+        {items.length > 0 && (
+          <div className="grid grid-cols-3 gap-2">
+            {items.map((item, index) => (
+              <div key={index} className="relative aspect-square">
+                <img
+                  src={item.url}
+                  alt={`Pré-visualização ${index + 1}`}
+                  className="w-full h-full object-cover rounded-lg border border-grey200 dark:border-grey800"
+                />
+                <button
+                  onClick={() => removeItem(index)}
+                  disabled={loading}
+                  className="absolute top-1 right-1 p-1 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors disabled:opacity-50"
+                  aria-label="Remover fotografia"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
           </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={loading}
-            className="w-full h-40 rounded-xl border-2 border-dashed border-grey300 dark:border-grey700 flex flex-col items-center justify-center gap-2 text-grey400 dark:text-grey600 hover:border-emerald-500/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors disabled:opacity-50"
-          >
-            <Upload className="w-6 h-6" />
-            <span className="text-sm font-bold">Anexar fotografia</span>
-            <span className="text-xs">Local já limpo / resíduos removidos</span>
-          </button>
         )}
+
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={loading}
+          className="w-full py-3 rounded-xl border-2 border-dashed border-grey300 dark:border-grey700 flex items-center justify-center gap-2 text-grey400 dark:text-grey600 hover:border-emerald-500/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors disabled:opacity-50 text-sm font-bold"
+        >
+          <Upload className="w-4 h-4" />
+          {items.length > 0 ? "Adicionar mais fotografias" : "Selecionar fotografias"}
+        </button>
 
         {/* Observações opcionais */}
         <div>
@@ -137,8 +156,8 @@ export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
           </button>
           <button
             onClick={handleSubmit}
-            disabled={loading || !photoFile}
-            title={!photoFile ? "Anexa uma fotografia para continuar" : undefined}
+            disabled={loading || items.length === 0}
+            title={items.length === 0 ? "Anexa pelo menos uma fotografia para continuar" : undefined}
             className="flex-1 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-emerald-600 text-white hover:bg-emerald-700"
           >
             {loading ? (
@@ -146,7 +165,7 @@ export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
                 <Loader2 className="w-4 h-4 animate-spin" /> A guardar...
               </>
             ) : (
-              "Confirmar Resolução"
+              `Confirmar Resolução${items.length > 1 ? ` (${items.length} fotos)` : ""}`
             )}
           </button>
         </div>
@@ -154,3 +173,4 @@ export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
     </div>
   );
 };
+
