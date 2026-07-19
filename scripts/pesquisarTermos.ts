@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * pesquisarTermos.js
+ * pesquisarTermos.ts
  * ---------------------------------------------------------------------------
  * Pesquisa (e, opcionalmente, remove) termos indesejados no código-fonte do
  * site — por padrão "premium" e "enterprise", que não fazem sentido numa
@@ -8,13 +8,13 @@
  *
  * MODO DE USO
  * ---------------------------------------------------------------------------
- *   node scripts/pesquisarTermos.js                     -> apenas pesquisa e lista ocorrências
- *   node scripts/pesquisarTermos.js --fix                -> remove as ocorrências encontradas
- *   node scripts/pesquisarTermos.js premium enterprise vip   -> pesquisa termos à escolha
- *   node scripts/pesquisarTermos.js --fix premium         -> remove só "premium"
- *   node scripts/pesquisarTermos.js --dir=src/components  -> restringe a pasta
+ *   npx tsx scripts/pesquisarTermos.ts                     -> apenas pesquisa e lista ocorrências
+ *   npx tsx scripts/pesquisarTermos.ts --fix                -> remove as ocorrências encontradas
+ *   npx tsx scripts/pesquisarTermos.ts premium enterprise vip   -> pesquisa termos à escolha
+ *   npx tsx scripts/pesquisarTermos.ts --fix premium         -> remove só "premium"
+ *   npx tsx scripts/pesquisarTermos.ts --dir=src/components  -> restringe a pasta
  *
- * Também pode ser corrido via npm, se adicionado ao package.json:
+ * Também pode ser corrido via npm (ver scripts no package.json):
  *   npm run termos            (apenas pesquisar)
  *   npm run termos:remover    (pesquisar e remover)
  *
@@ -35,13 +35,13 @@
  * ---------------------------------------------------------------------------
  */
 
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
-const DEFAULT_TERMS = ["premium", "enterprise"];
+const DEFAULT_TERMS: readonly string[] = ["premium", "enterprise"];
 const DEFAULT_DIR = "src";
 
-const IGNORED_DIRS = new Set([
+const IGNORED_DIRS: ReadonlySet<string> = new Set([
   "node_modules",
   ".git",
   ".next",
@@ -52,7 +52,7 @@ const IGNORED_DIRS = new Set([
   ".vercel",
 ]);
 
-const SCANNED_EXTENSIONS = new Set([
+const SCANNED_EXTENSIONS: ReadonlySet<string> = new Set([
   ".ts",
   ".tsx",
   ".js",
@@ -62,12 +62,29 @@ const SCANNED_EXTENSIONS = new Set([
   ".json",
 ]);
 
+interface ParsedArgs {
+  fix: boolean;
+  dir: string;
+  terms: string[];
+}
+
+interface Occurrence {
+  line: number;
+  text: string;
+  count: number;
+}
+
+interface ScanResult {
+  lines: string[];
+  occurrences: Occurrence[];
+}
+
 /* --------------------------------------------------------------------- */
 /* Leitura dos argumentos da linha de comandos                            */
 /* --------------------------------------------------------------------- */
 
-function parseArgs(argv) {
-  const args = { fix: false, dir: DEFAULT_DIR, terms: [] };
+function parseArgs(argv: string[]): ParsedArgs {
+  const args: ParsedArgs = { fix: false, dir: DEFAULT_DIR, terms: [] };
 
   for (const raw of argv) {
     if (raw === "--fix") {
@@ -83,7 +100,7 @@ function parseArgs(argv) {
   }
 
   if (args.terms.length === 0) {
-    args.terms = DEFAULT_TERMS;
+    args.terms = [...DEFAULT_TERMS];
   }
 
   return args;
@@ -93,15 +110,16 @@ function parseArgs(argv) {
 /* Percorrer a árvore de ficheiros                                       */
 /* --------------------------------------------------------------------- */
 
-function listFiles(startDir) {
-  const results = [];
+function listFiles(startDir: string): string[] {
+  const results: string[] = [];
 
-  function walk(currentDir) {
-    let entries;
+  function walk(currentDir: string): void {
+    let entries: fs.Dirent[];
     try {
       entries = fs.readdirSync(currentDir, { withFileTypes: true });
     } catch (err) {
-      console.warn(`Aviso: não foi possível ler "${currentDir}" (${err.message})`);
+      const message = err instanceof Error ? err.message : String(err);
+      console.warn(`Aviso: não foi possível ler "${currentDir}" (${message})`);
       return;
     }
 
@@ -128,7 +146,7 @@ function listFiles(startDir) {
 /* Pesquisa / remoção nos ficheiros                                       */
 /* --------------------------------------------------------------------- */
 
-function buildTermsRegex(terms) {
+function buildTermsRegex(terms: string[]): RegExp {
   const escaped = terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
   // \b...\b garante que só apanha a palavra inteira (não "premiumzinho" nem
   // partes de outra palavra), mas ainda apanha "bg-premium" ou "premium-card"
@@ -136,10 +154,10 @@ function buildTermsRegex(terms) {
   return new RegExp(`\\b(${escaped.join("|")})\\b`, "gi");
 }
 
-function scanFile(filePath, regex) {
+function scanFile(filePath: string, regex: RegExp): ScanResult {
   const original = fs.readFileSync(filePath, "utf8");
   const lines = original.split("\n");
-  const occurrences = [];
+  const occurrences: Occurrence[] = [];
 
   lines.forEach((lineText, index) => {
     const matches = lineText.match(regex);
@@ -152,10 +170,10 @@ function scanFile(filePath, regex) {
     }
   });
 
-  return { original, lines, occurrences };
+  return { lines, occurrences };
 }
 
-function removeTermsFromLine(lineText, regex) {
+function removeTermsFromLine(lineText: string, regex: RegExp): string {
   // Preserva a indentação original da linha (espaços/tabs no início) e só
   // limpa os espaços a mais que sobram exactamente onde a palavra foi
   // removida — nunca mexe na indentação em si.
@@ -176,7 +194,7 @@ function removeTermsFromLine(lineText, regex) {
 /* Execução principal                                                     */
 /* --------------------------------------------------------------------- */
 
-function main() {
+function main(): void {
   const args = parseArgs(process.argv.slice(2));
   const targetDir = path.resolve(process.cwd(), args.dir);
 
