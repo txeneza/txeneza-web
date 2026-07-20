@@ -166,10 +166,17 @@ function filterCollectionPoints(items: any[], filters: ReportFilters) {
   });
 }
 
+import { verifyAdminSession, unauthorizedResponse } from "@/core/server-auth";
+
 /**
  * Endpoint GET: Devolve a lista histórica de relatórios gerados
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const session = await verifyAdminSession(request);
+  if (!session) {
+    return unauthorizedResponse("Acesso negado: apenas administradores têm acesso aos relatórios.");
+  }
+
   try {
     const history = await readHistory();
     return NextResponse.json(history);
@@ -182,6 +189,11 @@ export async function GET() {
  * Endpoint POST: Gera um novo relatório no servidor
  */
 export async function POST(request: NextRequest) {
+  const session = await verifyAdminSession(request);
+  if (!session) {
+    return unauthorizedResponse("Acesso negado: apenas administradores podem gerar relatórios.");
+  }
+
   try {
     const body = await request.json();
     const { type, format, filters = {} } = body as {

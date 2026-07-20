@@ -5,6 +5,28 @@ export interface UserSession {
   uid: string;
   email: string | null;
   role: "admin" | "visitor";
+  accessToken?: string;
+}
+
+/**
+ * Utilitário interno para determinar com segurança se o utilizador possui o papel de administrador.
+ * Elimina a heurística vulnerável baseada em substring (includes("admin")).
+ */
+function checkIsAdmin(user: { email?: string | null; user_metadata?: Record<string, any>; app_metadata?: Record<string, any> }): boolean {
+  if (!user) return false;
+  const email = user.email?.toLowerCase();
+  
+  // Exact admin emails fallback
+  if (email === "admin@txeneza.com" || email === "admin@txeneza.gov.mz") {
+    return true;
+  }
+  
+  // Metadata claims check
+  if (user.user_metadata?.role === "admin" || user.app_metadata?.role === "admin") {
+    return true;
+  }
+
+  return false;
 }
 
 /**
@@ -24,14 +46,13 @@ export async function loginWithEmail(email: string, password: string): Promise<U
     throw new Error("Não foi possível carregar os dados da sessão.");
   }
 
-  // Verifica o papel (role) do utilizador nos metadados da conta, com fallback para admin baseado no e-mail
-  const isAdminEmail = data.user.email?.includes("admin") || data.user.email === "admin@txeneza.com";
-  const role = isAdminEmail ? "admin" : ((data.user.user_metadata?.role as "admin" | "visitor") || "visitor");
+  const role = checkIsAdmin(data.user) ? "admin" : "visitor";
   
   const sessionData: UserSession = {
     uid: data.user.id,
     email: data.user.email ?? null,
     role,
+    accessToken: data.session?.access_token,
   };
 
   // Salva no cookie imediatamente após login bem-sucedido
@@ -53,17 +74,17 @@ export async function logout(): Promise<void> {
 }
 
 /**
- * Ouve eventos de alteração de autenticação (login/logout/token expetirado).
+ * Ouve eventos de alteração de autenticação (login/logout/token expirado).
  */
 export function subscribeToAuthChanges(callback: (user: UserSession | null) => void) {
   const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
     if (session?.user) {
-      const isAdminEmail = session.user.email?.includes("admin") || session.user.email === "admin@txeneza.com";
-      const role = isAdminEmail ? "admin" : ((session.user.user_metadata?.role as "admin" | "visitor") || "visitor");
+      const role = checkIsAdmin(session.user) ? "admin" : "visitor";
       const sessionData: UserSession = {
         uid: session.user.id,
         email: session.user.email ?? null,
         role,
+        accessToken: session.access_token,
       };
       
       // Atualiza o cookie

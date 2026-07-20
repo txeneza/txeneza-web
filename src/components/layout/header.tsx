@@ -9,6 +9,8 @@ import { useUIStore } from "@/features/ui/ui.store";
 import { Sun, Moon, LogOut, Menu } from "lucide-react";
 import { BrandName } from "@/components/brand/brand-name";
 
+import { NotificationBell } from "@/components/layout/notification-bell";
+
 export const Header: React.FC = () => {
   const router = useRouter();
   const { user, logout, isAuthenticated } = useAuth();
@@ -49,6 +51,9 @@ export const Header: React.FC = () => {
       </div>
 
       <nav className="flex items-center gap-3">
+        {/* Notificações em Tempo Real */}
+        {mounted && isAuthenticated && <NotificationBell />}
+
         {/* Theme Switcher Button */}
         {mounted && (
           <button

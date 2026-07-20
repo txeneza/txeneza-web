@@ -17,10 +17,17 @@ function serialize(p: any) {
   };
 }
 
+import { verifyAdminSession, unauthorizedResponse } from "@/core/server-auth";
+
 /**
  * Actualiza um ponto de recolha existente.
  */
 export async function PUT(request: Request, { params }: RouteParams) {
+  const session = await verifyAdminSession(request);
+  if (!session) {
+    return unauthorizedResponse("Acesso negado: apenas administradores podem atualizar pontos de recolha.");
+  }
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -60,7 +67,12 @@ export async function PUT(request: Request, { params }: RouteParams) {
 /**
  * Remove um ponto de recolha.
  */
-export async function DELETE(_request: Request, { params }: RouteParams) {
+export async function DELETE(request: Request, { params }: RouteParams) {
+  const session = await verifyAdminSession(request);
+  if (!session) {
+    return unauthorizedResponse("Acesso negado: apenas administradores podem eliminar pontos de recolha.");
+  }
+
   try {
     const { id } = await params;
     await prisma.pontoRecolha.delete({ where: { id_ponto: id } });

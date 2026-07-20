@@ -82,8 +82,15 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
         notes || undefined
       );
       setVerifications((prev) => [...created, ...prev]);
-      await handleUpdateStatus();
+      
+      // Recarrega os dados atualizados da ocorrência para refletir a resolução ou a reabertura automática
+      const fresh = await occurrencesService.getById(id);
+      if (fresh) setOccurrence({ ...fresh });
+      
+      setPendingStatus(null);
       setProofModalOpen(false);
+    } catch (err: any) {
+      console.error("Erro ao submeter prova:", err);
     } finally {
       setSavingProof(false);
     }

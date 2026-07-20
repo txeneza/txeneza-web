@@ -30,10 +30,17 @@ export async function GET() {
   }
 }
 
+import { verifyAdminSession, unauthorizedResponse } from "@/core/server-auth";
+
 /**
  * Cadastra um novo ponto de recolha no banco de dados.
  */
 export async function POST(request: Request) {
+  const session = await verifyAdminSession(request);
+  if (!session) {
+    return unauthorizedResponse("Acesso negado: apenas administradores podem adicionar pontos de recolha.");
+  }
+
   try {
     const body = await request.json();
     const { nome, latitude, longitude, bairro, horario, estado } = body;

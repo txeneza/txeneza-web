@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateCSV } from "@/lib/csv";
+import { verifyAdminSession, unauthorizedResponse } from "@/core/server-auth";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const session = await verifyAdminSession(request);
+  if (!session) {
+    return unauthorizedResponse("Acesso negado: apenas administradores podem exportar dados.");
+  }
+
   try {
     const data = await prisma.ocorrencia.findMany({
       include: {

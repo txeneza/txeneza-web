@@ -69,10 +69,17 @@ export async function GET(_request: Request, { params }: RouteParams) {
   }
 }
 
+import { verifyAdminSession, unauthorizedResponse } from "@/core/server-auth";
+
 /**
  * Atualiza o estado de uma ocorrência.
  */
 export async function PUT(request: Request, { params }: RouteParams) {
+  const session = await verifyAdminSession(request);
+  if (!session) {
+    return unauthorizedResponse("Acesso negado: apenas administradores podem alterar o estado da ocorrência.");
+  }
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -110,6 +117,22 @@ export async function PUT(request: Request, { params }: RouteParams) {
         },
       },
     });
+
+    // REGISTO AUTOMÁTICO DE NOTIFICAÇÃO NA BASE DE DADOS
+    try {
+      await prisma.notificacao.create({
+        data: {
+          id_utilizador: atualizado.id_utilizador,
+          id_ocorrencia: atualizado.id_ocorrencia,
+          tipo: "alteracao_estado",
+          mensagem: `O estado da ocorrência de ${atualizado.categoria.nome} foi alterado para «${status}».`,
+          lida: false,
+          data_hora: new Date(),
+        },
+      });
+    } catch (notifErr: any) {
+      console.warn("Aviso ao registar notificação na BD:", notifErr.message);
+    }
 
     return NextResponse.json(serialize(atualizado));
   } catch (error: any) {
