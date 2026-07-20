@@ -21,11 +21,10 @@ export interface ResolutionVerification {
   result: ResolutionVerificationResult;
   /**
    * confianca_comparacao — percentagem (0-100) de confiança da comparação
-   * antes/depois feita pela IA (Gemini). Fica indefinido enquanto essa
-   * comparação automática não estiver ligada; o admin pode confirmar
-   * manualmente sem ela.
+   * antes/depois feita pela IA (Gemini).
    */
   comparisonConfidence?: number;
+  confianca?: number;
   /** observacoes */
   notes?: string;
   /** data_hora */

@@ -76,12 +76,15 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
     if (!occurrence || photoFiles.length === 0) return;
     setSavingProof(true);
     try {
-      const created = await resolutionVerificationService.createMany(
+      await resolutionVerificationService.createMany(
         occurrence.id,
         photoFiles,
         notes || undefined
       );
-      setVerifications((prev) => [...created, ...prev]);
+
+      // Recarrega a lista de provas atualizada diretamente da BD
+      const freshVerifs = await resolutionVerificationService.getByOccurrence(id);
+      setVerifications(freshVerifs);
       
       // Recarrega os dados atualizados da ocorrência para refletir a resolução ou a reabertura automática
       const fresh = await occurrencesService.getById(id);

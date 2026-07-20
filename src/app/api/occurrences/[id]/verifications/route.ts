@@ -28,11 +28,14 @@ export async function GET(_request: Request, { params }: RouteParams) {
 
     const serialized = verifications.map((v) => {
       const photoPath = v.fotografia?.caminho_ficheiro;
-      const photoUrl = photoPath
-        ? photoPath.startsWith("http")
-          ? photoPath
-          : `${supabaseUrl}/storage/v1/object/public/${STORAGE_BUCKET}/${photoPath}`
-        : "";
+      let photoUrl = "";
+      if (photoPath) {
+        if (photoPath.startsWith("http") || photoPath.startsWith("data:")) {
+          photoUrl = photoPath;
+        } else {
+          photoUrl = `${supabaseUrl}/storage/v1/object/public/${STORAGE_BUCKET}/${photoPath}`;
+        }
+      }
 
       return {
         id: v.id_verificacao,
@@ -101,16 +104,19 @@ export async function POST(request: Request, { params }: RouteParams) {
     const buffer = Buffer.from(arrayBuffer);
     const fileExt = photoFile.name ? photoFile.name.split(".").pop() : "jpg";
     const fileName = `verificacao/verif_${occurrenceId}_${Date.now()}.${fileExt}`;
+    const mimeType = photoFile.type || "image/jpeg";
 
+    let savedPath = fileName;
     const { error: uploadError } = await supabaseAdmin.storage
       .from(STORAGE_BUCKET)
       .upload(fileName, buffer, {
-        contentType: photoFile.type || "image/jpeg",
+        contentType: mimeType,
         upsert: true,
       });
 
     if (uploadError) {
-      console.warn("Aviso no upload para Supabase Storage:", uploadError.message);
+      console.warn("Aviso no upload para Supabase Storage, a usar fallback base64 Data URI:", uploadError.message);
+      savedPath = `data:${mimeType};base64,${buffer.toString("base64")}`;
     }
 
     // 3. Executar Verificação por IA
@@ -135,7 +141,7 @@ export async function POST(request: Request, { params }: RouteParams) {
     const novaFoto = await prisma.fotografia.create({
       data: {
         id_ocorrencia: occurrenceId,
-        caminho_ficheiro: fileName,
+        caminho_ficheiro: savedPath,
         tipo: "verificacao",
         data_hora: new Date(),
       },
@@ -198,7 +204,9 @@ export async function POST(request: Request, { params }: RouteParams) {
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://qixdkjsdurbzmpxlimdy.supabase.co";
-    const photoUrl = `${supabaseUrl}/storage/v1/object/public/${STORAGE_BUCKET}/${fileName}`;
+    const photoUrl = savedPath.startsWith("data:") || savedPath.startsWith("http")
+      ? savedPath
+      : `${supabaseUrl}/storage/v1/object/public/${STORAGE_BUCKET}/${savedPath}`;
 
     return NextResponse.json({
       id: novaVerificacao.id_verificacao,
