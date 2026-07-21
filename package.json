@@ -14,6 +14,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "firebase-admin": "^14.2.0",
     "@supabase/supabase-js": "^2.110.1",
     "ag-charts-community": "^14.0.0",
     "ag-charts-react": "^14.0.0",

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { enviarPush } from "@/features/notifications/push.service";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -120,15 +121,26 @@ export async function PUT(request: Request, { params }: RouteParams) {
 
     // REGISTO AUTOMÁTICO DE NOTIFICAÇÃO NA BASE DE DADOS
     try {
+      const mensagemNotif = `O estado da ocorrência de ${atualizado.categoria.nome} foi alterado para «${status}».`;
+
       await prisma.notificacao.create({
         data: {
           id_utilizador: atualizado.id_utilizador,
           id_ocorrencia: atualizado.id_ocorrencia,
           tipo: "alteracao_estado",
-          mensagem: `O estado da ocorrência de ${atualizado.categoria.nome} foi alterado para «${status}».`,
+          mensagem: mensagemNotif,
           lida: false,
           data_hora: new Date(),
         },
+      });
+
+      // Push real (FCM) — melhor esforço: nunca bloqueia nem falha a
+      // resposta principal se o envio não funcionar (ver push.service.ts).
+      await enviarPush({
+        fcmToken: atualizado.utilizador.fcm_token,
+        tipo: "alteracao_estado",
+        mensagem: mensagemNotif,
+        idOcorrencia: atualizado.id_ocorrencia,
       });
     } catch (notifErr: any) {
       console.warn("Aviso ao registar notificação na BD:", notifErr.message);

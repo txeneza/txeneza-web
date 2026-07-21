@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { supabaseAdmin } from "@/core/supabase-admin";
 import { aiVerificationService } from "@/features/occurrences/ai-verification.service";
 import { verifyAdminSession, unauthorizedResponse } from "@/core/server-auth";
+import { enviarPush } from "@/features/notifications/push.service";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -189,15 +190,26 @@ export async function POST(request: Request, { params }: RouteParams) {
           ? `A verificação por IA identificou que a limpeza está incompleta. A ocorrência foi automaticamente reaberta.`
           : `A prova de resolução foi validada com sucesso. A ocorrência foi marcada como resolvida.`;
 
+      const tipoNotif = finalResultado === "nao_resolvida" ? "reabertura_automatica" : "resolucao_validada";
+
       await prisma.notificacao.create({
         data: {
           id_utilizador: occurrence.id_utilizador,
           id_ocorrencia: occurrenceId,
-          tipo: finalResultado === "nao_resolvida" ? "reabertura_automatica" : "resolucao_validada",
+          tipo: tipoNotif,
           mensagem: msgNotif,
           lida: false,
           data_hora: new Date(),
         },
+      });
+
+      // Push real (FCM) — melhor esforço: nunca bloqueia nem falha a
+      // resposta principal se o envio não funcionar (ver push.service.ts).
+      await enviarPush({
+        fcmToken: occurrence.utilizador.fcm_token,
+        tipo: tipoNotif,
+        mensagem: msgNotif,
+        idOcorrencia: occurrenceId,
       });
     } catch (notifErr: any) {
       console.warn("Aviso ao registar notificação na BD:", notifErr.message);

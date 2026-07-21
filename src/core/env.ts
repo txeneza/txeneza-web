@@ -19,4 +19,16 @@ export const env = {
       process.env.NEXT_PUBLIC_MAPBOX_STYLE_SATELLITE ||
       "mapbox://styles/mapbox/satellite-streets-v12",
   },
+  // Firebase Admin — apenas para uso no servidor (rotas /api), para enviar
+  // pushes via Firebase Cloud Messaging. Nunca expor ao cliente. Obtido em:
+  // Firebase Console -> Definições do projeto -> Contas de serviço ->
+  // "Gerar nova chave privada" (descarrega um JSON com estes 3 campos).
+  firebaseAdmin: {
+    projectId: process.env.FIREBASE_PROJECT_ID || "",
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL || "",
+    // A chave privada vem com quebras de linha "\n" escapadas quando
+    // colada como variável de ambiente numa só linha — é preciso
+    // "desescapar" antes de passar ao SDK.
+    privateKey: (process.env.FIREBASE_PRIVATE_KEY || "").replace(/\\n/g, "\n"),
+  },
 } as const;
