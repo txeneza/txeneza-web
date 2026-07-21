@@ -82,6 +82,11 @@ model Utilizador {
   foto_perfil    String?
   data_registo   DateTime       @default(now())
   estado         EstadoConta    @default(activo)
+  // Token de registo Firebase Cloud Messaging do dispositivo do utilizador
+  // (guardado pela app mobile). Coluna criada via migração SQL directa no
+  // Supabase (ver txeneza-mobile/supabase/migrations/0008_fcm_token.sql),
+  // não via "prisma migrate" — não gerar uma migração Prisma para isto.
+  fcm_token      String?
 
   ocorrencias    Ocorrencia[]
   verificacoes   VerificacaoResolucao[]
