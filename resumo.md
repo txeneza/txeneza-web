@@ -128,7 +128,7 @@ O modelo relacional do banco de dados (Prisma DB Schema) apoia as operações in
 * **Notificacao**: Avisos gerados para o munícipe sobre alterações no status de suas denúncias.
 
 ---
-
+## dark mode
 ## 11. Recursos Visuais e Usabilidade
 * **Modo Escuro e Claro Integrado**: Interface limpa baseada na paleta de cores da identidade do Txeneza (ForestGreen, LimeGreen, SageGreen).
 * **Scripts de Auditoria de Design**: Scripts utilitários (`colores.js` e `trocar_colores.js`) desenvolvidos na raiz do projeto para varrer a base de código do painel, localizando cores estáticas fora do padrão do tema e realizando substituições em lote para variáveis semânticas CSS do tema oficial.
