@@ -71,7 +71,14 @@ export const aiVerificationService = {
       };
     }
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    // IMPORTANTE: nunca usar um fallback "NEXT_PUBLIC_GEMINI_API_KEY" aqui.
+    // Qualquer variável com prefixo NEXT_PUBLIC_ é inserida pelo Next.js no
+    // bundle JavaScript enviado ao browser sempre que é referenciada em
+    // código que chega ao cliente — uma chave paga da API Gemini não pode
+    // ter esse nome, nem como "alternativa", para não a expor por engano
+    // se este código (ou algo que o importe) vier a ser usado de um
+    // componente "use client" no futuro.
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       console.warn("GEMINI_API_KEY não configurada — verificação de resolução requer revisão manual.");
