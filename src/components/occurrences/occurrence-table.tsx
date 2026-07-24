@@ -80,7 +80,7 @@ export const OccurrenceTable: React.FC<OccurrenceTableProps> = ({ occurrences, o
 
                   {/* Data */}
                   <td className="px-5 py-3.5 hidden lg:table-cell text-grey600 dark:text-grey400">
-                    {new Date(occ.createdAt).toLocaleDateString("pt-PT")}
+                    {new Date(occ.createdAt).toLocaleDateString("pt-PT", { timeZone: "Africa/Maputo" })}
                   </td>
 
                   {/* Estado */}

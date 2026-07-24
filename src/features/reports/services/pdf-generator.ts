@@ -82,7 +82,7 @@ export async function generatePDFReport(
           bairro: o.bairro || "",
           gravidade: o.gravidade || "baixa",
           estadoLabel: o.status === "pendente" ? "Pendente" : o.status === "resolvido" || o.status === "resolvida" ? "Resolvida" : "Em Progresso",
-          dataStr: o.createdAt ? new Date(o.createdAt).toLocaleDateString("pt-PT") : ""
+          dataStr: o.createdAt ? new Date(o.createdAt).toLocaleDateString("pt-PT", { timeZone: "Africa/Maputo" }) : ""
         }));
 
         drawPDFTable(doc, columns, mappedData, currentY);

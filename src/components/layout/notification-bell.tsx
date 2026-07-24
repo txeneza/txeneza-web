@@ -153,7 +153,7 @@ export const NotificationBell: React.FC = () => {
                       {n.message}
                     </p>
                     <span className="text-[10px] text-grey500 dark:text-grey400 mt-1 block font-mono">
-                      {new Date(n.createdAt).toLocaleString("pt-PT")}
+                      {new Date(n.createdAt).toLocaleString("pt-PT", { timeZone: "Africa/Maputo" })}
                     </span>
                   </div>
                   {!n.read && (

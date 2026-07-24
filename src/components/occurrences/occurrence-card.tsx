@@ -82,7 +82,7 @@ export const OccurrenceCard: React.FC<OccurrenceCardProps> = ({ occurrence, onCl
           )}
           <div className="flex items-center gap-1.5">
             <Calendar className="w-3.5 h-3.5 shrink-0" />
-            <span>{new Date(occurrence.createdAt).toLocaleDateString("pt-PT")}</span>
+            <span>{new Date(occurrence.createdAt).toLocaleDateString("pt-PT", { timeZone: "Africa/Maputo" })}</span>
             {occurrence.reportedBy && (
               <span className="ml-auto truncate max-w-[55%] text-right">{occurrence.reportedBy}</span>
             )}

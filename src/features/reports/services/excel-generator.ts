@@ -130,7 +130,7 @@ export async function generateExcelReport(
         gravidade: item.gravidade || "baixa",
         status: item.status === "pendente" ? "Pendente" : item.status === "resolvido" || item.status === "resolvida" ? "Resolvido" : "Em Progresso",
         reportedBy: item.reportedBy || "Munícipe",
-        createdAt: item.createdAt ? new Date(item.createdAt) : "",
+        createdAt: item.createdAt ? new Date(new Date(item.createdAt).toLocaleString("en-US", { timeZone: "Africa/Maputo" })) : "",
       });
 
       // Formatar célula de Data nativa do Excel

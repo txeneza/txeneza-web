@@ -192,7 +192,7 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
         <DetailRow
           icon={<Calendar className="w-4 h-4" />}
           label="Reportado em"
-          value={new Date(occurrence.createdAt).toLocaleString("pt-PT")}
+          value={new Date(occurrence.createdAt).toLocaleString("pt-PT", { timeZone: "Africa/Maputo" })}
         />
       </div>
 

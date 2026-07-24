@@ -406,7 +406,7 @@ export default function AdminReportsPage() {
                         {formatBytes(item.sizeBytes)}
                       </td>
                       <td className="py-3.5 px-5 text-center text-grey600 dark:text-grey400">
-                        {new Date(item.createdAt).toLocaleString("pt-PT")}
+                        {new Date(item.createdAt).toLocaleString("pt-PT", { timeZone: "Africa/Maputo" })}
                       </td>
                       <td className="py-3.5 px-5">
                         <div className="flex items-center justify-end">
