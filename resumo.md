@@ -14,9 +14,7 @@ A plataforma está construída com uma infraestrutura robusta focada em desempen
 * **Geração de Ficheiros**: PDFKit (para relatórios em PDF) e ExcelJS (para folhas de cálculo Excel).
 * **Gerenciamento de Estado**: Zustand (para controle global de mapas e relatórios).
 * **Estilização**: TailwindCSS com temas CSS semânticos e suporte nativo a Modo Escuro/Claro.
-
 ---
-
 ## 2. Portal Público (Landing Page)
 Uma página de apresentação rica e interativa voltada aos munícipes e parceiros institucionais:
 * **Navegação Inteligente**: Menu responsivo com alternador de modo escuro/claro e atalhos rápidos de navegação.
