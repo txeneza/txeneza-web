@@ -122,8 +122,14 @@ export async function POST(request: Request, { params }: RouteParams) {
 
     // 3. Executar Verificação por IA
     const originalPhotoPath = occurrence.fotografias[0]?.caminho_ficheiro;
+    // A IA precisa de uma URL pública real para descarregar a foto original
+    // e comparar com a de resolução — um caminho de storage por si só
+    // (ex: "denuncia/abc.jpg") não é acessível pela API do Gemini.
+    const originalPhotoUrl = originalPhotoPath
+      ? supabaseAdmin.storage.from(STORAGE_BUCKET).getPublicUrl(originalPhotoPath).data.publicUrl
+      : null;
     const aiResult = await aiVerificationService.verifyResolution(
-      originalPhotoPath,
+      originalPhotoUrl,
       buffer,
       notes
     );
