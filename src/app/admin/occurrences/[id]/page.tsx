@@ -60,13 +60,19 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
     load();
   }, [id]);
 
+  const [updateError, setUpdateError] = useState<string | null>(null);
+
   const handleUpdateStatus = async () => {
     if (!occurrence || !pendingStatus) return;
     setUpdating(pendingStatus);
+    setUpdateError(null);
     try {
       const updated = await occurrencesService.updateStatus(occurrence.id, pendingStatus);
       setOccurrence({ ...updated });
       setPendingStatus(null);
+    } catch (err: any) {
+      console.error("Erro ao atualizar estado:", err);
+      setUpdateError(err.message || "Não foi possível atualizar o estado.");
     } finally {
       setUpdating(null);
     }

@@ -93,7 +93,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
       );
     }
 
-    // Mapeamento sugerido para Escrita (Frontend -> DB):
+    // Mapeamento para Escrita (Frontend -> DB):
     // - "pendente" -> pendente
     // - "em-progresso" -> em_analise
     // - "resolvido" -> resolvida
@@ -119,9 +119,18 @@ export async function PUT(request: Request, { params }: RouteParams) {
       },
     });
 
-    // REGISTO AUTOMÁTICO DE NOTIFICAÇÃO NA BASE DE DADOS
+    // REGISTO AUTOMÁTICO DE NOTIFICAÇÃO NA BASE DE DADOS + PUSH FCM
     try {
-      const mensagemNotif = `O estado da ocorrência de ${atualizado.categoria.nome} foi alterado para «${status}».`;
+      const statusLabel =
+        status === "em-progresso"
+          ? "Em Progresso"
+          : status === "resolvido"
+          ? "Resolvida"
+          : status === "rejeitado"
+          ? "Rejeitada"
+          : "Pendente";
+
+      const mensagemNotif = `O estado da ocorrência de «${atualizado.categoria.nome}» foi alterado para ${statusLabel}.`;
 
       await prisma.notificacao.create({
         data: {
@@ -134,8 +143,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
         },
       });
 
-      // Push real (FCM) — melhor esforço: nunca bloqueia nem falha a
-      // resposta principal se o envio não funcionar (ver push.service.ts).
+      // Disparar notificação push FCM
       await enviarPush({
         fcmToken: atualizado.utilizador.fcm_token,
         tipo: "alteracao_estado",
@@ -143,7 +151,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
         idOcorrencia: atualizado.id_ocorrencia,
       });
     } catch (notifErr: any) {
-      console.warn("Aviso ao registar notificação na BD:", notifErr.message);
+      console.warn("Aviso ao processar notificação/push:", notifErr.message);
     }
 
     return NextResponse.json(serialize(atualizado));
