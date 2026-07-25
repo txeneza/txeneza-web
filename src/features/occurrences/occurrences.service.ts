@@ -52,6 +52,17 @@ export const occurrencesService = {
     return res.json();
   },
 
+  async delete(id: string): Promise<boolean> {
+    const res = await fetch(`/api/occurrences/${id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || "Erro ao eliminar ocorrência.");
+    }
+    return true;
+  },
+
   subscribeToChanges(callback: (occurrences: Occurrence[]) => void) {
     // Busca os dados iniciais
     this.getAll().then(callback).catch(console.error);

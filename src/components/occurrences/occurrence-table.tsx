@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import { Occurrence } from "@/features/occurrences/occurrences.types";
 import { OCCURRENCE_STATUS_META } from "@/features/occurrences/occurrence-status";
-import { ImageIcon, MapPin, ChevronRight } from "lucide-react";
+import { ImageIcon, MapPin, ChevronRight, Trash2 } from "lucide-react";
 
 interface OccurrenceTableProps {
   occurrences: Occurrence[];
   onSelect?: (occ: Occurrence) => void;
+  onDelete?: (occ: Occurrence) => void;
 }
 
 const Thumb: React.FC<{ occ: Occurrence }> = ({ occ }) => {
@@ -30,7 +31,7 @@ const Thumb: React.FC<{ occ: Occurrence }> = ({ occ }) => {
   );
 };
 
-export const OccurrenceTable: React.FC<OccurrenceTableProps> = ({ occurrences, onSelect }) => {
+export const OccurrenceTable: React.FC<OccurrenceTableProps> = ({ occurrences, onSelect, onDelete }) => {
   return (
     <div className="w-full border border-grey200 dark:border-grey800 rounded-2xl bg-light-background dark:bg-dark-background overflow-hidden">
       <div className="overflow-x-auto">
@@ -95,10 +96,25 @@ export const OccurrenceTable: React.FC<OccurrenceTableProps> = ({ occurrences, o
 
                   {/* Ação */}
                   <td className="px-5 py-3.5 text-right">
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-forestGreen dark:text-limeGreen opacity-70 group-hover:opacity-100 transition-opacity">
-                      Ver detalhes
-                      <ChevronRight className="w-4 h-4" />
-                    </span>
+                    <div className="flex items-center justify-end gap-2">
+                      {onDelete && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(occ);
+                          }}
+                          title="Eliminar ocorrência"
+                          className="p-1.5 rounded-lg text-grey400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                      <span className="inline-flex items-center gap-1 text-xs font-bold text-forestGreen dark:text-limeGreen opacity-70 group-hover:opacity-100 transition-opacity">
+                        Ver detalhes
+                        <ChevronRight className="w-4 h-4" />
+                      </span>
+                    </div>
                   </td>
                 </tr>
               );

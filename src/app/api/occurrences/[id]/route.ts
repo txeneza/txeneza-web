@@ -165,3 +165,40 @@ export async function PUT(request: Request, { params }: RouteParams) {
     );
   }
 }
+
+/**
+ * Elimina uma ocorrência e os seus registos associados.
+ */
+export async function DELETE(request: Request, { params }: RouteParams) {
+  const session = await verifyAdminSession(request);
+  if (!session) {
+    return unauthorizedResponse("Acesso negado: apenas administradores podem eliminar ocorrências.");
+  }
+
+  try {
+    const { id } = await params;
+
+    const exists = await prisma.ocorrencia.findUnique({
+      where: { id_ocorrencia: id },
+    });
+
+    if (!exists) {
+      return NextResponse.json({ error: "Ocorrência não encontrada." }, { status: 404 });
+    }
+
+    // Apagar dependências em transação
+    await prisma.$transaction([
+      prisma.verificacaoResolucao.deleteMany({ where: { id_ocorrencia: id } }),
+      prisma.notificacao.deleteMany({ where: { id_ocorrencia: id } }),
+      prisma.fotografia.deleteMany({ where: { id_ocorrencia: id } }),
+      prisma.ocorrencia.delete({ where: { id_ocorrencia: id } }),
+    ]);
+
+    return NextResponse.json({ success: true, id });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: "Erro ao eliminar ocorrência: " + error.message },
+      { status: 500 }
+    );
+  }
+}
