@@ -32,17 +32,19 @@ export const ProblemSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Content Grid */}
+        {/* Content Grid — carrossel horizontal no mobile, grelha no desktop */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-200 dark:bg-white/10 border border-slate-200 dark:border-white/10"
+          className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-3 -mx-4 px-4 pb-2
+                     sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible sm:grid sm:grid-cols-2 sm:gap-px
+                     sm:bg-slate-200 sm:dark:bg-white/10 sm:border sm:border-slate-200 sm:dark:border-white/10"
         >
 
           {/* Card 1: 1000 Tons/dia */}
-          <motion.div variants={itemVariants} className="p-8 bg-slate-50 dark:bg-grey900 flex flex-col justify-between">
+          <motion.div variants={itemVariants} className="snap-start shrink-0 w-[86%] xs:w-[78%] sm:w-auto border border-slate-200 dark:border-white/10 sm:border-0 p-6 sm:p-8 bg-slate-50 dark:bg-grey900 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2.5 text-forestGreen dark:text-limeGreen">
                 <Trash2 className="w-5 h-5" />
@@ -67,7 +69,7 @@ export const ProblemSection: React.FC = () => {
           </motion.div>
 
           {/* Card 2: Bairros Afectados */}
-          <motion.div variants={itemVariants} className="p-8 bg-slate-50 dark:bg-grey900 flex flex-col justify-between">
+          <motion.div variants={itemVariants} className="snap-start shrink-0 w-[86%] xs:w-[78%] sm:w-auto border border-slate-200 dark:border-white/10 sm:border-0 p-6 sm:p-8 bg-slate-50 dark:bg-grey900 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2.5 text-amber-600 dark:text-amber-400">
                 <ShieldAlert className="w-5 h-5" />
@@ -96,7 +98,7 @@ export const ProblemSection: React.FC = () => {
           </motion.div>
 
           {/* Card 3: Doenças e Malária */}
-          <motion.div variants={itemVariants} className="p-8 bg-slate-50 dark:bg-grey900 flex flex-col justify-between">
+          <motion.div variants={itemVariants} className="snap-start shrink-0 w-[86%] xs:w-[78%] sm:w-auto border border-slate-200 dark:border-white/10 sm:border-0 p-6 sm:p-8 bg-slate-50 dark:bg-grey900 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2.5 text-red-600 dark:text-red-400">
                 <HeartPulse className="w-5 h-5" />
@@ -118,7 +120,7 @@ export const ProblemSection: React.FC = () => {
           </motion.div>
 
           {/* Card 4: Inundações / Ciclone Idai */}
-          <motion.div variants={itemVariants} className="p-8 bg-slate-50 dark:bg-grey900 flex flex-col justify-between">
+          <motion.div variants={itemVariants} className="snap-start shrink-0 w-[86%] xs:w-[78%] sm:w-auto border border-slate-200 dark:border-white/10 sm:border-0 p-6 sm:p-8 bg-slate-50 dark:bg-grey900 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2.5 text-blue-600 dark:text-blue-400">
                 <CloudRain className="w-5 h-5" />

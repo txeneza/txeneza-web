@@ -73,22 +73,27 @@ export const InstitutionalSection: React.FC = () => {
           </div>
 
           {/* Right Column: ODS blocks */}
-          <div className="lg:col-span-7 flex flex-col gap-px bg-slate-200 dark:bg-white/10 border border-slate-200 dark:border-white/10">
-            <span className="font-mono text-[11px] font-medium tracking-widest text-forestGreen dark:text-limeGreen uppercase block px-6 py-4 bg-background dark:bg-grey900">
+          <div className="lg:col-span-7 flex flex-col">
+            <span className="font-mono text-[11px] font-medium tracking-widest text-forestGreen dark:text-limeGreen uppercase block px-6 py-4 bg-background dark:bg-grey900 border border-b-0 border-slate-200 dark:border-white/10">
               Alinhamento com Objectivos da ONU (ODS)
             </span>
 
-            {odsList.map((ods, idx) => {
-              const Icon = ods.icon;
-              return (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: idx * 0.1 }}
-                  className="p-6 bg-background dark:bg-grey900 flex gap-5 items-start"
-                >
+            <div
+              className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-3 -mx-4 px-4 pb-2 pt-2
+                         sm:mx-0 sm:px-0 sm:pb-0 sm:pt-0 sm:overflow-visible sm:flex-col sm:gap-px
+                         sm:bg-slate-200 sm:dark:bg-white/10 sm:border sm:border-slate-200 sm:dark:border-white/10"
+            >
+              {odsList.map((ods, idx) => {
+                const Icon = ods.icon;
+                return (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: idx * 0.1 }}
+                    className="snap-start shrink-0 w-[85%] xs:w-[75%] sm:w-auto border border-slate-200 dark:border-white/10 sm:border-0 p-6 bg-background dark:bg-grey900 flex gap-5 items-start"
+                  >
                   {/* Badge ODS */}
                   <div className="w-12 h-12 border border-forestGreen/30 dark:border-limeGreen/30 flex flex-col items-center justify-center shrink-0 text-forestGreen dark:text-limeGreen font-mono">
                     <span className="text-lg font-semibold leading-none">{ods.num}</span>
@@ -106,8 +111,9 @@ export const InstitutionalSection: React.FC = () => {
                     </p>
                   </div>
                 </motion.div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
         </div>

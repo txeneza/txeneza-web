@@ -108,18 +108,20 @@ export const SocialProofSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Small stats cards */}
+        {/* Small stats cards — carrossel horizontal no mobile */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-slate-200 dark:bg-white/10 border border-slate-200 dark:border-white/10 max-w-5xl"
+          className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-3 -mx-4 px-4 pb-2
+                     sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible sm:grid sm:grid-cols-3 sm:gap-px
+                     sm:bg-slate-200 sm:dark:bg-white/10 sm:border sm:border-slate-200 sm:dark:border-white/10 max-w-5xl"
         >
           {secondaryStats.map((item, index) => {
             const Icon = item.icon;
             return (
-              <motion.div key={index} variants={itemVariants} className="p-5 bg-background dark:bg-grey900 flex gap-4 items-start">
+              <motion.div key={index} variants={itemVariants} className="snap-start shrink-0 w-[80%] xs:w-[65%] sm:w-auto border border-slate-200 dark:border-white/10 sm:border-0 p-5 bg-background dark:bg-grey900 flex gap-4 items-start">
                 <Icon className="w-5 h-5 text-forestGreen dark:text-limeGreen shrink-0 mt-0.5" />
                 <div>
                   <div className="text-lg font-mono font-semibold text-foreground dark:text-white">{item.value}</div>

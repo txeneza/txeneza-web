@@ -60,13 +60,15 @@ export const HowItWorksSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Steps Grid */}
+        {/* Steps — carrossel horizontal no mobile, grelha no desktop */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-slate-200 dark:bg-white/10 border border-slate-200 dark:border-white/10"
+          className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-3 -mx-4 px-4 pb-2
+                     sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-px
+                     sm:bg-slate-200 sm:dark:bg-white/10 sm:border sm:border-slate-200 sm:dark:border-white/10"
         >
           {steps.map((step, index) => {
             const Icon = step.icon;
@@ -74,7 +76,7 @@ export const HowItWorksSection: React.FC = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-background dark:bg-grey900 p-6 flex flex-col justify-between"
+                className="snap-start shrink-0 w-[70%] xs:w-[60%] sm:w-auto border border-slate-200 dark:border-white/10 sm:border-0 bg-background dark:bg-grey900 p-6 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex justify-between items-start mb-6">

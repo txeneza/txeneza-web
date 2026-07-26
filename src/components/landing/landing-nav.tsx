@@ -66,7 +66,7 @@ export const LandingNav: React.FC = () => {
           {/* CTA Button + Theme Toggle */}
           <div className="hidden md:flex items-center gap-2">
             <button
-              onClick={toggleTheme}
+              onClick={(e) => toggleTheme({ x: e.clientX, y: e.clientY })}
               aria-label="Alternar modo claro/escuro"
               title={theme === "dark" ? "Modo claro" : "Modo escuro"}
               className="p-2 rounded-md text-slate-300 hover:text-limeGreen hover:bg-white/5 transition-colors"
@@ -84,7 +84,7 @@ export const LandingNav: React.FC = () => {
 
           {/* Mobile: Theme Toggle */}
           <button
-            onClick={toggleTheme}
+            onClick={(e) => toggleTheme({ x: e.clientX, y: e.clientY })}
             aria-label="Alternar modo claro/escuro"
             className="md:hidden ml-auto mr-1 p-2 rounded-md text-slate-300 hover:text-limeGreen hover:bg-white/5 transition-colors"
           >
