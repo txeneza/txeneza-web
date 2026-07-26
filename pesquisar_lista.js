@@ -29,7 +29,7 @@ const suspiciousTerms = [
 const replacementRules = [
   { pattern: /gerado por ia/gi, replacement: 'Desenvolvido sob padrões acadêmicos' },
   { pattern: /gerado por intelig[êe]ncia artificial/gi, replacement: 'Desenvolvido de forma personalizada' },
-  { pattern: /criado por ia/gi, replacement: 'Trabalho de Conclusão de Curso' },
+  { pattern: /criado por IA/gi, replacement: 'Trabalho de Conclusão de Curso' },
   { pattern: /criado por intelig[êe]ncia artificial/gi, replacement: 'Trabalho Acadêmico' },
   { pattern: /desenvolvido por ia/gi, replacement: 'Desenvolvido pelo estudante' },
   { pattern: /desenvolvido por intelig[êe]ncia artificial/gi, replacement: 'Desenvolvimento próprio' },
