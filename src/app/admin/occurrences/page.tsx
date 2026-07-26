@@ -11,16 +11,38 @@ import {
 } from "@/features/occurrences/occurrence-status";
 import { ClipboardList, Search, Download, AlertCircle, Inbox, FileText, FileSpreadsheet, Loader2 } from "lucide-react";
 
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { occurrencesService } from "@/features/occurrences/occurrences.service";
+import { Occurrence } from "@/features/occurrences/occurrences.types";
+
 type StatusFiltro = "todas" | OccurrenceStatus;
 
 export default function AdminOccurrencesPage() {
   const router = useRouter();
-  const { occurrences, loading, error } = useOccurrences();
+  const { occurrences, loading, error, refetch } = useOccurrences();
   const [exporting, setExporting] = useState(false);
   const [exportingFormat, setExportingFormat] = useState<string | null>(null);
 
   const [search, setSearch] = useState("");
   const [statusFiltro, setStatusFiltro] = useState<StatusFiltro>("todas");
+
+  const [deletingOcc, setDeletingOcc] = useState<Occurrence | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!deletingOcc) return;
+    setDeleting(true);
+    try {
+      await occurrencesService.delete(deletingOcc.id);
+      setDeletingOcc(null);
+      if (refetch) refetch();
+      else router.refresh();
+    } catch (err: any) {
+      alert(err.message || "Erro ao eliminar ocorrência.");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const counts = useMemo(() => {
     const base: Record<string, number> = { todas: occurrences.length };
@@ -204,8 +226,29 @@ export default function AdminOccurrencesPage() {
         <OccurrenceTable
           occurrences={filtered}
           onSelect={(occ) => router.push(`/admin/occurrences/${occ.id}`)}
+          onDelete={(occ) => setDeletingOcc(occ)}
         />
       )}
+
+      {/* Confirmação de Eliminação */}
+      <ConfirmDialog
+        open={deletingOcc !== null}
+        tone="danger"
+        title="Eliminar ocorrência"
+        description={
+          deletingOcc ? (
+            <>
+              Tem a certeza que deseja eliminar permanentemente a ocorrência{" "}
+              <b className="text-grey900 dark:text-grey50">«{deletingOcc.title}»</b>? Esta ação é
+              irreversível e removerá todas as provas de resolução e notificações associadas.
+            </>
+          ) : null
+        }
+        confirmLabel="Eliminar permanentemente"
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setDeletingOcc(null)}
+      />
     </div>
   );
 }

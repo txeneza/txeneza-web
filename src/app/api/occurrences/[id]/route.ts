@@ -93,7 +93,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
       );
     }
 
-    // Mapeamento sugerido para Escrita (Frontend -> DB):
+    // Mapeamento para Escrita (Frontend -> DB):
     // - "pendente" -> pendente
     // - "em-progresso" -> em_analise
     // - "resolvido" -> resolvida
@@ -119,9 +119,18 @@ export async function PUT(request: Request, { params }: RouteParams) {
       },
     });
 
-    // REGISTO AUTOMÁTICO DE NOTIFICAÇÃO NA BASE DE DADOS
+    // REGISTO AUTOMÁTICO DE NOTIFICAÇÃO NA BASE DE DADOS + PUSH FCM
     try {
-      const mensagemNotif = `O estado da ocorrência de ${atualizado.categoria.nome} foi alterado para «${status}».`;
+      const statusLabel =
+        status === "em-progresso"
+          ? "Em Progresso"
+          : status === "resolvido"
+          ? "Resolvida"
+          : status === "rejeitado"
+          ? "Rejeitada"
+          : "Pendente";
+
+      const mensagemNotif = `O estado da ocorrência de «${atualizado.categoria.nome}» foi alterado para ${statusLabel}.`;
 
       await prisma.notificacao.create({
         data: {
@@ -134,8 +143,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
         },
       });
 
-      // Push real (FCM) — melhor esforço: nunca bloqueia nem falha a
-      // resposta principal se o envio não funcionar (ver push.service.ts).
+      // Disparar notificação push FCM
       await enviarPush({
         fcmToken: atualizado.utilizador.fcm_token,
         tipo: "alteracao_estado",
@@ -143,7 +151,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
         idOcorrencia: atualizado.id_ocorrencia,
       });
     } catch (notifErr: any) {
-      console.warn("Aviso ao registar notificação na BD:", notifErr.message);
+      console.warn("Aviso ao processar notificação/push:", notifErr.message);
     }
 
     return NextResponse.json(serialize(atualizado));
@@ -153,6 +161,43 @@ export async function PUT(request: Request, { params }: RouteParams) {
     }
     return NextResponse.json(
       { error: "Erro ao actualizar ocorrência: " + error.message },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * Elimina uma ocorrência e os seus registos associados.
+ */
+export async function DELETE(request: Request, { params }: RouteParams) {
+  const session = await verifyAdminSession(request);
+  if (!session) {
+    return unauthorizedResponse("Acesso negado: apenas administradores podem eliminar ocorrências.");
+  }
+
+  try {
+    const { id } = await params;
+
+    const exists = await prisma.ocorrencia.findUnique({
+      where: { id_ocorrencia: id },
+    });
+
+    if (!exists) {
+      return NextResponse.json({ error: "Ocorrência não encontrada." }, { status: 404 });
+    }
+
+    // Apagar dependências em transação
+    await prisma.$transaction([
+      prisma.verificacaoResolucao.deleteMany({ where: { id_ocorrencia: id } }),
+      prisma.notificacao.deleteMany({ where: { id_ocorrencia: id } }),
+      prisma.fotografia.deleteMany({ where: { id_ocorrencia: id } }),
+      prisma.ocorrencia.delete({ where: { id_ocorrencia: id } }),
+    ]);
+
+    return NextResponse.json({ success: true, id });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: "Erro ao eliminar ocorrência: " + error.message },
       { status: 500 }
     );
   }

@@ -23,6 +23,7 @@ import {
   ImageOff,
   Map as MapIcon,
   Loader2,
+  Trash2,
 } from "lucide-react";
 
 const STATUS_TONE: Record<OccurrenceStatus, ConfirmTone> = {
@@ -50,6 +51,21 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
   const [proofModalOpen, setProofModalOpen] = useState(false);
   const [savingProof, setSavingProof] = useState(false);
 
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteOccurrence = async () => {
+    if (!occurrence) return;
+    setDeleting(true);
+    try {
+      await occurrencesService.delete(occurrence.id);
+      router.push("/admin/occurrences");
+    } catch (err: any) {
+      alert(err.message || "Erro ao eliminar ocorrência.");
+      setDeleting(false);
+    }
+  };
+
   useEffect(() => {
     async function load() {
       const data = await occurrencesService.getById(id);
@@ -60,13 +76,19 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
     load();
   }, [id]);
 
+  const [updateError, setUpdateError] = useState<string | null>(null);
+
   const handleUpdateStatus = async () => {
     if (!occurrence || !pendingStatus) return;
     setUpdating(pendingStatus);
+    setUpdateError(null);
     try {
       const updated = await occurrencesService.updateStatus(occurrence.id, pendingStatus);
       setOccurrence({ ...updated });
       setPendingStatus(null);
+    } catch (err: any) {
+      console.error("Erro ao atualizar estado:", err);
+      setUpdateError(err.message || "Não foi possível atualizar o estado.");
     } finally {
       setUpdating(null);
     }
@@ -218,37 +240,58 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
       <ResolutionGallery verifications={verifications} />
 
       {/* Ações de gestão */}
-      <div className="p-6 bg-light-background dark:bg-dark-background border border-grey200 dark:border-grey800 rounded-2xl">
-        <h3 className="text-xs font-bold text-grey600 dark:text-grey400 uppercase tracking-wider mb-4">
-          Alterar Estado
-        </h3>
-        <div className="flex flex-wrap gap-2">
-          {OCCURRENCE_STATUS_ORDER.map((s) => {
-            const m = OCCURRENCE_STATUS_META[s];
-            const isCurrent = occurrence.status === s;
-            return (
-              <button
-                key={s}
-                onClick={() => {
-                  setPendingStatus(s);
-                  if (s === "resolvido") setProofModalOpen(true);
-                }}
-                disabled={isCurrent || updating !== null}
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-all disabled:cursor-not-allowed ${
-                  isCurrent
-                    ? `${m.badge} opacity-100`
-                    : "bg-grey100 dark:bg-grey900 border-grey200 dark:border-grey800 text-grey700 dark:text-grey300 hover:border-grey300 dark:hover:border-grey700 disabled:opacity-50"
-                }`}
-              >
-                {updating === s ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <span className={`w-1.5 h-1.5 rounded-full ${m.dot}`} />
-                )}
-                {isCurrent ? `Estado atual: ${m.label}` : m.label}
-              </button>
-            );
-          })}
+      <div className="p-6 bg-light-background dark:bg-dark-background border border-grey200 dark:border-grey800 rounded-2xl flex flex-col gap-6">
+        <div>
+          <h3 className="text-xs font-bold text-grey600 dark:text-grey400 uppercase tracking-wider mb-4">
+            Alterar Estado
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {OCCURRENCE_STATUS_ORDER.map((s) => {
+              const m = OCCURRENCE_STATUS_META[s];
+              const isCurrent = occurrence.status === s;
+              return (
+                <button
+                  key={s}
+                  onClick={() => {
+                    setPendingStatus(s);
+                    if (s === "resolvido") setProofModalOpen(true);
+                  }}
+                  disabled={isCurrent || updating !== null}
+                  className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-all disabled:cursor-not-allowed ${
+                    isCurrent
+                      ? `${m.badge} opacity-100`
+                      : "bg-grey100 dark:bg-grey900 border-grey200 dark:border-grey800 text-grey700 dark:text-grey300 hover:border-grey300 dark:hover:border-grey700 disabled:opacity-50"
+                  }`}
+                >
+                  {updating === s ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <span className={`w-1.5 h-1.5 rounded-full ${m.dot}`} />
+                  )}
+                  {isCurrent ? `Estado atual: ${m.label}` : m.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="pt-4 border-t border-grey200 dark:border-grey800 flex justify-between items-center">
+          <div>
+            <h4 className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">
+              Zona de Perigo
+            </h4>
+            <p className="text-xs text-grey500 mt-0.5">
+              Eliminar esta ocorrência remove permanentemente os seus dados e fotografias.
+            </p>
+          </div>
+          <button
+            onClick={() => setDeleteConfirmOpen(true)}
+            disabled={deleting}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 transition-all disabled:opacity-50"
+          >
+            {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+            Eliminar Ocorrência
+          </button>
         </div>
       </div>
 
@@ -280,6 +323,18 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
         loading={savingProof || updating !== null}
         onConfirm={handleConfirmProof}
         onCancel={handleCancelProof}
+      />
+
+      {/* Confirmação de Eliminação da Ocorrência */}
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        tone="danger"
+        title="Eliminar ocorrência"
+        description="Tem a certeza que deseja eliminar esta ocorrência? Esta ação é permanente e removerá todas as provas de resolução e notificações registadas."
+        confirmLabel="Eliminar permanentemente"
+        loading={deleting}
+        onConfirm={handleDeleteOccurrence}
+        onCancel={() => setDeleteConfirmOpen(false)}
       />
     </div>
   );
