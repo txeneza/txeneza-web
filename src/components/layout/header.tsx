@@ -57,7 +57,7 @@ export const Header: React.FC = () => {
         {/* Theme Switcher Button */}
         {mounted && (
           <button
-            onClick={toggleTheme}
+            onClick={(e) => toggleTheme({ x: e.clientX, y: e.clientY })}
             className="p-2 rounded-xl bg-grey100 dark:bg-grey950 border border-grey200 dark:border-grey850 text-grey600 dark:text-grey500 hover:text-forestGreen dark:hover:text-limeGreen hover:scale-105 transition-all duration-200"
             title={theme === "light" ? "Mudar para Modo Escuro" : "Mudar para Modo Claro"}
           >
