@@ -23,7 +23,6 @@ Uma página de apresentação rica e interativa voltada aos munícipes e parceir
 * **Demonstração Móvel Interativa**: Mockup interativo da aplicação móvel simulando o chatbot "Xeni" (assistente virtual de IA com suporte a Gemini e TensorFlow Lite) e a visualização de ocorrências no ecrã do telemóvel.
 * **Visualização Pública do Mapa**: Pré-visualização funcional baseada em Mapbox que plota as ocorrências registradas e pontos de recolha oficiais.
 * **Seção de Públicos-Alvo**: Segmentação explicativa para Moradores, Fiscais Ambientais e Administração Pública.
-
 ---
 
 ## 3. Segurança e Controle de Acesso
