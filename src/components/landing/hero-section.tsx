@@ -190,6 +190,8 @@ export const HeroSection: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Fusão suave com a secção seguinte (evita o corte abrupto de cor) */}
+      <div className="absolute inset-x-0 bottom-0 h-28 sm:h-40 bg-gradient-to-b from-forestGreen to-slate-50 dark:to-grey900 pointer-events-none" />
     </section>
   );
 };
