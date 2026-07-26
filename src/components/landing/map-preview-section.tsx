@@ -54,33 +54,33 @@ export const MapPreviewSection: React.FC = () => {
 
   return (
     <section id="mapa-preview" className="py-20 md:py-28 bg-slate-50 dark:bg-grey900/50 text-foreground dark:text-grey50 relative border-y border-slate-100 dark:border-slate-800/50">
-      <div className="absolute top-10 left-10 w-[20%] aspect-square rounded-full bg-forestGreen/10 filter blur-3xl pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Title */}
-        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
-          <span className="text-xs font-black tracking-widest text-limeGreen uppercase">Visualização de Dados</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mt-3">
-            O Que o <BrandName /> Mostra
+        <div className="max-w-3xl mb-12 md:mb-16">
+          <span className="font-mono text-[11px] tracking-[0.2em] text-forestGreen dark:text-limeGreen uppercase">
+            03 · Visualização de Dados
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
+            O que a <BrandName /> mostra
           </h2>
-          <p className="text-slate-605 dark:text-slate-400 mt-4 text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-400 mt-4 text-sm sm:text-base leading-relaxed">
             Consulte as ocorrências em tempo real. A plataforma oferece duas formas complementares de visualizar a gravidade do problema na Beira: marcadores detalhados e mapas térmicos.
           </p>
         </div>
 
         {/* Mode Toggle Controls */}
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex p-1.5 rounded-2xl bg-background/80 dark:bg-slate-950/80 border border-slate-205 dark:border-slate-800 shadow-xl">
+        <div className="flex mb-8">
+          <div className="inline-flex border border-slate-200 dark:border-white/15">
             <button
               onClick={() => {
                 setMapMode("markers");
                 setSelectedPin(null);
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              className={`flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold transition-colors ${
                 mapMode === "markers"
-                  ? "bg-forestGreen text-white shadow-lg"
-                  : "text-slate-505 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  ? "bg-forestGreen text-white"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               <MapPin className="w-4 h-4" />
@@ -91,13 +91,13 @@ export const MapPreviewSection: React.FC = () => {
                 setMapMode("heatmap");
                 setSelectedPin(null);
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              className={`flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold transition-colors border-l border-slate-200 dark:border-white/15 ${
                 mapMode === "heatmap"
-                  ? "bg-forestGreen text-white shadow-lg"
-                  : "text-slate-505 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  ? "bg-forestGreen text-white"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
-              <Flame className="w-4 h-4 text-orange-500 fill-orange-500/20" />
+              <Flame className="w-4 h-4" />
               Mapa de Calor
             </button>
           </div>
@@ -108,10 +108,10 @@ export const MapPreviewSection: React.FC = () => {
           
           {/* Left Description Column */}
           <div className="lg:col-span-4 flex flex-col justify-between gap-6">
-            <div className="p-6 sm:p-8 rounded-3xl bg-background/80 dark:bg-white/5 border border-slate-205 dark:border-slate-800 flex flex-col gap-5">
-              <span className="flex items-center gap-2 text-xs font-bold text-limeGreen">
-                <Sparkles className="w-4 h-4" />
-                Destaque do Sistema
+            <div className="p-6 sm:p-8 bg-background dark:bg-grey900 border border-slate-200 dark:border-white/10 flex flex-col gap-5">
+              <span className="font-mono flex items-center gap-2 text-[11px] font-medium tracking-wide uppercase text-forestGreen dark:text-limeGreen">
+                <Sparkles className="w-3.5 h-3.5" />
+                Destaque do sistema
               </span>
               
               <AnimatePresence mode="wait">
@@ -124,8 +124,8 @@ export const MapPreviewSection: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="flex flex-col gap-3"
                   >
-                    <h3 className="text-xl font-bold text-foreground dark:text-white">Mapa de Marcadores</h3>
-                    <p className="text-xs sm:text-sm text-slate-605 dark:text-slate-400 leading-relaxed">
+                    <h3 className="text-xl font-semibold text-foreground dark:text-white">Mapa de Marcadores</h3>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                       Cada ponto reportado gera um marcador interativo. Ao clicar, moradores e vereadores veem fotos, gravidade, data e descrição. Ajuda a identificar incidentes individuais no seu bairro.
                     </p>
                   </motion.div>
@@ -138,51 +138,51 @@ export const MapPreviewSection: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="flex flex-col gap-3"
                   >
-                    <h3 className="text-xl font-bold text-foreground dark:text-white">Zonas Críticas</h3>
-                    <p className="text-xs sm:text-sm text-slate-605 dark:text-slate-400 leading-relaxed">
+                    <h3 className="text-xl font-semibold text-foreground dark:text-white">Zonas Críticas</h3>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                       O algoritmo analisa a densidade e proximidade dos reportes, gerando &ldquo;manchas térmicas&rdquo; coloridas. Quanto mais denso e severo o lixo acumulado, mais quente fica a cor no mapa.
                     </p>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <div className="h-[1px] bg-slate-100 dark:bg-grey900/90 my-1" />
+              <div className="h-px bg-slate-200 dark:bg-white/10 my-1" />
 
               <div className="flex flex-col gap-2.5">
-                <div className="flex items-center gap-3 text-xs text-slate-605 dark:text-slate-300">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-650 shrink-0" />
+                <div className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300">
+                  <div className="w-2 h-2 bg-red-600 shrink-0" />
                   <span>Crítico (Ações imediatas CMB)</span>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-slate-605 dark:text-slate-300">
-                  <div className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0" />
+                <div className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300">
+                  <div className="w-2 h-2 bg-orange-500 shrink-0" />
                   <span>Alta gravidade (Programação semanal)</span>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-slate-605 dark:text-slate-300">
-                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
+                <div className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300">
+                  <div className="w-2 h-2 bg-amber-500 shrink-0" />
                   <span>Média gravidade (Monitorização)</span>
                 </div>
               </div>
             </div>
 
             {/* Micro Interaction tip */}
-            <div className="hidden lg:flex items-center gap-3 p-5 rounded-2xl bg-forestGreen/10 border border-forestGreen/20 text-xs text-slate-300">
-              <Eye className="w-4.5 h-4.5 text-limeGreen shrink-0" />
+            <div className="hidden lg:flex items-center gap-3 p-5 bg-forestGreen/[0.06] dark:bg-limeGreen/5 border border-forestGreen/15 dark:border-limeGreen/15 text-xs text-slate-600 dark:text-slate-300">
+              <Eye className="w-4 h-4 text-forestGreen dark:text-limeGreen shrink-0" />
               <span>Experimente alterar as abas de visualização acima para ver a simulação dinâmica.</span>
             </div>
           </div>
 
           {/* Right Simulated Map Dashboard */}
-          <div className="lg:col-span-8 bg-background dark:bg-slate-950 rounded-3xl border border-slate-205 dark:border-slate-800 overflow-hidden flex flex-col h-[480px] sm:h-[520px] shadow-2xl relative">
-            
+          <div className="lg:col-span-8 bg-background dark:bg-slate-950 border border-slate-200 dark:border-white/10 overflow-hidden flex flex-col h-[480px] sm:h-[520px] relative">
+
             {/* Map Header Panel */}
-            <div className="px-5 py-3.5 bg-slate-50 dark:bg-grey900/90 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold">
-              <div className="flex items-center gap-2 text-slate-605 dark:text-slate-300">
-                <Map className="w-4.5 h-4.5 text-limeGreen" />
+            <div className="px-5 py-3.5 bg-slate-50 dark:bg-grey900 border-b border-slate-200 dark:border-white/10 flex items-center justify-between text-xs font-medium">
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                <Map className="w-4 h-4 text-forestGreen dark:text-limeGreen" />
                 <span>Consola Pública de Monitoramento • Beira, MZ</span>
               </div>
               <div className="flex items-center gap-1.5 text-slate-500">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] uppercase font-bold tracking-wider">Live</span>
+                <span className="font-mono text-[10px] uppercase font-semibold tracking-wider">Live</span>
               </div>
             </div>
 
@@ -252,16 +252,10 @@ export const MapPreviewSection: React.FC = () => {
                         style={{ top: pin.lat, left: pin.lng }}
                         className="absolute w-7 h-7 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer group"
                       >
-                        {/* Pulse */}
-                        <span className={`absolute inset-0 rounded-full animate-ping opacity-25 ${
-                          pin.gravidade === "Crítico" ? "bg-red-500" : "bg-orange-500"
-                        }`} />
                         {/* Pin body */}
-                        <div className={`w-4.5 h-4.5 rounded-full border border-white flex items-center justify-center shadow-lg relative ${
+                        <div className={`w-4 h-4 rounded-full border-2 border-white flex items-center justify-center shadow-md ${
                           pin.gravidade === "Crítico" ? "bg-red-600" : "bg-orange-500"
-                        }`}>
-                          <div className="w-1.5 h-1.5 bg-light-background dark:bg-dark-background rounded-full" />
-                        </div>
+                        }`} />
                       </motion.button>
                     ))}
                   </>
@@ -275,7 +269,7 @@ export const MapPreviewSection: React.FC = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: 20, opacity: 0 }}
-                    className="absolute bottom-6 left-6 right-6 bg-background/95 dark:bg-grey900/95 backdrop-blur-md border border-slate-205 dark:border-slate-800 p-4 rounded-2xl shadow-2xl z-50 flex flex-col gap-3"
+                    className="absolute bottom-6 left-6 right-6 bg-background dark:bg-grey900 border border-slate-200 dark:border-white/15 p-4 shadow-lg z-50 flex flex-col gap-3"
                   >
                     {(() => {
                       const pin = mockOccurrences.find((p) => p.id === selectedPin);
@@ -284,32 +278,30 @@ export const MapPreviewSection: React.FC = () => {
                         <>
                           <div className="flex justify-between items-start">
                             <div className="flex gap-2.5 items-center">
-                              <div className="w-7 h-7 rounded-lg bg-red-955 border border-red-500/30 flex items-center justify-center text-red-500 shrink-0">
-                                <ShieldAlert className="w-4.5 h-4.5" />
-                              </div>
+                              <ShieldAlert className="w-4 h-4 text-red-600 shrink-0" />
                               <div>
-                                <h4 className="font-extrabold text-sm text-foreground dark:text-white">{pin.title}</h4>
-                                <span className="text-[10px] text-slate-605 dark:text-slate-400">Bairro: {pin.bairro}</span>
+                                <h4 className="font-semibold text-sm text-foreground dark:text-white">{pin.title}</h4>
+                                <span className="text-[10px] text-slate-600 dark:text-slate-400">Bairro: {pin.bairro}</span>
                               </div>
                             </div>
                             <button
                               onClick={() => setSelectedPin(null)}
-                              className="text-[10px] text-slate-605 dark:text-slate-400 hover:text-foreground dark:hover:text-white px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md transition-colors"
+                              className="text-[10px] text-slate-600 dark:text-slate-400 hover:text-foreground dark:hover:text-white px-2 py-0.5 border border-slate-200 dark:border-white/15 transition-colors"
                             >
                               Fechar
                             </button>
                           </div>
-                          <p className="text-xs text-slate-605 dark:text-slate-400 leading-relaxed">{pin.desc}</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{pin.desc}</p>
                           <div className="flex items-center justify-between mt-1 text-[10px]">
                             <div className="flex gap-2">
-                              <span className="px-2 py-0.5 bg-red-500/20 text-red-450 rounded-full font-bold">
+                              <span className="px-2 py-0.5 bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 font-semibold">
                                 {pin.gravidade}
                               </span>
-                              <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-605 dark:text-slate-400 rounded-full">
+                              <span className="px-2 py-0.5 bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400">
                                 Pendente
                               </span>
                             </div>
-                            <span className="text-slate-500">Hoje às 06:12</span>
+                            <span className="font-mono text-slate-500">Hoje às 06:12</span>
                           </div>
                         </>
                       );

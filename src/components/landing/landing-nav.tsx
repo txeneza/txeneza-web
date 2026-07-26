@@ -7,6 +7,14 @@ import { useTheme } from "@/hooks/use-theme";
 import { motion, AnimatePresence } from "framer-motion";
 import { BrandName } from "@/components/brand/brand-name";
 
+const NAV_LINKS = [
+  { href: "#problema", label: "O Problema" },
+  { href: "#funcionamento", label: "Como Funciona" },
+  { href: "#mapa-preview", label: "O Mapa" },
+  { href: "#para-quem-e", label: "Público-Alvo" },
+  { href: "#ods", label: "Alinhamento ODS" },
+];
+
 export const LandingNav: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -15,13 +23,7 @@ export const LandingNav: React.FC = () => {
 
   useEffect(() => {
     setMounted(true);
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -30,94 +32,73 @@ export const LandingNav: React.FC = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 border-b ${
         scrolled
-          ? "bg-forestGreen/95 dark:bg-grey900/95 backdrop-blur-md border-b border-slate-800/80 py-3 shadow-lg"
-          : "bg-transparent py-5"
+          ? "bg-forestGreen dark:bg-grey900 border-white/10 py-3"
+          : "bg-forestGreen/0 border-transparent py-5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-12">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg border border-slate-800 bg-grey900/90 group-hover:scale-105 transition-all">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-md overflow-hidden border border-white/15 bg-grey900">
               <img src="/icons/TXENEZA.svg" alt="Txeneza Logo" className="w-full h-full object-cover" />
             </div>
-            <span className="text-xl font-black tracking-tight">
+            <span className="text-lg font-semibold tracking-tight">
               <BrandName variant="onDark" />
             </span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <a
-              href="#problema"
-              className="text-sm font-medium text-slate-300 hover:text-limeGreen transition-colors"
-            >
-              O Problema
-            </a>
-            <a
-              href="#funcionamento"
-              className="text-sm font-medium text-slate-300 hover:text-limeGreen transition-colors"
-            >
-              Como Funciona
-            </a>
-            <a
-              href="#mapa-preview"
-              className="text-sm font-medium text-slate-300 hover:text-limeGreen transition-colors"
-            >
-              O Mapa
-            </a>
-            <a
-              href="#para-quem-e"
-              className="text-sm font-medium text-slate-300 hover:text-limeGreen transition-colors"
-            >
-              Público-Alvo
-            </a>
-            <a
-              href="#ods"
-              className="text-sm font-medium text-slate-300 hover:text-limeGreen transition-colors"
-            >
-              Alinhamento ODS
-            </a>
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-[13px] font-medium text-slate-300 hover:text-limeGreen transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
           </div>
 
           {/* CTA Button + Theme Toggle */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
             <button
               onClick={toggleTheme}
               aria-label="Alternar modo claro/escuro"
               title={theme === "dark" ? "Modo claro" : "Modo escuro"}
-              className="p-2 rounded-lg text-slate-300 hover:text-limeGreen hover:bg-white/10 transition-colors"
+              className="p-2 rounded-md text-slate-300 hover:text-limeGreen hover:bg-white/5 transition-colors"
             >
-              <ThemeIcon className="w-5 h-5" />
+              <ThemeIcon className="w-[18px] h-[18px]" />
             </button>
             <Link
               href="/map"
-              className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold bg-limeGreen text-forestGreen hover:bg-lightLime hover:scale-[1.02] shadow-lg shadow-limeGreen/10 active:scale-95 transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-md text-[13px] font-semibold bg-limeGreen text-forestGreen hover:bg-lightLime transition-colors ml-1"
             >
               <Map className="w-4 h-4 stroke-[2.5]" />
               Ver Mapa
             </Link>
           </div>
 
-          {/* Mobile: Theme Toggle (junto ao botão do menu) */}
+          {/* Mobile: Theme Toggle */}
           <button
             onClick={toggleTheme}
             aria-label="Alternar modo claro/escuro"
-            className="md:hidden ml-auto mr-1 p-2 rounded-lg text-slate-300 hover:text-limeGreen hover:bg-white/10 transition-colors"
+            className="md:hidden ml-auto mr-1 p-2 rounded-md text-slate-300 hover:text-limeGreen hover:bg-white/5 transition-colors"
           >
-            <ThemeIcon className="w-5 h-5" />
+            <ThemeIcon className="w-[18px] h-[18px]" />
           </button>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-slate-300 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition-colors"
+              className="text-slate-300 hover:text-white p-2 rounded-md hover:bg-white/5 transition-colors"
               aria-label="Abrir Menu"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -130,43 +111,27 @@ export const LandingNav: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden absolute top-full left-0 right-0 bg-forestGreen/98 dark:bg-grey900/98 backdrop-blur-lg border-b border-slate-800 px-6 py-8 flex flex-col gap-4 shadow-2xl overflow-hidden"
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="md:hidden bg-forestGreen dark:bg-grey900 border-b border-white/10 px-6 py-6 flex flex-col gap-1 overflow-hidden"
           >
-            {[
-              { href: "#problema", label: "O Problema" },
-              { href: "#funcionamento", label: "Como Funciona" },
-              { href: "#mapa-preview", label: "O Mapa" },
-              { href: "#para-quem-e", label: "Público-Alvo" },
-              { href: "#ods", label: "Alinhamento ODS" },
-            ].map((link, i) => (
-              <motion.a
+            {NAV_LINKS.map((link) => (
+              <a
                 key={link.href}
-                initial={{ opacity: 0, x: -15 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="text-base font-bold text-slate-100 hover:text-limeGreen py-2 border-b border-white/5 transition-colors"
+                className="text-sm font-medium text-slate-200 hover:text-limeGreen py-3 border-b border-white/10 transition-colors"
               >
                 {link.label}
-              </motion.a>
+              </a>
             ))}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="pt-2"
+            <Link
+              href="/map"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center justify-center gap-2 w-full mt-4 py-3 rounded-md text-sm font-semibold bg-limeGreen text-forestGreen hover:bg-lightLime transition-colors"
             >
-              <Link
-                href="/map"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-base font-bold bg-limeGreen text-forestGreen hover:bg-lightLime shadow-lg shadow-limeGreen/10 active:scale-95 transition-all"
-              >
-                <Map className="w-5 h-5 stroke-[2.5]" />
-                Ver Mapa
-              </Link>
-            </motion.div>
+              <Map className="w-4 h-4 stroke-[2.5]" />
+              Ver Mapa
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
