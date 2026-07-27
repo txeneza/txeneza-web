@@ -28,7 +28,7 @@ export const InstitutionalSection: React.FC = () => {
   ];
 
   return (
-    <section id="ods" className="py-20 md:py-28 bg-background dark:bg-grey900 text-foreground dark:text-grey50">
+    <section id="ods" className="relative overflow-hidden py-20 md:py-28 bg-background dark:bg-grey900 text-foreground dark:text-grey50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
 
@@ -117,6 +117,16 @@ export const InstitutionalSection: React.FC = () => {
           </div>
 
         </div>
+      </div>
+
+      {/* Fusão suave com o rodapé: onda sólida, sem banding de cor */}
+      <div className="absolute inset-x-0 bottom-0 leading-none pointer-events-none translate-y-px">
+        <svg viewBox="0 0 1440 90" preserveAspectRatio="none" className="w-full h-12 sm:h-20 block">
+          <path
+            d="M0,45 C240,80 480,15 720,42 C960,70 1200,20 1440,52 L1440,90 L0,90 Z"
+            className="fill-forestGreen"
+          />
+        </svg>
       </div>
     </section>
   );

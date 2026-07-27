@@ -8,9 +8,6 @@ import { BrandName } from "@/components/brand/brand-name";
 export const LandingFooter: React.FC = () => {
   return (
     <footer id="download-app" className="relative overflow-hidden bg-forestGreen border-t border-white/10 text-slate-300 py-16 px-4">
-      {/* Fusão suave vindo da secção anterior (evita o corte abrupto de cor) */}
-      <div className="absolute inset-x-0 top-0 h-28 sm:h-40 bg-gradient-to-b from-background dark:from-grey900 to-forestGreen pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start mb-12">
 

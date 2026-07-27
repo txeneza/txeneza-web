@@ -190,8 +190,15 @@ export const HeroSection: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Fusão suave com a secção seguinte (evita o corte abrupto de cor) */}
-      <div className="absolute inset-x-0 bottom-0 h-28 sm:h-40 bg-gradient-to-b from-forestGreen to-slate-50 dark:to-grey900 pointer-events-none" />
+      {/* Fusão suave com a secção seguinte: onda sólida, sem banding de cor */}
+      <div className="absolute inset-x-0 bottom-0 leading-none pointer-events-none translate-y-px">
+        <svg viewBox="0 0 1440 90" preserveAspectRatio="none" className="w-full h-12 sm:h-20 block">
+          <path
+            d="M0,45 C240,10 480,75 720,48 C960,20 1200,70 1440,38 L1440,90 L0,90 Z"
+            className="fill-slate-50 dark:fill-grey900"
+          />
+        </svg>
+      </div>
     </section>
   );
 };
