@@ -1,11 +1,19 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyAdminSession } from "@/core/server-auth";
 
 /**
  * Obtém todas as ocorrências cadastradas no banco de dados.
+ *
+ * Nota de privacidade: o nome do cidadão que reportou (reportedBy) só é
+ * incluído na resposta quando o pedido vem de uma sessão de administrador
+ * autenticada. Para pedidos públicos (ex.: o mapa público /map), este
+ * campo é omitido para proteger a identidade de quem denuncia.
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const session = await verifyAdminSession(request);
+
     const databaseOccurrences = await prisma.ocorrencia.findMany({
       include: {
         utilizador: true,
@@ -46,7 +54,7 @@ export async function GET() {
         status,
         createdAt: o.data_hora_registo.toISOString(),
         updatedAt: o.data_hora_sync ? o.data_hora_sync.toISOString() : undefined,
-        reportedBy: o.utilizador.nome,
+        reportedBy: session ? o.utilizador.nome : undefined,
         imageUrl,
         gravidade: o.gravidade,
       };

@@ -6,7 +6,7 @@ import { MapView, PontoRecolhaMapData } from "@/components/map/map-view";
 import { HeatmapView } from "@/components/map/heatmap-view";
 import { OccurrenceCard } from "@/components/occurrences/occurrence-card";
 import { useMapStore } from "@/features/map/map.store";
-import { ArrowLeft, Map as MapIcon, Flame, Info, X, WifiOff } from "lucide-react";
+import { ArrowLeft, Map as MapIcon, Flame, Info, X, WifiOff, PlusCircle, MousePointerClick } from "lucide-react";
 import { BrandName } from "@/components/brand/brand-name";
 
 // Mapa público de ocorrências — acessível a qualquer visitante, sem necessidade de login.
@@ -17,6 +17,17 @@ export default function PublicMapPage() {
   const [pointsError, setPointsError] = useState<string | null>(null);
   const [mode, setMode] = useState<"markers" | "heatmap">("markers");
   const [mounted, setMounted] = useState(false);
+  const [showTip, setShowTip] = useState(true);
+
+  const handleReportClick = () => {
+    const appUri = "txeneza://";
+    window.location.href = appUri;
+    setTimeout(() => {
+      if (!document.hidden) {
+        window.location.href = "/#download-app";
+      }
+    }, 1200);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -57,28 +68,53 @@ export default function PublicMapPage() {
             </span>
           </Link>
 
-          {/* Alternador Marcadores / Mapa de Calor */}
-          <div className="inline-flex border border-white/15">
+          <div className="flex items-center gap-2">
+            {/* Alternador Marcadores / Mapa de Calor */}
+            <div className="inline-flex border border-white/15">
+              <button
+                onClick={() => setMode("markers")}
+                className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold transition-colors ${
+                  mode === "markers" ? "bg-limeGreen text-forestGreen" : "text-slate-300 hover:text-white"
+                }`}
+              >
+                <MapIcon className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Marcadores</span>
+              </button>
+              <button
+                onClick={() => setMode("heatmap")}
+                className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold transition-colors border-l border-white/15 ${
+                  mode === "heatmap" ? "bg-limeGreen text-forestGreen" : "text-slate-300 hover:text-white"
+                }`}
+              >
+                <Flame className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Mapa de Calor</span>
+              </button>
+            </div>
+
             <button
-              onClick={() => setMode("markers")}
-              className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold transition-colors ${
-                mode === "markers" ? "bg-limeGreen text-forestGreen" : "text-slate-300 hover:text-white"
-              }`}
+              onClick={handleReportClick}
+              className="hidden sm:flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-limeGreen text-forestGreen hover:bg-lightLime transition-colors"
             >
-              <MapIcon className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Marcadores</span>
-            </button>
-            <button
-              onClick={() => setMode("heatmap")}
-              className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold transition-colors border-l border-white/15 ${
-                mode === "heatmap" ? "bg-limeGreen text-forestGreen" : "text-slate-300 hover:text-white"
-              }`}
-            >
-              <Flame className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Mapa de Calor</span>
+              <PlusCircle className="w-3.5 h-3.5" />
+              Denunciar
             </button>
           </div>
         </div>
+
+        {/* Dica de utilização — só desaparece quando o utilizador a fecha */}
+        {showTip && (
+          <div className="border-t border-white/10 bg-forestGreen/95">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center gap-3 text-xs text-slate-200">
+              <MousePointerClick className="w-4 h-4 text-limeGreen shrink-0" />
+              <span className="flex-1">
+                Toque num marcador <span className="text-red-400 font-semibold">vermelho</span> para ver a denúncia, ou num ponto <span className="text-limeGreen font-semibold">verde</span> para ver um local oficial de recolha do CMB.
+              </span>
+              <button onClick={() => setShowTip(false)} className="text-slate-400 hover:text-white shrink-0">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

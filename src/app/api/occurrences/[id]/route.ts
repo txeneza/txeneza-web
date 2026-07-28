@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { enviarPush } from "@/features/notifications/push.service";
+import { verifyAdminSession, unauthorizedResponse } from "@/core/server-auth";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-function serialize(o: any) {
+function serialize(o: any, isAdmin: boolean) {
   // Mapeamento de status:
   // - pendente ou reaberta -> "pendente"
   // - em_analise -> "em-progresso"
@@ -33,7 +34,7 @@ function serialize(o: any) {
     status,
     createdAt: o.data_hora_registo.toISOString(),
     updatedAt: o.data_hora_sync ? o.data_hora_sync.toISOString() : undefined,
-    reportedBy: o.utilizador.nome,
+    reportedBy: isAdmin ? o.utilizador.nome : undefined,
     imageUrl,
     gravidade: o.gravidade,
   };
@@ -42,8 +43,9 @@ function serialize(o: any) {
 /**
  * Obtém uma ocorrência específica por ID.
  */
-export async function GET(_request: Request, { params }: RouteParams) {
+export async function GET(request: Request, { params }: RouteParams) {
   try {
+    const session = await verifyAdminSession(request);
     const { id } = await params;
     const o = await prisma.ocorrencia.findUnique({
       where: { id_ocorrencia: id },
@@ -61,7 +63,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
       return NextResponse.json({ error: "Ocorrência não encontrada." }, { status: 404 });
     }
 
-    return NextResponse.json(serialize(o));
+    return NextResponse.json(serialize(o, !!session));
   } catch (error: any) {
     return NextResponse.json(
       { error: "Erro ao obter ocorrência: " + error.message },
@@ -69,8 +71,6 @@ export async function GET(_request: Request, { params }: RouteParams) {
     );
   }
 }
-
-import { verifyAdminSession, unauthorizedResponse } from "@/core/server-auth";
 
 /**
  * Atualiza o estado de uma ocorrência.
@@ -154,7 +154,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
       console.warn("Aviso ao processar notificação/push:", notifErr.message);
     }
 
-    return NextResponse.json(serialize(atualizado));
+    return NextResponse.json(serialize(atualizado, true));
   } catch (error: any) {
     if (error?.code === "P2025") {
       return NextResponse.json({ error: "Ocorrência não encontrada." }, { status: 404 });
