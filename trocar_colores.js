@@ -4,10 +4,8 @@
 
 const fs = require('fs');
 const path = require('path');
-
 const DIRECTORIES_TO_SCAN = ['src'];
 const EXTENSIONS_TO_SCAN = ['.ts', '.tsx', '.css'];
-
 // Mapa de substituições das classes genéricas para as classes oficiais do tema
 const CLASS_REPLACEMENTS = {
   // Planos de Fundo (Backgrounds)
