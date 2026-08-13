@@ -38,7 +38,7 @@ export const TargetAudienceSection: React.FC = () => {
   };
 
   return (
-    <section id="para-quem-e" className="py-20 md:py-28 bg-background dark:bg-grey900 text-foreground dark:text-grey50">
+    <section id="para-quem-e" className="py-20 md:py-28 bg-transparent text-foreground dark:text-grey50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Title */}
@@ -54,15 +54,13 @@ export const TargetAudienceSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Audience — carrossel horizontal no mobile, grelha no desktop */}
+        {/* Audience */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-3 -mx-4 px-4 pb-2
-                     sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible sm:grid sm:grid-cols-3 sm:gap-px
-                     sm:bg-slate-200 sm:dark:bg-white/10 sm:border sm:border-slate-200 sm:dark:border-white/10"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           {groups.map((group, index) => {
             const Icon = group.icon;
@@ -70,10 +68,12 @@ export const TargetAudienceSection: React.FC = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="snap-start shrink-0 w-[85%] xs:w-[75%] sm:w-auto border border-slate-200 dark:border-white/10 sm:border-0 bg-background dark:bg-grey900 p-6 sm:p-8 flex flex-col justify-between"
+                className="bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all"
               >
                 <div>
-                  <Icon className="w-6 h-6 text-forestGreen dark:text-limeGreen mb-6" />
+                  <div className="p-3 rounded-2xl bg-forestGreen/5 dark:bg-limeGreen/10 border border-forestGreen/10 dark:border-limeGreen/20 w-fit mb-6">
+                    <Icon className="w-6 h-6 text-forestGreen dark:text-limeGreen" />
+                  </div>
                   <h3 className="text-xl font-semibold text-foreground dark:text-white mb-3">
                     {group.title}
                   </h3>
@@ -82,7 +82,7 @@ export const TargetAudienceSection: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-slate-200 dark:border-white/10 flex justify-between items-center text-[10px] text-slate-500 font-semibold uppercase tracking-wider">
+                <div className="pt-4 border-t border-forestGreen/10 dark:border-white/10 flex justify-between items-center text-[10px] text-slate-500 font-semibold uppercase tracking-wider">
                   <span className="font-mono">Papel</span>
                   <span className="text-forestGreen dark:text-limeGreen font-semibold normal-case tracking-normal text-xs">{group.role}</span>
                 </div>
@@ -97,14 +97,16 @@ export const TargetAudienceSection: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.15, duration: 0.4 }}
-          className="mt-px p-6 sm:p-8 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 border-t-0 flex flex-col sm:flex-row items-start gap-6"
+          className="mt-6 p-6 sm:p-8 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl shadow-xl flex flex-col sm:flex-row items-start gap-6"
         >
-          <HelpCircle className="w-5 h-5 text-forestGreen dark:text-limeGreen shrink-0 mt-0.5" />
+          <div className="p-3 rounded-2xl bg-forestGreen/5 dark:bg-limeGreen/10 border border-forestGreen/10 dark:border-limeGreen/20 shrink-0">
+            <HelpCircle className="w-5 h-5 text-forestGreen dark:text-limeGreen" />
+          </div>
           <div className="text-left">
-            <h4 className="font-semibold text-sm text-slate-800 dark:text-slate-200">Abordagem inclusiva e centrada no cidadão</h4>
+            <h4 className="font-semibold text-sm text-slate-800 dark:text-slate-200">Informação Geográfica Voluntária (VGI) & Inclusão Cidadã</h4>
             <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-              &ldquo;A inclusão digital de grupos historicamente vulneráveis na Beira é essencial para democratizar a gestão do saneamento. A <BrandName /> atua como ponte tecnológica reduzindo a assimetria na comunicação com o poder público municipal.&rdquo;
-              <span className="font-mono text-slate-500 block mt-1.5 text-[11px]">— Monografia académica de suporte</span>
+              &ldquo;Sob o paradigma da Informação Geográfica Voluntária (Goodchild, 2007), a capacitação do cidadão como sensor urbano permite democratizar o mapeamento georreferenciado e reduzir a assimetria na comunicação com o Conselho Municipal da Beira.&rdquo;
+              <span className="font-mono text-forestGreen dark:text-limeGreen font-semibold block mt-1.5 text-[11px]">— Paulo Babucho Issaca Tivane, Monografia UNIZA 2026</span>
             </p>
           </div>
         </motion.div>

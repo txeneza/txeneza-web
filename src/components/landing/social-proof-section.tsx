@@ -42,24 +42,24 @@ export const SocialProofSection: React.FC = () => {
   };
 
   return (
-    <section className="py-20 md:py-28 bg-slate-50 dark:bg-grey900 text-foreground dark:text-grey50 border-y border-slate-200 dark:border-white/10">
+    <section className="py-20 md:py-28 bg-transparent text-foreground dark:text-grey50 border-y border-forestGreen/10 dark:border-forestGreen/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Title */}
         <div className="max-w-3xl mb-16 md:mb-20">
           <span className="font-mono text-[11px] tracking-[0.2em] text-forestGreen dark:text-limeGreen uppercase">
-            05 · Resultados do Questionário
+            05 · Validação Científica & Usabilidade
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
-            Aceitação comunitária validada
+            Aceitação e Hipóteses Validadas
           </h2>
           <p className="text-slate-600 dark:text-slate-400 mt-4 text-base sm:text-lg leading-relaxed">
-            Realizámos um inquérito de opinião aos moradores das zonas afectadas da Beira para validar o interesse no projecto. A resposta foi extremamente favorável.
+            Inquérito de opinião aos moradores da Beira e avaliação de usabilidade sob a norma <strong className="text-foreground dark:text-white font-semibold">ISO 9241-11</strong> e as <strong className="text-foreground dark:text-white font-semibold">Heurísticas de Nielsen (1994)</strong>. As hipóteses H1, H2 e H3 foram confirmadas.
           </p>
         </div>
 
         {/* Circular Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-200 dark:bg-white/10 border border-slate-200 dark:border-white/10 max-w-5xl mb-px">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mb-6">
           {stats.map((stat, index) => (
             <motion.div
               key={index}
@@ -67,7 +67,7 @@ export const SocialProofSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="p-8 bg-background dark:bg-grey900 flex flex-col md:flex-row items-center gap-8"
+              className="p-8 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl shadow-xl flex flex-col md:flex-row items-center gap-8 hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all"
             >
               {/* SVG Ring Progress */}
               <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
@@ -108,25 +108,25 @@ export const SocialProofSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Small stats cards — carrossel horizontal no mobile */}
+        {/* Small stats cards */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-3 -mx-4 px-4 pb-2
-                     sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible sm:grid sm:grid-cols-3 sm:gap-px
-                     sm:bg-slate-200 sm:dark:bg-white/10 sm:border sm:border-slate-200 sm:dark:border-white/10 max-w-5xl"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl"
         >
           {secondaryStats.map((item, index) => {
             const Icon = item.icon;
             return (
-              <motion.div key={index} variants={itemVariants} className="snap-start shrink-0 w-[80%] xs:w-[65%] sm:w-auto border border-slate-200 dark:border-white/10 sm:border-0 p-5 bg-background dark:bg-grey900 flex gap-4 items-start">
-                <Icon className="w-5 h-5 text-forestGreen dark:text-limeGreen shrink-0 mt-0.5" />
+              <motion.div key={index} variants={itemVariants} className="p-6 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl shadow-xl flex gap-4 items-start hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all">
+                <div className="p-2.5 rounded-2xl bg-forestGreen/5 dark:bg-limeGreen/10 border border-forestGreen/10 dark:border-limeGreen/20 shrink-0">
+                  <Icon className="w-5 h-5 text-forestGreen dark:text-limeGreen" />
+                </div>
                 <div>
                   <div className="text-lg font-mono font-semibold text-foreground dark:text-white">{item.value}</div>
                   <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-0.5">{item.label}</h4>
-                  <p className="text-[11px] text-slate-600 dark:text-slate-500 mt-1 leading-normal">{item.desc}</p>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1 leading-normal">{item.desc}</p>
                 </div>
               </motion.div>
             );

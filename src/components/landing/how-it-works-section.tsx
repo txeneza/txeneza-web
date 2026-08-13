@@ -9,26 +9,26 @@ export const HowItWorksSection: React.FC = () => {
   const steps = [
     {
       num: "01",
-      title: "Fotografar",
-      desc: "Abra a aplicação e capture uma foto nítida do ponto de lixo acumulado. A imagem ajuda a verificar as dimensões e o tipo de resíduo.",
+      title: "Fotografar & IA",
+      desc: "Capture a foto do resíduo. A visão computacional via Inteligência Artificial (Google Gemini) classifica automaticamente a tipologia e o nível de gravidade.",
       icon: Camera,
     },
     {
       num: "02",
-      title: "Localizar",
-      desc: "O GPS do seu telemóvel deteta a localização geográfica exacta de forma automática. Não precisa de digitar moradas ou saber nomes de ruas.",
+      title: "Localizar (Offline-First)",
+      desc: "Georreferenciação automática via GPS. Graças à arquitetura Offline-First, a denúncia é guardada sem perda de dados mesmo em conectividade intermitente.",
       icon: MapPin,
     },
     {
       num: "03",
-      title: "Classificar",
-      desc: "Indique o nível de gravidade aproximado (pequeno, médio ou crítico) para ajudar as equipas de limpeza a priorizar as ocorrências.",
+      title: "Assistente Xeni & Status",
+      desc: "O assistente conversacional Xeni orienta o cidadão. O mapa de calor georreferenciado (KDE) direciona a ocorrência à equipa municipal adequada.",
       icon: Sliders,
     },
     {
       num: "04",
-      title: "Confirmar",
-      desc: "Submeta o relatório. A ocorrência é guardada, aparece instantaneamente no mapa público e fica pronta para análise municipal.",
+      title: "Verificação Fotográfica",
+      desc: "Após a recolha, o ciclo encerra com a verificação fotográfica antes/depois, garantindo transparência, credibilidade e responsabilização municipal.",
       icon: CheckCircle,
     },
   ];
@@ -44,7 +44,7 @@ export const HowItWorksSection: React.FC = () => {
   };
 
   return (
-    <section id="funcionamento" className="py-20 md:py-28 bg-background dark:bg-grey900 text-foreground dark:text-grey50">
+    <section id="funcionamento" className="py-20 md:py-28 bg-transparent text-foreground dark:text-grey50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
@@ -60,15 +60,13 @@ export const HowItWorksSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Steps — carrossel horizontal no mobile, grelha no desktop */}
+        {/* Steps */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-3 -mx-4 px-4 pb-2
-                     sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-px
-                     sm:bg-slate-200 sm:dark:bg-white/10 sm:border sm:border-slate-200 sm:dark:border-white/10"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {steps.map((step, index) => {
             const Icon = step.icon;
@@ -76,12 +74,17 @@ export const HowItWorksSection: React.FC = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="snap-start shrink-0 w-[70%] xs:w-[60%] sm:w-auto border border-slate-200 dark:border-white/10 sm:border-0 bg-background dark:bg-grey900 p-6 flex flex-col justify-between"
+                className="bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl p-6 sm:p-7 shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all relative overflow-hidden group"
               >
+                {/* Accent top line on hover */}
+                <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-limeGreen to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
                 <div>
                   <div className="flex justify-between items-start mb-6">
-                    <Icon className="w-6 h-6 text-forestGreen dark:text-limeGreen" />
-                    <span className="font-mono text-xs text-slate-400 dark:text-slate-600">
+                    <div className="p-3 rounded-2xl bg-forestGreen/5 dark:bg-limeGreen/10 border border-forestGreen/10 dark:border-limeGreen/20">
+                      <Icon className="w-6 h-6 text-forestGreen dark:text-limeGreen" />
+                    </div>
+                    <span className="font-mono text-xs font-bold text-slate-400 dark:text-slate-500">
                       {step.num}/04
                     </span>
                   </div>

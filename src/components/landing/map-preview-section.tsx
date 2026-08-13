@@ -53,34 +53,34 @@ export const MapPreviewSection: React.FC = () => {
   ];
 
   return (
-    <section id="mapa-preview" className="py-20 md:py-28 bg-slate-50 dark:bg-grey900/50 text-foreground dark:text-grey50 relative border-y border-slate-100 dark:border-slate-800/50">
+    <section id="mapa-preview" className="py-20 md:py-28 bg-transparent text-foreground dark:text-grey50 relative border-y border-forestGreen/10 dark:border-forestGreen/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Title */}
         <div className="max-w-3xl mb-12 md:mb-16">
           <span className="font-mono text-[11px] tracking-[0.2em] text-forestGreen dark:text-limeGreen uppercase">
-            03 · Visualização de Dados
+            03 · Visualização em Tempo Real
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
-            O que a <BrandName /> mostra
+            O Mapa Público de Ocorrências
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 mt-4 text-sm sm:text-base leading-relaxed">
-            Consulte as ocorrências em tempo real. A plataforma oferece duas formas complementares de visualizar a gravidade do problema na Beira: marcadores detalhados e mapas térmicos.
+          <p className="text-slate-600 dark:text-slate-400 mt-4 text-base sm:text-lg leading-relaxed">
+            Uma ferramenta de transparência onde o município e os munícipes acompanham a geolocalização e gravidade de cada denúncia efetuada.
           </p>
         </div>
 
-        {/* Mode Toggle Controls */}
-        <div className="flex mb-8">
-          <div className="inline-flex border border-slate-200 dark:border-white/15">
+        {/* Mode Selector Toggle */}
+        <div className="flex justify-start mb-8">
+          <div className="inline-flex bg-white/80 dark:bg-forestGreen/20 backdrop-blur-xl p-1.5 rounded-2xl border border-forestGreen/15 dark:border-forestGreen/30 shadow-md">
             <button
               onClick={() => {
                 setMapMode("markers");
                 setSelectedPin(null);
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl transition-all ${
                 mapMode === "markers"
-                  ? "bg-forestGreen text-white"
-                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  ? "bg-limeGreen text-forestGreen shadow-md font-bold"
+                  : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               <MapPin className="w-4 h-4" />
@@ -91,10 +91,10 @@ export const MapPreviewSection: React.FC = () => {
                 setMapMode("heatmap");
                 setSelectedPin(null);
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold transition-colors border-l border-slate-200 dark:border-white/15 ${
+              className={`flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl transition-all ${
                 mapMode === "heatmap"
-                  ? "bg-forestGreen text-white"
-                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  ? "bg-limeGreen text-forestGreen shadow-md font-bold"
+                  : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               <Flame className="w-4 h-4" />
@@ -108,7 +108,7 @@ export const MapPreviewSection: React.FC = () => {
           
           {/* Left Description Column */}
           <div className="lg:col-span-4 flex flex-col justify-between gap-6">
-            <div className="p-6 sm:p-8 bg-background dark:bg-grey900 border border-slate-200 dark:border-white/10 flex flex-col gap-5">
+            <div className="p-6 sm:p-8 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl shadow-xl flex flex-col gap-5">
               <span className="font-mono flex items-center gap-2 text-[11px] font-medium tracking-wide uppercase text-forestGreen dark:text-limeGreen">
                 <Sparkles className="w-3.5 h-3.5" />
                 Destaque do sistema
@@ -138,41 +138,41 @@ export const MapPreviewSection: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="flex flex-col gap-3"
                   >
-                    <h3 className="text-xl font-semibold text-foreground dark:text-white">Zonas Críticas</h3>
+                    <h3 className="text-xl font-semibold text-foreground dark:text-white">Zonas Críticas (Estimativa de Kernel - KDE)</h3>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                      O algoritmo analisa a densidade e proximidade dos reportes, gerando &ldquo;manchas térmicas&rdquo; coloridas. Quanto mais denso e severo o lixo acumulado, mais quente fica a cor no mapa.
+                      O algoritmo utiliza <strong className="text-foreground dark:text-white font-semibold">Estimativa de Densidade de Kernel (KDE)</strong> e <strong className="text-foreground dark:text-white font-semibold">clustering espacial</strong> para analisar a densidade e proximidade dos reportes, gerando &ldquo;manchas térmicas&rdquo; para priorização municipal.
                     </p>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <div className="h-px bg-slate-200 dark:bg-white/10 my-1" />
+              <div className="h-px bg-forestGreen/10 dark:bg-white/10 my-1" />
 
               <div className="flex flex-col gap-2.5">
                 <div className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300">
-                  <div className="w-2 h-2 bg-red-600 shrink-0" />
+                  <div className="w-2 h-2 bg-red-600 rounded-full shrink-0" />
                   <span>Crítico (Ações imediatas CMB)</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300">
-                  <div className="w-2 h-2 bg-orange-500 shrink-0" />
+                  <div className="w-2 h-2 bg-orange-500 rounded-full shrink-0" />
                   <span>Alta gravidade (Programação semanal)</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300">
-                  <div className="w-2 h-2 bg-amber-500 shrink-0" />
+                  <div className="w-2 h-2 bg-amber-500 rounded-full shrink-0" />
                   <span>Média gravidade (Monitorização)</span>
                 </div>
               </div>
             </div>
 
             {/* Micro Interaction tip */}
-            <div className="hidden lg:flex items-center gap-3 p-5 bg-forestGreen/[0.06] dark:bg-limeGreen/5 border border-forestGreen/15 dark:border-limeGreen/15 text-xs text-slate-600 dark:text-slate-300">
+            <div className="hidden lg:flex items-center gap-3 p-5 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-2xl text-xs text-slate-600 dark:text-slate-300">
               <Eye className="w-4 h-4 text-forestGreen dark:text-limeGreen shrink-0" />
               <span>Experimente alterar as abas de visualização acima para ver a simulação dinâmica.</span>
             </div>
           </div>
 
           {/* Right Simulated Map Dashboard */}
-          <div className="lg:col-span-8 bg-background dark:bg-slate-950 border border-slate-200 dark:border-white/10 overflow-hidden flex flex-col h-[480px] sm:h-[520px] relative">
+          <div className="lg:col-span-8 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[480px] sm:h-[520px] relative">
 
             {/* Map Header Panel */}
             <div className="px-5 py-3.5 bg-slate-50 dark:bg-grey900 border-b border-slate-200 dark:border-white/10 flex items-center justify-between text-xs font-medium">

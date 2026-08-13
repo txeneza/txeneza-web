@@ -28,7 +28,7 @@ export const InstitutionalSection: React.FC = () => {
   ];
 
   return (
-    <section id="ods" className="relative overflow-hidden py-20 md:py-28 bg-background dark:bg-grey900 text-foreground dark:text-grey50">
+    <section id="ods" className="relative overflow-hidden py-20 md:py-28 bg-transparent text-foreground dark:text-grey50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
 
@@ -45,11 +45,13 @@ export const InstitutionalSection: React.FC = () => {
             </p>
 
             {/* Disclaimer Alert */}
-            <div className="p-5 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 flex gap-4 items-start">
-              <Landmark className="w-5 h-5 text-forestGreen dark:text-limeGreen shrink-0 mt-0.5" />
+            <div className="p-6 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl shadow-xl flex gap-4 items-start">
+              <div className="p-2.5 rounded-2xl bg-forestGreen/5 dark:bg-limeGreen/10 border border-forestGreen/10 dark:border-limeGreen/20 shrink-0">
+                <Landmark className="w-5 h-5 text-forestGreen dark:text-limeGreen" />
+              </div>
               <div className="text-xs">
                 <h4 className="font-semibold text-foreground dark:text-slate-200">Delimitação de integração</h4>
-                <p className="text-slate-600 dark:text-slate-500 mt-1 leading-relaxed">
+                <p className="text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
                   Clarificamos que esta plataforma actua de forma independente como protótipo académico. Não possui integração automática formal instalada nos sistemas internos da <strong>CMB</strong>, <strong>AMOR</strong> ou <strong>Kolekt</strong>, servindo como uma proposta tecnológica viável para futura adopção.
                 </p>
               </div>
@@ -57,11 +59,12 @@ export const InstitutionalSection: React.FC = () => {
 
             {/* Entities list */}
             <div className="flex flex-col gap-2.5">
-              <span className="font-mono text-[10px] font-medium text-slate-500 uppercase tracking-widest block">Entidades referenciadas</span>
-              <div className="flex flex-col divide-y divide-slate-200 dark:divide-white/10 border-y border-slate-200 dark:border-white/10">
+              <span className="font-mono text-[10px] font-medium text-slate-500 uppercase tracking-widest block">Entidades e Atores Referenciados</span>
+              <div className="flex flex-col divide-y divide-forestGreen/10 dark:divide-white/10 border-y border-forestGreen/10 dark:border-white/10">
                 {[
-                  "CMB — Conselho Municipal da Beira",
-                  "AMOR — Associação Moçambicana de Reciclagem",
+                  "CMB — Conselho Municipal da Beira (Gestão de Resíduos)",
+                  "SASB — Serviço Autónomo de Saneamento da Beira (Drenagem)",
+                  "AMOR — Associação Moçambicana de Reciclagem (Ecopontos)",
                   "Kolekt — Plataforma de Incentivos",
                 ].map((ent, idx) => (
                   <span key={idx} className="py-2.5 text-[13px] font-medium text-slate-600 dark:text-slate-400">
@@ -70,19 +73,21 @@ export const InstitutionalSection: React.FC = () => {
                 ))}
               </div>
             </div>
+
+            {/* Author Credit */}
+            <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 pt-2 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-limeGreen rounded-full" />
+              <span>Investigação desenvolvida por <strong>Paulo Babucho Issaca Tivane</strong> — <strong>UNIZA 2026</strong></span>
+            </div>
           </div>
 
           {/* Right Column: ODS blocks */}
           <div className="lg:col-span-7 flex flex-col">
-            <span className="font-mono text-[11px] font-medium tracking-widest text-forestGreen dark:text-limeGreen uppercase block px-6 py-4 bg-background dark:bg-grey900 border border-b-0 border-slate-200 dark:border-white/10">
+            <span className="font-mono text-[11px] font-medium tracking-widest text-forestGreen dark:text-limeGreen uppercase block px-6 py-4 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-b-0 border-forestGreen/15 dark:border-forestGreen/30 rounded-t-3xl shadow-sm">
               Alinhamento com Objectivos da ONU (ODS)
             </span>
 
-            <div
-              className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-3 -mx-4 px-4 pb-2 pt-2
-                         sm:mx-0 sm:px-0 sm:pb-0 sm:pt-0 sm:overflow-visible sm:flex-col sm:gap-px
-                         sm:bg-slate-200 sm:dark:bg-white/10 sm:border sm:border-slate-200 sm:dark:border-white/10"
-            >
+            <div className="flex flex-col gap-4 p-6 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-b-3xl shadow-xl">
               {odsList.map((ods, idx) => {
                 const Icon = ods.icon;
                 return (
@@ -92,10 +97,10 @@ export const InstitutionalSection: React.FC = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: idx * 0.1 }}
-                    className="snap-start shrink-0 w-[85%] xs:w-[75%] sm:w-auto border border-slate-200 dark:border-white/10 sm:border-0 p-6 bg-background dark:bg-grey900 flex gap-5 items-start"
+                    className="p-6 bg-white/50 dark:bg-forestGreen/20 rounded-2xl border border-forestGreen/10 dark:border-white/10 flex gap-5 items-start hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all"
                   >
                   {/* Badge ODS */}
-                  <div className="w-12 h-12 border border-forestGreen/30 dark:border-limeGreen/30 flex flex-col items-center justify-center shrink-0 text-forestGreen dark:text-limeGreen font-mono">
+                  <div className="w-12 h-12 rounded-xl border border-forestGreen/30 dark:border-limeGreen/30 bg-forestGreen/5 dark:bg-limeGreen/10 flex flex-col items-center justify-center shrink-0 text-forestGreen dark:text-limeGreen font-mono">
                     <span className="text-lg font-semibold leading-none">{ods.num}</span>
                     <span className="text-[7px] uppercase tracking-wider font-medium mt-0.5">ODS</span>
                   </div>
