@@ -20,7 +20,7 @@ export function useLogin() {
       await login(email, password);
       router.push("/admin");
     } catch (err: any) {
-      setError(err.message || "Credenciais de acesso incorretas.");
+      setError(err?.message || "Ocorreu um erro ao efetuar login. Por favor, tente novamente.");
     } finally {
       setLoading(false);
     }

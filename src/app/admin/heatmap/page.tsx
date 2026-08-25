@@ -7,7 +7,7 @@ import { getBeiraHeatmapStats } from "@/features/map/beira-heatmap.data";
 import { Flame, ShieldCheck, Radio, MapPin, AlertTriangle } from "lucide-react";
 
 export default function HeatmapPage() {
-  const { heatmapData, fetchMapData } = useMapStore();
+  const { heatmapData, markers, fetchMapData } = useMapStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -20,8 +20,43 @@ export default function HeatmapPage() {
     }
   }, [fetchMapData, mounted]);
 
-  const stats = useMemo(() => getBeiraHeatmapStats(), []);
-  const totalPoints = heatmapData.length || stats.totalPoints;
+  // Métricas calculadas dinamicamente com base nas denúncias reais registadas no sistema
+  const stats = useMemo(() => {
+    if (markers && markers.length > 0) {
+      const bairrosSet = new Set<string>();
+      const bairroWeights: Record<string, number> = {};
+
+      markers.forEach((m) => {
+        const b = m.bairro || "Outro";
+        const grav = (m.gravidade as string)?.toLowerCase();
+        const gravWeight = grav === "critica" || grav === "crítico" ? 3 : grav === "alta" ? 2 : 1;
+        bairroWeights[b] = (bairroWeights[b] || 0) + gravWeight;
+      });
+
+      let topBairro = "Nenhum";
+      let maxW = -1;
+      Object.entries(bairroWeights).forEach(([bairro, w]) => {
+        if (w > maxW) {
+          maxW = w;
+          topBairro = bairro;
+        }
+      });
+
+      return {
+        totalPoints: markers.length,
+        bairrosCount: bairrosSet.size,
+        criticalZone: topBairro,
+      };
+    }
+
+    // Se o banco estiver sem registos, recorre às estatísticas base do estudo de caso da Beira
+    const base = getBeiraHeatmapStats();
+    return {
+      totalPoints: heatmapData.length || base.totalPoints,
+      bairrosCount: base.bairrosCount,
+      criticalZone: base.criticalZone,
+    };
+  }, [markers, heatmapData]);
 
   if (!mounted) {
     return null;
@@ -58,7 +93,7 @@ export default function HeatmapPage() {
         <MetricCard
           icon={<Radio className="w-4 h-4" />}
           label="Pontos monitorizados"
-          value={totalPoints.toString()}
+          value={stats.totalPoints.toString()}
         />
         <MetricCard
           icon={<MapPin className="w-4 h-4" />}
