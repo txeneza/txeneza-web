@@ -1,7 +1,10 @@
 // beira-heatmap.data.ts
 // Superfície de densidade estimada de resíduos sólidos urbanos para o estudo de caso da Cidade da Beira.
-// Os pontos são gerados de forma DETERMINÍSTICA (PRNG semeado) a partir de aglomerados
-// ancorados em bairros reais da Beira, para garantir estabilidade entre SSR/CSR e métricas consistentes.
+// Deriva os aglomerados a partir da lista canónica de bairros em src/core/geo/beira-bairros.ts.
+
+import { BAIRROS_BEIRA, findClosestBairro } from "@/core/geo/beira-bairros";
+
+export { findClosestBairro };
 
 export interface HeatPoint {
   lat: number;
@@ -22,22 +25,34 @@ export interface BeiraBairro {
   count: number;
 }
 
-// Aglomerados ancorados na geografia real da Beira (cidade costeira, centro ~ -19.83 / 34.84).
-// Munhava (zona industrial/informal a NO) e a Baixa/Mercado Central concentram maior geração
-// de resíduos; a orla do Macúti, mais turística, apresenta densidade inferior.
-export const BEIRA_BAIRROS: BeiraBairro[] = [
-  { name: "Munhava Central", center: [-19.8172, 34.8486], weight: 1.0,  spread: 0.0075, count: 14 },
-  { name: "Baixa / Mercado",center: [-19.8295, 34.8385], weight: 0.95, spread: 0.0050, count: 12 },
-  { name: "Manga Loforte",   center: [-19.7806, 34.8821], weight: 0.78, spread: 0.0090, count: 10 },
-  { name: "Goto",           center: [-19.8312, 34.8442], weight: 0.72, spread: 0.0060, count: 8  },
-  { name: "Chaimite",       center: [-19.8342, 34.8362], weight: 0.70, spread: 0.0055, count: 8  },
-  { name: "Esturro",        center: [-19.8250, 34.8560], weight: 0.64, spread: 0.0060, count: 7  },
-  { name: "Matacuane",      center: [-19.8318, 34.8583], weight: 0.60, spread: 0.0050, count: 6  },
-  { name: "Maraza",         center: [-19.8080, 34.8685], weight: 0.58, spread: 0.0070, count: 6  },
-  { name: "Palmeiras",      center: [-19.8441, 34.8610], weight: 0.54, spread: 0.0055, count: 5  },
-  { name: "Ponta-Gêa",      center: [-19.8446, 34.8472], weight: 0.48, spread: 0.0045, count: 5  },
-  { name: "Macúti",         center: [-19.8435, 34.8928], weight: 0.40, spread: 0.0060, count: 5  },
-];
+// Deriva os aglomerados de estimativa térmica diretamente da lista canónica BAIRROS_BEIRA
+export const BEIRA_BAIRROS: BeiraBairro[] = BAIRROS_BEIRA
+  .filter((b): b is { nome: string; center: [number, number] } => !!b.center)
+  .map((b) => {
+    let weight = 0.5;
+    let count = 6;
+    const spread = 0.0060;
+
+    if (b.nome.includes("Munhava")) { weight = 1.0; count = 14; }
+    else if (b.nome.includes("Baixa")) { weight = 0.95; count = 12; }
+    else if (b.nome.includes("Manga")) { weight = 0.78; count = 10; }
+    else if (b.nome.includes("Goto")) { weight = 0.72; count = 8; }
+    else if (b.nome.includes("Chaimite")) { weight = 0.70; count = 8; }
+    else if (b.nome.includes("Esturro")) { weight = 0.64; count = 7; }
+    else if (b.nome.includes("Matacuane")) { weight = 0.60; count = 6; }
+    else if (b.nome.includes("Maraza")) { weight = 0.58; count = 6; }
+    else if (b.nome.includes("Palmeiras")) { weight = 0.54; count = 5; }
+    else if (b.nome.includes("Ponta-Gêa")) { weight = 0.48; count = 5; }
+    else if (b.nome.includes("Macúti")) { weight = 0.40; count = 5; }
+
+    return {
+      name: b.nome,
+      center: b.center,
+      weight,
+      spread,
+      count,
+    };
+  });
 
 // PRNG determinístico (mulberry32) — mesma sequência em servidor e cliente.
 function mulberry32(seed: number): () => number {
@@ -99,28 +114,10 @@ export interface BeiraHeatmapStats {
 export function getBeiraHeatmapStats(extraPoints = 0): BeiraHeatmapStats {
   const totalPoints =
     BEIRA_BAIRROS.reduce((acc, b) => acc + b.count, 0) + extraPoints;
-  const criticalZone = [...BEIRA_BAIRROS].sort((a, b) => b.weight - a.weight)[0].name;
+  const criticalZone = [...BEIRA_BAIRROS].sort((a, b) => b.weight - a.weight)[0]?.name || "Munhava Central";
   return {
     totalPoints,
     bairrosCount: BEIRA_BAIRROS.length,
     criticalZone,
   };
-}
-
-/** Encontra o bairro da Beira mais próximo de um par de coordenadas (lat, lng) */
-export function findClosestBairro(lat: number, lng: number): string {
-  let closestName = "Outro";
-  let minSquareDist = Infinity;
-
-  for (const b of BEIRA_BAIRROS) {
-    const dLat = lat - b.center[0];
-    const dLng = lng - b.center[1];
-    const distSq = dLat * dLat + dLng * dLng;
-    if (distSq < minSquareDist) {
-      minSquareDist = distSq;
-      closestName = b.name;
-    }
-  }
-
-  return closestName;
 }
