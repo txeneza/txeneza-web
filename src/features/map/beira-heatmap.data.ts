@@ -106,3 +106,21 @@ export function getBeiraHeatmapStats(extraPoints = 0): BeiraHeatmapStats {
     criticalZone,
   };
 }
+
+/** Encontra o bairro da Beira mais próximo de um par de coordenadas (lat, lng) */
+export function findClosestBairro(lat: number, lng: number): string {
+  let closestName = "Outro";
+  let minSquareDist = Infinity;
+
+  for (const b of BEIRA_BAIRROS) {
+    const dLat = lat - b.center[0];
+    const dLng = lng - b.center[1];
+    const distSq = dLat * dLat + dLng * dLng;
+    if (distSq < minSquareDist) {
+      minSquareDist = distSq;
+      closestName = b.name;
+    }
+  }
+
+  return closestName;
+}

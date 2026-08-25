@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { HeatmapView } from "@/components/map/heatmap-view";
 import { useMapStore } from "@/features/map/map.store";
-import { getBeiraHeatmapStats } from "@/features/map/beira-heatmap.data";
+import { getBeiraHeatmapStats, findClosestBairro } from "@/features/map/beira-heatmap.data";
 import { Flame, ShieldCheck, Radio, MapPin, AlertTriangle } from "lucide-react";
 
 export default function HeatmapPage() {
@@ -27,7 +27,12 @@ export default function HeatmapPage() {
       const bairroWeights: Record<string, number> = {};
 
       markers.forEach((m) => {
-        const b = m.bairro || "Outro";
+        const b = m.bairro && m.bairro !== "Outro" && m.bairro.trim() !== ""
+          ? m.bairro
+          : findClosestBairro(m.latitude, m.longitude);
+        
+        bairrosSet.add(b);
+
         const grav = (m.gravidade as string)?.toLowerCase();
         const gravWeight = grav === "critica" || grav === "crítico" ? 3 : grav === "alta" ? 2 : 1;
         bairroWeights[b] = (bairroWeights[b] || 0) + gravWeight;
