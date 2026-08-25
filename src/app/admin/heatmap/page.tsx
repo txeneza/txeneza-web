@@ -3,7 +3,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { HeatmapView } from "@/components/map/heatmap-view";
 import { useMapStore } from "@/features/map/map.store";
-import { getBeiraHeatmapStats, findClosestBairro } from "@/features/map/beira-heatmap.data";
+import { getBeiraHeatmapStats } from "@/features/map/beira-heatmap.data";
+import { findClosestBairro } from "@/core/geo/beira-bairros";
 import { Flame, ShieldCheck, Radio, MapPin, AlertTriangle } from "lucide-react";
 
 export default function HeatmapPage() {

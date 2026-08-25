@@ -26,17 +26,17 @@ export interface BeiraBairro {
 // Munhava (zona industrial/informal a NO) e a Baixa/Mercado Central concentram maior geração
 // de resíduos; a orla do Macúti, mais turística, apresenta densidade inferior.
 export const BEIRA_BAIRROS: BeiraBairro[] = [
-  { name: "Munhava",        center: [-19.8090, 34.8470], weight: 1.0,  spread: 0.0075, count: 14 },
-  { name: "Baixa / Mercado",center: [-19.8340, 34.8390], weight: 0.95, spread: 0.0050, count: 12 },
-  { name: "Manga",          center: [-19.8010, 34.8230], weight: 0.78, spread: 0.0090, count: 10 },
-  { name: "Goto",           center: [-19.8170, 34.8360], weight: 0.72, spread: 0.0060, count: 8  },
-  { name: "Chaimite",       center: [-19.8380, 34.8460], weight: 0.70, spread: 0.0055, count: 8  },
+  { name: "Munhava Central", center: [-19.8172, 34.8486], weight: 1.0,  spread: 0.0075, count: 14 },
+  { name: "Baixa / Mercado",center: [-19.8295, 34.8385], weight: 0.95, spread: 0.0050, count: 12 },
+  { name: "Manga Loforte",   center: [-19.7806, 34.8821], weight: 0.78, spread: 0.0090, count: 10 },
+  { name: "Goto",           center: [-19.8312, 34.8442], weight: 0.72, spread: 0.0060, count: 8  },
+  { name: "Chaimite",       center: [-19.8342, 34.8362], weight: 0.70, spread: 0.0055, count: 8  },
   { name: "Esturro",        center: [-19.8250, 34.8560], weight: 0.64, spread: 0.0060, count: 7  },
-  { name: "Matacuane",      center: [-19.8300, 34.8520], weight: 0.60, spread: 0.0050, count: 6  },
-  { name: "Maraza",         center: [-19.7960, 34.8320], weight: 0.58, spread: 0.0070, count: 6  },
-  { name: "Palmeiras",      center: [-19.8150, 34.8290], weight: 0.54, spread: 0.0055, count: 5  },
-  { name: "Ponta-Gêa",      center: [-19.8430, 34.8380], weight: 0.48, spread: 0.0045, count: 5  },
-  { name: "Macúti",         center: [-19.8270, 34.8720], weight: 0.40, spread: 0.0060, count: 5  },
+  { name: "Matacuane",      center: [-19.8318, 34.8583], weight: 0.60, spread: 0.0050, count: 6  },
+  { name: "Maraza",         center: [-19.8080, 34.8685], weight: 0.58, spread: 0.0070, count: 6  },
+  { name: "Palmeiras",      center: [-19.8441, 34.8610], weight: 0.54, spread: 0.0055, count: 5  },
+  { name: "Ponta-Gêa",      center: [-19.8446, 34.8472], weight: 0.48, spread: 0.0045, count: 5  },
+  { name: "Macúti",         center: [-19.8435, 34.8928], weight: 0.40, spread: 0.0060, count: 5  },
 ];
 
 // PRNG determinístico (mulberry32) — mesma sequência em servidor e cliente.
