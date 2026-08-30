@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyAdminSession } from "@/core/server-auth";
+import { findClosestBairro } from "@/core/geo/beira-bairros";
 
 /**
  * Obtém todas as ocorrências cadastradas no banco de dados.
  *
- * Nota de privacidade: o nome do cidadão que reportou (reportedBy) só é
- * incluído na resposta quando o pedido vem de uma sessão de administrador
- * autenticada. Para pedidos públicos (ex.: o mapa público /map), este
- * campo é omitido para proteger a identidade de quem denuncia.
+ * Nota de privacidade: o nome do cidadão que reportou (reportedBy) e seu
+ * bairro de residência (reporterBairro) só são incluídos na resposta quando
+ * o pedido vem de uma sessão de administrador autenticada. Para pedidos
+ * públicos (ex.: o mapa público /map), estes campos são omitidos.
  */
 export async function GET(request: Request) {
   try {
@@ -28,15 +29,15 @@ export async function GET(request: Request) {
 
     // Mapeia do banco de dados para a interface Occurrence do frontend
     const serialized = databaseOccurrences.map((o) => {
-      // Mapeamento de status:
-      // - pendente ou reaberta -> "pendente"
-      // - em_analise -> "em-progresso"
-      // - resolvida -> "resolvido"
-      // - rejeitada -> "rejeitado"
       let status: "pendente" | "em-progresso" | "resolvido" | "rejeitado" = "pendente";
       if ((o.estado as string) === "em_analise") status = "em-progresso";
       else if ((o.estado as string) === "resolvida") status = "resolvido";
       else if ((o.estado as string) === "rejeitada") status = "rejeitado";
+
+      const lat = Number(o.latitude);
+      const lng = Number(o.longitude);
+      const rawBairro = (o as any).bairro as string | undefined;
+      const occurrenceBairro = rawBairro && rawBairro.trim() !== "" ? rawBairro : findClosestBairro(lat, lng);
 
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://qixdkjsdurbzmpxlimdy.supabase.co";
       const imageUrl = o.fotografias[0]?.caminho_ficheiro
@@ -48,13 +49,14 @@ export async function GET(request: Request) {
         title: `Ocorrência de ${o.categoria.nome}`,
         description: o.descricao || "",
         category: o.categoria.nome,
-        latitude: Number(o.latitude),
-        longitude: Number(o.longitude),
-        bairro: o.utilizador.bairro,
+        latitude: lat,
+        longitude: lng,
+        bairro: occurrenceBairro,
         status,
         createdAt: o.data_hora_registo.toISOString(),
         updatedAt: o.data_hora_sync ? o.data_hora_sync.toISOString() : undefined,
         reportedBy: session ? o.utilizador.nome : undefined,
+        reporterBairro: session ? o.utilizador.bairro : undefined,
         imageUrl,
         gravidade: o.gravidade,
       };

@@ -113,6 +113,7 @@ model Ocorrencia {
   id_classificacao   String?           @db.Uuid
 
   descricao          String?
+  bairro             String?           @db.VarChar(80)
   latitude           Decimal           @db.Decimal(10, 7)
   longitude          Decimal           @db.Decimal(10, 7)
   gravidade          Gravidade

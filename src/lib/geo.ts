@@ -1,48 +1,36 @@
 import { polygon, point } from "@turf/helpers";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 
-// Limites geográficos da Cidade da Beira, Moçambique
+// Limites geográficos da Cidade da Beira, Moçambique (englobando todos os 31 bairros oficiais)
 export const BEIRA_BOUNDS = {
-  minLat: -19.9000,
-  maxLat: -19.7500,
-  minLng: 34.8000,
-  maxLng: 34.9500,
+  minLat: -19.9200,
+  maxLat: -19.6800,
+  minLng: 34.7600,
+  maxLng: 34.9600,
 };
 
 /**
- * Polígono aproximado da área urbana da Beira (vértices em [lat, lng]).
- *
- * NOTA IMPORTANTE: isto é uma aproximação construída a partir dos centros
- * conhecidos dos bairros (ver core/geo/beira-bairros.ts) e da forma geral da
- * península visível no mapa — NÃO é um levantamento oficial/cadastral da
- * Beira. Corta os cantos mais claramente oceânicos (a oeste de Ponta-Gêa e a
- * noroeste, junto à baía de Munhava) que uma simples caixa retangular
- * incluiria incorretamente, mas mantém-se generoso o suficiente para não
- * bloquear bairros legítimos perto da fronteira.
- *
- * Por isso mesmo, o formulário de pontos de recolha nunca bloqueia
- * definitivamente um ponto fora deste polígono — apenas avisa e pede
- * confirmação explícita do admin (ver isWithinBeira + o fluxo no
- * collection-point-form.tsx). Se/quando houver acesso a um polígono oficial
- * (ex: câmara municipal, OSM com melhor qualidade local), basta substituir
- * os vértices abaixo.
+ * Polígono abrangente da área municipal da Cidade da Beira (vértices em [lat, lng]).
+ * Cobre desde Nhangau e Inhamizua a norte até Ponta Gêa a sul, e Macuti a leste.
  */
 const BEIRA_POLYGON_LATLNG: [number, number][] = [
-  [-19.800, 34.815],
-  [-19.790, 34.835],
-  [-19.795, 34.860],
-  [-19.815, 34.885],
-  [-19.840, 34.880],
-  [-19.855, 34.850],
-  [-19.845, 34.828],
-  [-19.815, 34.812],
-  [-19.800, 34.815], // fecha o polígono (primeiro vértice repetido)
+  [-19.680, 34.880], // extremo norte (Nhangau / Nhangoma)
+  [-19.720, 34.930], // nordeste
+  [-19.760, 34.930],
+  [-19.825, 34.920], // leste (Macuti / Estoril)
+  [-19.855, 34.910],
+  [-19.890, 34.880], // sul (Ponta Gêa / Porto / Foz do Púngoè)
+  [-19.895, 34.835],
+  [-19.870, 34.800],
+  [-19.820, 34.780], // oeste
+  [-19.740, 34.785], // noroeste (Muave / Chingussura)
+  [-19.680, 34.880], // fecha o polígono
 ];
 
 const BEIRA_POLYGON = polygon([BEIRA_POLYGON_LATLNG.map(([lat, lng]) => [lng, lat])]);
 
 /**
- * Valida se um par de coordenadas está dentro do polígono da cidade da Beira.
+ * Valida se um par de coordenadas está dentro dos limites da cidade da Beira.
  */
 export function isWithinBeira(latitude: number, longitude: number): boolean {
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return false;
@@ -50,16 +38,12 @@ export function isWithinBeira(latitude: number, longitude: number): boolean {
 }
 
 // Faixas de valores plausíveis para latitude/longitude na região da Beira —
-// usadas apenas para detetar a troca latitude↔longitude, não para validar
-// se o ponto está dentro da cidade (isso é o isWithinBeira, acima).
-const PLAUSIBLE_LATITUDE_RANGE: [number, number] = [-20.0, -19.6];
-const PLAUSIBLE_LONGITUDE_RANGE: [number, number] = [34.6, 35.1];
+// usadas para detetar a troca acidental latitude ↔ longitude.
+const PLAUSIBLE_LATITUDE_RANGE: [number, number] = [-20.2, -19.5];
+const PLAUSIBLE_LONGITUDE_RANGE: [number, number] = [34.5, 35.2];
 
 /**
- * Deteta o erro clássico de colar/inserir latitude e longitude na ordem
- * trocada: o valor no campo "latitude" parece na verdade uma longitude (e
- * vice-versa). Não decide qual é o valor "certo" — só sinaliza a suspeita,
- * para o formulário oferecer um botão de correção num clique.
+ * Deteta o erro clássico de colar/inserir latitude e longitude na ordem trocada.
  */
 export function detectSwappedCoordinates(latitude: number, longitude: number): boolean {
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return false;

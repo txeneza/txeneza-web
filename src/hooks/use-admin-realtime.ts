@@ -9,6 +9,7 @@ import { useMapStore } from "@/features/map/map.store";
 import { useDashboardStore } from "@/features/dashboard/dashboard.store";
 import { useNotificationsStore } from "@/features/notifications/notifications.store";
 import { Occurrence, OccurrenceStatus } from "@/features/occurrences/occurrences.types";
+import { findClosestBairro } from "@/core/geo/beira-bairros";
 
 export function useAdminRealtime() {
   const [alerts, setAlerts] = useState<LiveAlertPayload[]>([]);
@@ -90,21 +91,26 @@ export function useAdminRealtime() {
           const gravidade = newRow.gravidade || "media";
           const isCritica = gravidade === "critica";
 
+          const lat = Number(newRow.latitude);
+          const lng = Number(newRow.longitude);
+          const occurrenceBairro = newRow.bairro && newRow.bairro.trim() !== "" ? newRow.bairro : findClosestBairro(lat, lng);
+
           const occurrenceObj: Occurrence = {
             id: newRow.id_ocorrencia,
             title: `Nova Denúncia`,
             description: newRow.descricao || "Sem descrição adicional",
             category: "Resíduo",
-            latitude: Number(newRow.latitude),
-            longitude: Number(newRow.longitude),
+            latitude: lat,
+            longitude: lng,
+            bairro: occurrenceBairro,
             status,
             gravidade,
             createdAt: newRow.data_hora_registo || new Date().toISOString(),
           };
 
           const messageText = newRow.descricao
-            ? `Nova denúncia registada (${gravidade}): ${newRow.descricao}`
-            : `Nova denúncia de resíduos registada no sistema.`;
+            ? `Nova denúncia em ${occurrenceBairro} (${gravidade}): ${newRow.descricao}`
+            : `Nova denúncia de resíduos registada no bairro ${occurrenceBairro}.`;
 
           // 1. Adiciona imediatamente à central de notificações (Sino) em 0ms
           useNotificationsStore.getState().addNotification({
@@ -122,7 +128,7 @@ export function useAdminRealtime() {
           triggerLiveAlert({
             id: newRow.id_ocorrencia,
             occurrenceId: newRow.id_ocorrencia,
-            title: "Nova Denúncia Registada",
+            title: `Nova Denúncia · ${occurrenceBairro}`,
             message: messageText,
             gravidade,
             createdAt: newRow.data_hora_registo || new Date().toISOString(),
@@ -178,13 +184,18 @@ export function useAdminRealtime() {
           else if (updatedRow.estado === "resolvida") status = "resolvido";
           else if (updatedRow.estado === "rejeitada") status = "rejeitado";
 
+          const updateLat = Number(updatedRow.latitude);
+          const updateLng = Number(updatedRow.longitude);
+          const updateBairro = updatedRow.bairro && updatedRow.bairro.trim() !== "" ? updatedRow.bairro : findClosestBairro(updateLat, updateLng);
+
           const occurrenceObj: Occurrence = {
             id: updatedRow.id_ocorrencia,
             title: `Ocorrência`,
             description: updatedRow.descricao || "",
             category: "Resíduo",
-            latitude: Number(updatedRow.latitude),
-            longitude: Number(updatedRow.longitude),
+            latitude: updateLat,
+            longitude: updateLng,
+            bairro: updateBairro,
             status,
             gravidade: updatedRow.gravidade || "media",
             createdAt: updatedRow.data_hora_registo || new Date().toISOString(),

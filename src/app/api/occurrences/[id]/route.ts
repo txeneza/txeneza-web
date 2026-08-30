@@ -3,20 +3,22 @@ import { prisma } from "@/lib/prisma";
 import { enviarPush } from "@/features/notifications/push.service";
 import { verifyAdminSession, unauthorizedResponse } from "@/core/server-auth";
 
+import { findClosestBairro } from "@/core/geo/beira-bairros";
+
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
 function serialize(o: any, isAdmin: boolean) {
-  // Mapeamento de status:
-  // - pendente ou reaberta -> "pendente"
-  // - em_analise -> "em-progresso"
-  // - resolvida -> "resolvido"
-  // - rejeitada -> "rejeitado"
   let status: "pendente" | "em-progresso" | "resolvido" | "rejeitado" = "pendente";
   if (o.estado === "em_analise") status = "em-progresso";
   else if (o.estado === "resolvida") status = "resolvido";
   else if (o.estado === "rejeitada") status = "rejeitado";
+
+  const lat = Number(o.latitude);
+  const lng = Number(o.longitude);
+  const rawBairro = (o as any).bairro as string | undefined;
+  const occurrenceBairro = rawBairro && rawBairro.trim() !== "" ? rawBairro : findClosestBairro(lat, lng);
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://qixdkjsdurbzmpxlimdy.supabase.co";
   const imageUrl = o.fotografias[0]?.caminho_ficheiro
@@ -28,13 +30,14 @@ function serialize(o: any, isAdmin: boolean) {
     title: `Ocorrência de ${o.categoria.nome}`,
     description: o.descricao || "",
     category: o.categoria.nome,
-    latitude: Number(o.latitude),
-    longitude: Number(o.longitude),
-    bairro: o.utilizador.bairro,
+    latitude: lat,
+    longitude: lng,
+    bairro: occurrenceBairro,
     status,
     createdAt: o.data_hora_registo.toISOString(),
     updatedAt: o.data_hora_sync ? o.data_hora_sync.toISOString() : undefined,
     reportedBy: isAdmin ? o.utilizador.nome : undefined,
+    reporterBairro: isAdmin ? o.utilizador.bairro : undefined,
     imageUrl,
     gravidade: o.gravidade,
   };

@@ -63,10 +63,20 @@ export const OccurrenceTable: React.FC<OccurrenceTableProps> = ({ occurrences, o
                           {occ.title}
                         </p>
                         {occ.bairro && (
-                          <span className="inline-flex items-center gap-1 text-xs text-grey600 dark:text-grey400 mt-0.5">
-                            <MapPin className="w-3 h-3" />
-                            {occ.bairro}
-                          </span>
+                          <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                            <span className="inline-flex items-center gap-1 text-xs text-grey600 dark:text-grey400 font-medium">
+                              <MapPin className="w-3 h-3 text-forestGreen dark:text-limeGreen shrink-0" />
+                              {occ.bairro}
+                            </span>
+                            {occ.reporterBairro && occ.reporterBairro !== occ.bairro && (
+                              <span
+                                className="text-[10px] text-grey600 dark:text-grey400 bg-grey200/60 dark:bg-grey800/80 px-1.5 py-0.5 rounded font-normal"
+                                title={`Munícipe reside em: ${occ.reporterBairro}`}
+                              >
+                                Morador de {occ.reporterBairro}
+                              </span>
+                            )}
+                          </div>
                         )}
                       </div>
                     </div>

@@ -204,12 +204,17 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
 
       {/* Detalhes */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <DetailRow icon={<Tag className="w-4 h-4" />} label="Categoria" value={occurrence.category} accent />
-        <DetailRow icon={<MapPin className="w-4 h-4" />} label="Bairro" value={occurrence.bairro || "—"} />
+        <DetailRow icon={<MapPin className="w-4 h-4" />} label="Bairro da Ocorrência" value={occurrence.bairro || "—"} />
         <DetailRow
           icon={<User className="w-4 h-4" />}
           label="Reportado por"
-          value={occurrence.reportedBy || "Munícipe"}
+          value={
+            occurrence.reportedBy
+              ? occurrence.reporterBairro
+                ? `${occurrence.reportedBy} · Residente em: ${occurrence.reporterBairro}`
+                : occurrence.reportedBy
+              : "Munícipe"
+          }
         />
         <DetailRow
           icon={<Calendar className="w-4 h-4" />}

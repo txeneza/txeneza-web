@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateCSV } from "@/lib/csv";
 import { verifyAdminSession, unauthorizedResponse } from "@/core/server-auth";
+import { findClosestBairro } from "@/core/geo/beira-bairros";
 
 export async function GET(request: Request) {
   const session = await verifyAdminSession(request);
@@ -13,6 +14,7 @@ export async function GET(request: Request) {
     const data = await prisma.ocorrencia.findMany({
       include: {
         categoria: true,
+        utilizador: true,
       },
       orderBy: { data_hora_registo: "desc" }
     });
@@ -24,14 +26,23 @@ export async function GET(request: Request) {
       else if ((o.estado as string) === "resolvida") status = "resolvido";
       else if ((o.estado as string) === "rejeitada") status = "rejeitado";
 
+      const lat = Number(o.latitude);
+      const lng = Number(o.longitude);
+      const rawBairro = (o as any).bairro as string | undefined;
+      const occurrenceBairro = rawBairro && rawBairro.trim() !== "" ? rawBairro : findClosestBairro(lat, lng);
+
       return {
         id: o.id_ocorrencia,
         titulo: `Ocorrência de ${o.categoria.nome}`,
         descricao: o.descricao || "",
         categoria: o.categoria.nome,
-        latitude: Number(o.latitude),
-        longitude: Number(o.longitude),
+        bairro: occurrenceBairro,
+        latitude: lat,
+        longitude: lng,
+        gravidade: o.gravidade,
         estado: status,
+        moradorNome: o.utilizador?.nome || "",
+        moradorResidencia: o.utilizador?.bairro || "",
         criadoEm: o.data_hora_registo.toISOString(),
       };
     });

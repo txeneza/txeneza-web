@@ -12,6 +12,7 @@ export interface Occurrence {
   createdAt: Date | string;
   updatedAt?: Date | string;
   reportedBy?: string;
+  reporterBairro?: string;
   imageUrl?: string;
   gravidade?: "baixa" | "media" | "alta" | "critica";
 }

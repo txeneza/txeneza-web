@@ -7,6 +7,7 @@ import { generateCSV } from "@/lib/csv";
 import { prisma } from "@/lib/prisma";
 import { supabaseAdmin } from "@/core/supabase-admin";
 import { getBeiraHeatmapStats, BEIRA_BAIRROS } from "@/features/map/beira-heatmap.data";
+import { findClosestBairro } from "@/core/geo/beira-bairros";
 import { ReportFilters, ExportHistoryItem } from "@/features/reports/types";
 
 // Bucket público no Supabase Storage onde os relatórios gerados e o
@@ -71,6 +72,11 @@ async function getDatabaseOccurrences() {
       else if ((o.estado as string) === "resolvida") status = "resolvido";
       else if ((o.estado as string) === "rejeitada") status = "rejeitado";
 
+      const lat = Number(o.latitude);
+      const lng = Number(o.longitude);
+      const rawBairro = (o as any).bairro as string | undefined;
+      const occurrenceBairro = rawBairro && rawBairro.trim() !== "" ? rawBairro : findClosestBairro(lat, lng);
+
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://qixdkjsdurbzmpxlimdy.supabase.co";
       const imageUrl = o.fotografias[0]?.caminho_ficheiro
         ? `${supabaseUrl}/storage/v1/object/public/denuncias/${o.fotografias[0].caminho_ficheiro}`
@@ -81,13 +87,14 @@ async function getDatabaseOccurrences() {
         title: `Ocorrência de ${o.categoria.nome}`,
         description: o.descricao || "",
         category: o.categoria.nome,
-        latitude: Number(o.latitude),
-        longitude: Number(o.longitude),
-        bairro: o.utilizador.bairro,
+        latitude: lat,
+        longitude: lng,
+        bairro: occurrenceBairro,
         status,
         createdAt: o.data_hora_registo.toISOString(),
         updatedAt: o.data_hora_sync ? o.data_hora_sync.toISOString() : undefined,
         reportedBy: o.utilizador.nome,
+        reporterBairro: o.utilizador.bairro,
         imageUrl,
         gravidade: o.gravidade,
       };

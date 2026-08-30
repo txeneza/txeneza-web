@@ -33,17 +33,16 @@ export const BEIRA_BAIRROS: BeiraBairro[] = BAIRROS_BEIRA
     let count = 6;
     const spread = 0.0060;
 
-    if (b.nome.includes("Munhava")) { weight = 1.0; count = 14; }
-    else if (b.nome.includes("Baixa")) { weight = 0.95; count = 12; }
+    if (b.nome === "Munhava") { weight = 1.0; count = 14; }
+    else if (b.nome === "Central") { weight = 0.95; count = 12; }
     else if (b.nome.includes("Manga")) { weight = 0.78; count = 10; }
-    else if (b.nome.includes("Goto")) { weight = 0.72; count = 8; }
-    else if (b.nome.includes("Chaimite")) { weight = 0.70; count = 8; }
-    else if (b.nome.includes("Esturro")) { weight = 0.64; count = 7; }
-    else if (b.nome.includes("Matacuane")) { weight = 0.60; count = 6; }
-    else if (b.nome.includes("Maraza")) { weight = 0.58; count = 6; }
-    else if (b.nome.includes("Palmeiras")) { weight = 0.54; count = 5; }
-    else if (b.nome.includes("Ponta-Gêa")) { weight = 0.48; count = 5; }
-    else if (b.nome.includes("Macúti")) { weight = 0.40; count = 5; }
+    else if (b.nome === "Goto") { weight = 0.72; count = 8; }
+    else if (b.nome === "Chaimite") { weight = 0.70; count = 8; }
+    else if (b.nome === "Esturro") { weight = 0.64; count = 7; }
+    else if (b.nome === "Matacuane") { weight = 0.60; count = 6; }
+    else if (b.nome === "Maraza") { weight = 0.58; count = 6; }
+    else if (b.nome === "Ponta Gêa") { weight = 0.48; count = 5; }
+    else if (b.nome === "Macuti") { weight = 0.40; count = 5; }
 
     return {
       name: b.nome,
@@ -114,7 +113,7 @@ export interface BeiraHeatmapStats {
 export function getBeiraHeatmapStats(extraPoints = 0): BeiraHeatmapStats {
   const totalPoints =
     BEIRA_BAIRROS.reduce((acc, b) => acc + b.count, 0) + extraPoints;
-  const criticalZone = [...BEIRA_BAIRROS].sort((a, b) => b.weight - a.weight)[0]?.name || "Munhava Central";
+  const criticalZone = [...BEIRA_BAIRROS].sort((a, b) => b.weight - a.weight)[0]?.name || "Munhava";
   return {
     totalPoints,
     bairrosCount: BEIRA_BAIRROS.length,
