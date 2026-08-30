@@ -19,6 +19,9 @@ import {
   CheckCircle2,
   AlertCircle,
   FileDigit,
+  Search,
+  Filter,
+  X,
 } from "lucide-react";
 
 const BAIRROS_BEIRA = [
@@ -45,7 +48,7 @@ const TIPO_LABELS: Record<ReportType, string> = {
 export default function AdminReportsPage() {
   const { history, generating, loadingHistory, error, success, generateReport } = useReports();
 
-  // Estados dos filtros
+  // Estados dos filtros de geração
   const [reportType, setReportType] = useState<ReportType>("occurrences");
   const [format, setFormat] = useState<ReportFormat>("pdf");
   const [startDate, setStartDate] = useState("");
@@ -53,6 +56,21 @@ export default function AdminReportsPage() {
   const [bairro, setBairro] = useState("Todos");
   const [status, setStatus] = useState("Todos");
   const [gravity, setGravity] = useState("Todos");
+
+  // Estados dos filtros do histórico
+  const [historySearch, setHistorySearch] = useState("");
+  const [historyType, setHistoryType] = useState("Todos");
+  const [historyFormat, setHistoryFormat] = useState("Todos");
+
+  const filteredHistory = history.filter((item) => {
+    const matchSearch =
+      historySearch === "" ||
+      item.filename.toLowerCase().includes(historySearch.toLowerCase()) ||
+      (TIPO_LABELS[item.type] || item.type).toLowerCase().includes(historySearch.toLowerCase());
+    const matchType = historyType === "Todos" || item.type === historyType;
+    const matchFormat = historyFormat === "Todos" || item.format === historyFormat;
+    return matchSearch && matchType && matchFormat;
+  });
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -335,16 +353,82 @@ export default function AdminReportsPage() {
 
         {/* Histórico de Exportações */}
         <div className="xl:col-span-2 bg-light-background dark:bg-dark-background border border-grey200 dark:border-grey800 rounded-2xl shadow-sm overflow-hidden flex flex-col h-[585px]">
-          <div className="p-5 border-b border-grey200 dark:border-grey800 flex justify-between items-center">
-            <div>
-              <h3 className="font-bold text-grey900 dark:text-grey50 flex items-center gap-2">
-                <History className="w-4 h-4 text-forestGreen dark:text-limeGreen" />
-                Histórico de Exportações Recentes
-              </h3>
-              <p className="text-xs text-grey600 dark:text-grey400 mt-0.5">
-                Descarregue relatórios criados anteriormente sem necessidade de nova geração.
-              </p>
+          {/* Header do histórico */}
+          <div className="p-5 border-b border-grey200 dark:border-grey800">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div>
+                <h3 className="font-bold text-grey900 dark:text-grey50 flex items-center gap-2">
+                  <History className="w-4 h-4 text-forestGreen dark:text-limeGreen" />
+                  Histórico de Exportações Recentes
+                </h3>
+                <p className="text-xs text-grey600 dark:text-grey400 mt-0.5">
+                  Descarregue relatórios criados anteriormente sem necessidade de nova geração.
+                </p>
+              </div>
+              {(historySearch || historyType !== "Todos" || historyFormat !== "Todos") && (
+                <button
+                  onClick={() => { setHistorySearch(""); setHistoryType("Todos"); setHistoryFormat("Todos"); }}
+                  className="flex items-center gap-1.5 text-xs text-grey500 dark:text-grey400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors shrink-0 mt-0.5"
+                >
+                  <X className="w-3.5 h-3.5" /> Limpar filtros
+                </button>
+              )}
             </div>
+
+            {/* Barra de pesquisa + filtros */}
+            <div className="flex flex-col sm:flex-row gap-2">
+              {/* Pesquisa por texto */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-grey400" />
+                <input
+                  type="text"
+                  value={historySearch}
+                  onChange={(e) => setHistorySearch(e.target.value)}
+                  placeholder="Pesquisar por nome ou tipo..."
+                  className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-grey200 dark:border-grey800 bg-grey50 dark:bg-grey950 text-grey900 dark:text-grey50 placeholder-grey400 focus:outline-none focus:border-forestGreen dark:focus:border-limeGreen transition-colors"
+                />
+              </div>
+
+              {/* Filtro por tipo */}
+              <div className="relative">
+                <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-grey400" />
+                <select
+                  value={historyType}
+                  onChange={(e) => setHistoryType(e.target.value)}
+                  className="pl-7 pr-3 py-2 text-xs rounded-lg border border-grey200 dark:border-grey800 bg-grey50 dark:bg-grey950 text-grey900 dark:text-grey50 focus:outline-none focus:border-forestGreen dark:focus:border-limeGreen transition-colors"
+                >
+                  <option value="Todos">Todos os tipos</option>
+                  <option value="occurrences">Ocorrências</option>
+                  <option value="collection-points">Pontos de Recolha</option>
+                  <option value="summary">Resumo Geral</option>
+                  <option value="heatmap">Mapa de Calor</option>
+                </select>
+              </div>
+
+              {/* Filtro por formato */}
+              <div className="relative">
+                <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-grey400" />
+                <select
+                  value={historyFormat}
+                  onChange={(e) => setHistoryFormat(e.target.value)}
+                  className="pl-7 pr-3 py-2 text-xs rounded-lg border border-grey200 dark:border-grey800 bg-grey50 dark:bg-grey950 text-grey900 dark:text-grey50 focus:outline-none focus:border-forestGreen dark:focus:border-limeGreen transition-colors"
+                >
+                  <option value="Todos">Todos os formatos</option>
+                  <option value="pdf">PDF</option>
+                  <option value="excel">Excel</option>
+                  <option value="csv">CSV</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Contador de resultados */}
+            {history.length > 0 && (
+              <p className="text-[11px] text-grey400 dark:text-grey500 mt-2">
+                {filteredHistory.length === history.length
+                  ? `${history.length} relatório${history.length !== 1 ? "s" : ""}`
+                  : `${filteredHistory.length} de ${history.length} relatório${history.length !== 1 ? "s" : ""}`}
+              </p>
+            )}
           </div>
 
           <div className="flex-1 overflow-y-auto">
@@ -361,6 +445,20 @@ export default function AdminReportsPage() {
                   Os relatórios gerados nesta sessão aparecerão aqui para descarregamento rápido.
                 </p>
               </div>
+            ) : filteredHistory.length === 0 ? (
+              <div className="flex flex-col items-center justify-center gap-3 h-full text-center px-6">
+                <Search className="w-8 h-8 text-grey400 dark:text-grey600" />
+                <h4 className="font-bold text-grey900 dark:text-grey50">Sem resultados</h4>
+                <p className="text-xs text-grey600 dark:text-grey400 max-w-xs leading-relaxed">
+                  Nenhum relatório corresponde aos filtros aplicados.
+                </p>
+                <button
+                  onClick={() => { setHistorySearch(""); setHistoryType("Todos"); setHistoryFormat("Todos"); }}
+                  className="text-xs font-bold text-forestGreen dark:text-limeGreen hover:underline"
+                >
+                  Limpar filtros
+                </button>
+              </div>
             ) : (
               <table className="w-full text-left border-collapse">
                 <thead className="sticky top-0 bg-grey100 dark:bg-grey900/80 backdrop-blur-sm">
@@ -374,7 +472,7 @@ export default function AdminReportsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-grey200 dark:divide-grey800">
-                  {history.map((item) => (
+                  {filteredHistory.map((item) => (
                     <tr
                       key={item.id}
                       className="text-xs text-grey900 dark:text-grey50 hover:bg-grey100 dark:hover:bg-grey900/40 transition-colors"
