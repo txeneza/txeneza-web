@@ -9,6 +9,7 @@ interface OccurrencesState {
   filters: OccurrenceFilter;
   setFilters: (filters: OccurrenceFilter) => void;
   fetchOccurrences: () => Promise<void>;
+  addOrUpdateOccurrence: (occurrence: Occurrence) => void;
   updateOccurrenceStatus: (id: string, status: Occurrence["status"]) => Promise<void>;
 }
 
@@ -29,6 +30,19 @@ export const useOccurrencesStore = create<OccurrencesState>((set, get) => ({
     } catch (err: any) {
       set({ error: err.message || "Erro ao buscar ocorrências", loading: false });
     }
+  },
+  addOrUpdateOccurrence: (occurrence) => {
+    set((state) => {
+      const exists = state.occurrences.some((o) => o.id === occurrence.id);
+      if (exists) {
+        return {
+          occurrences: state.occurrences.map((o) => (o.id === occurrence.id ? { ...o, ...occurrence } : o)),
+        };
+      }
+      return {
+        occurrences: [occurrence, ...state.occurrences],
+      };
+    });
   },
   updateOccurrenceStatus: async (id, status) => {
     try {

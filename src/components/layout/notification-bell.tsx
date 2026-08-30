@@ -35,8 +35,40 @@ export const NotificationBell: React.FC = () => {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 15000); // Polling suave a cada 15s
-    return () => clearInterval(interval);
+    const interval = setInterval(fetchNotifications, 15000); // Polling suave como fallback
+
+    const handleRealtimeNewNotif = (event: any) => {
+      const newNotif = event.detail;
+      if (newNotif) {
+        setNotifications((prev) => [
+          {
+            id: newNotif.id_notificacao || newNotif.id,
+            userId: newNotif.id_utilizador || newNotif.userId,
+            occurrenceId: newNotif.id_ocorrencia || newNotif.occurrenceId,
+            type: newNotif.tipo || newNotif.type || "nova_denuncia",
+            message: newNotif.mensagem || newNotif.message,
+            read: false,
+            createdAt: newNotif.data_hora || new Date().toISOString(),
+          },
+          ...prev.filter((n) => n.id !== (newNotif.id_notificacao || newNotif.id)),
+        ]);
+      } else {
+        fetchNotifications();
+      }
+    };
+
+    const handleRealtimeNewOcc = () => {
+      fetchNotifications();
+    };
+
+    window.addEventListener("txeneza:new-notification", handleRealtimeNewNotif);
+    window.addEventListener("txeneza:new-occurrence", handleRealtimeNewOcc);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("txeneza:new-notification", handleRealtimeNewNotif);
+      window.removeEventListener("txeneza:new-occurrence", handleRealtimeNewOcc);
+    };
   }, []);
 
   // Fechar dropdown ao clicar fora

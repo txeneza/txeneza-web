@@ -11,6 +11,7 @@ interface MapState {
   selectedOccurrence: Occurrence | null;
   setSelectedOccurrence: (occ: Occurrence | null) => void;
   fetchMapData: () => Promise<void>;
+  addOrUpdateMarker: (occ: Occurrence) => void;
   setViewport: (center: [number, number], zoom: number) => void;
 }
 
@@ -35,6 +36,19 @@ export const useMapStore = create<MapState>((set) => ({
       console.error("Erro ao buscar dados do mapa", error);
       set({ loading: false });
     }
+  },
+  addOrUpdateMarker: (occ) => {
+    set((state) => {
+      const exists = state.markers.some((m) => m.id === occ.id);
+      if (exists) {
+        return {
+          markers: state.markers.map((m) => (m.id === occ.id ? { ...m, ...occ } : m)),
+        };
+      }
+      return {
+        markers: [occ, ...state.markers],
+      };
+    });
   },
   setViewport: (center, zoom) => set({ center, zoom }),
 }));
