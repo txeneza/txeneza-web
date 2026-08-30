@@ -5,7 +5,8 @@ import { HeatmapView } from "@/features/map/components/heatmap-view";
 import { useMapStore } from "@/features/map/map.store";
 import { getBeiraHeatmapStats } from "@/features/map/beira-heatmap.data";
 import { findClosestBairro } from "@/core/geo/beira-bairros";
-import { Flame, ShieldCheck, Radio, MapPin, AlertTriangle } from "lucide-react";
+import { Flame, Radio, MapPin, AlertTriangle } from "lucide-react";
+
 
 export default function HeatmapPage() {
   const { heatmapData, markers, fetchMapData } = useMapStore();
@@ -84,13 +85,6 @@ export default function HeatmapPage() {
               Densidade georreferenciada de resíduos sólidos urbanos na Cidade da Beira.
             </p>
           </div>
-        </div>
-
-        <div className="flex items-center gap-2 px-4 py-2 bg-forestGreen/5 dark:bg-limeGreen/5 border border-forestGreen/10 dark:border-limeGreen/10 rounded-xl">
-          <ShieldCheck className="w-4 h-4 text-forestGreen dark:text-limeGreen" />
-          <span className="text-xs font-bold text-forestGreen dark:text-limeGreen uppercase tracking-wider">
-            Estudo de Caso — Beira
-          </span>
         </div>
       </div>
 
