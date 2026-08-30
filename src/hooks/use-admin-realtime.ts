@@ -7,6 +7,7 @@ import { LiveAlertPayload } from "@/components/ui/realtime-toast-alert";
 import { useOccurrencesStore } from "@/features/occurrences/occurrences.store";
 import { useMapStore } from "@/features/map/map.store";
 import { useDashboardStore } from "@/features/dashboard/dashboard.store";
+import { useNotificationsStore } from "@/features/notifications/notifications.store";
 import { Occurrence, OccurrenceStatus } from "@/features/occurrences/occurrences.types";
 
 export function useAdminRealtime() {
@@ -40,17 +41,18 @@ export function useAdminRealtime() {
         processedIdsRef.current.add(payload.id);
       }
 
-      // 1. Toca som suave
+      // 1. Toca som suave (se não estiver silenciado)
       notificationSound.playChime();
 
       // 2. Adiciona ao estado dos Toasts flutuantes
       setAlerts((prev) => [payload, ...prev].slice(0, 5));
 
-      // 3. Notificação nativa do SO/Navegador (se a janela não estiver em foco ou se suportada)
+      // 3. Notificação nativa do SO/Navegador (sem emojis)
       if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
         try {
-          new Notification("Txeneza · Nova Denúncia", {
-            body: payload.message || payload.title,
+          const cleanBody = (payload.message || payload.title).replace(/[\u{1F300}-\u{1FAFF}]/gu, "").trim();
+          new Notification("Txeneza · Nova Notificação", {
+            body: cleanBody,
             icon: "/icons/TXENEZA.svg",
             tag: payload.id,
           });
@@ -70,7 +72,7 @@ export function useAdminRealtime() {
 
     // Cria o canal Realtime no Supabase
     const channel = supabase
-      .channel("admin-realtime-channel")
+      .channel("admin-realtime-global-channel")
       // A. Ouve inserções na tabela de ocorrências (novas denúncias do mobile)
       .on(
         "postgres_changes",
@@ -85,39 +87,51 @@ export function useAdminRealtime() {
           else if (newRow.estado === "resolvida") status = "resolvido";
           else if (newRow.estado === "rejeitada") status = "rejeitado";
 
+          const gravidade = newRow.gravidade || "media";
+          const isCritica = gravidade === "critica";
+
           const occurrenceObj: Occurrence = {
             id: newRow.id_ocorrencia,
             title: `Nova Denúncia`,
             description: newRow.descricao || "Sem descrição adicional",
-            category: "Resíduo", // Atualizado dinamicamente
+            category: "Resíduo",
             latitude: Number(newRow.latitude),
             longitude: Number(newRow.longitude),
             status,
-            gravidade: newRow.gravidade || "media",
+            gravidade,
             createdAt: newRow.data_hora_registo || new Date().toISOString(),
           };
 
-          // Dispara alerta audiovisual completo (Toast, Chime, Notificação do Navegador)
-          triggerLiveAlert({
-            id: newRow.id_ocorrencia,
+          const messageText = newRow.descricao
+            ? `Nova denúncia registada (${gravidade}): ${newRow.descricao}`
+            : `Nova denúncia de resíduos registada no sistema.`;
+
+          // 1. Adiciona imediatamente à central de notificações (Sino) em 0ms
+          useNotificationsStore.getState().addNotification({
+            id: `occ-${newRow.id_ocorrencia}`,
+            userId: newRow.id_utilizador || "admin",
             occurrenceId: newRow.id_ocorrencia,
-            title: `🚨 Nova Denúncia Registada`,
-            message: newRow.descricao
-              ? `Nova denúncia submetida (${newRow.gravidade || "Gravidade Normal"}): ${newRow.descricao}`
-              : `Nova denúncia de resíduos submetida com gravidade ${newRow.gravidade || "normal"}.`,
-            gravidade: newRow.gravidade || "media",
+            type: isCritica ? "alerta_critico" : "nova_denuncia",
+            message: messageText,
+            read: false,
+            gravidade,
             createdAt: newRow.data_hora_registo || new Date().toISOString(),
           });
 
-          // Atualiza as lojas ativas (Tabela, Mapa, Estatísticas)
+          // 2. Dispara alerta audiovisual completo (Toast, Chime, Notificação do Navegador)
+          triggerLiveAlert({
+            id: newRow.id_ocorrencia,
+            occurrenceId: newRow.id_ocorrencia,
+            title: "Nova Denúncia Registada",
+            message: messageText,
+            gravidade,
+            createdAt: newRow.data_hora_registo || new Date().toISOString(),
+          });
+
+          // 3. Atualiza as lojas ativas (Tabela, Mapa, Estatísticas)
           useOccurrencesStore.getState().addOrUpdateOccurrence(occurrenceObj);
           useMapStore.getState().addOrUpdateMarker(occurrenceObj);
           useDashboardStore.getState().fetchStats();
-
-          // Notifica o sino de notificações para sincronizar
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(new CustomEvent("txeneza:new-occurrence", { detail: occurrenceObj }));
-          }
         }
       )
       // B. Ouve inserções na tabela de notificações (geradas pelo Trigger PostgreSQL)
@@ -128,18 +142,27 @@ export function useAdminRealtime() {
           const newNotif = payload.new as any;
           if (!newNotif) return;
 
-          triggerLiveAlert({
+          const cleanMessage = (newNotif.mensagem || "").replace(/[\u{1F300}-\u{1FAFF}]/gu, "").trim();
+
+          // 1. Adiciona à central de notificações em 0ms
+          useNotificationsStore.getState().addNotification({
             id: newNotif.id_notificacao,
+            userId: newNotif.id_utilizador,
             occurrenceId: newNotif.id_ocorrencia,
-            title: "Nova Notificação do Sistema",
-            message: newNotif.mensagem,
+            type: newNotif.tipo || "sistema",
+            message: cleanMessage,
+            read: newNotif.lida || false,
             createdAt: newNotif.data_hora || new Date().toISOString(),
           });
 
-          // Notifica o componente NotificationBell para atualizar o badge em 0ms
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(new CustomEvent("txeneza:new-notification", { detail: newNotif }));
-          }
+          // 2. Dispara alerta visual e sonoro
+          triggerLiveAlert({
+            id: newNotif.id_notificacao,
+            occurrenceId: newNotif.id_ocorrencia,
+            title: "Notificação do Sistema",
+            message: cleanMessage,
+            createdAt: newNotif.data_hora || new Date().toISOString(),
+          });
         }
       )
       // C. Ouve alterações de estado em ocorrências (ex.: resoluções, reaberturas)

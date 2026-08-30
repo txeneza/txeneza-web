@@ -1,75 +1,48 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
-import { Bell, CheckCheck, Info, AlertTriangle, CheckCircle2 } from "lucide-react";
-
-interface NotificationItem {
-  id: string;
-  userId: string;
-  occurrenceId?: string | null;
-  type: string;
-  message: string;
-  read: boolean;
-  createdAt: string;
-}
+import React, { useEffect, useState, useRef, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Bell,
+  CheckCheck,
+  Info,
+  AlertTriangle,
+  CheckCircle2,
+  AlertOctagon,
+  Trash2,
+  Volume2,
+  VolumeX,
+  Flame,
+  ArrowRight,
+  Inbox,
+  Clock,
+  Sparkles,
+  MapPin,
+} from "lucide-react";
+import { useNotificationsStore } from "@/features/notifications/notifications.store";
+import { NotificationFilterTab } from "@/features/notifications/notifications.types";
+import { notificationSound } from "@/lib/notification-sound";
 
 export const NotificationBell: React.FC = () => {
-  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const {
+    notifications,
+    filterTab,
+    setFilterTab,
+    fetchNotifications,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+  } = useNotificationsStore();
 
-  const fetchNotifications = async () => {
-    try {
-      const res = await fetch("/api/notifications");
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setNotifications(data);
-        }
-      }
-    } catch (err) {
-      console.warn("Erro ao buscar notificações:", err);
-    }
-  };
+  const [isOpen, setIsOpen] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 15000); // Polling suave como fallback
-
-    const handleRealtimeNewNotif = (event: any) => {
-      const newNotif = event.detail;
-      if (newNotif) {
-        setNotifications((prev) => [
-          {
-            id: newNotif.id_notificacao || newNotif.id,
-            userId: newNotif.id_utilizador || newNotif.userId,
-            occurrenceId: newNotif.id_ocorrencia || newNotif.occurrenceId,
-            type: newNotif.tipo || newNotif.type || "nova_denuncia",
-            message: newNotif.mensagem || newNotif.message,
-            read: false,
-            createdAt: newNotif.data_hora || new Date().toISOString(),
-          },
-          ...prev.filter((n) => n.id !== (newNotif.id_notificacao || newNotif.id)),
-        ]);
-      } else {
-        fetchNotifications();
-      }
-    };
-
-    const handleRealtimeNewOcc = () => {
-      fetchNotifications();
-    };
-
-    window.addEventListener("txeneza:new-notification", handleRealtimeNewNotif);
-    window.addEventListener("txeneza:new-occurrence", handleRealtimeNewOcc);
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener("txeneza:new-notification", handleRealtimeNewNotif);
-      window.removeEventListener("txeneza:new-occurrence", handleRealtimeNewOcc);
-    };
-  }, []);
+    setMuted(notificationSound.isMuted());
+  }, [fetchNotifications]);
 
   // Fechar dropdown ao clicar fora
   useEffect(() => {
@@ -82,117 +55,318 @@ export const NotificationBell: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const markAllAsRead = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/notifications", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ markAll: true }),
-      });
-      if (res.ok) {
-        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-      }
-    } finally {
-      setLoading(false);
+  const toggleSound = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const next = !muted;
+    setMuted(next);
+    notificationSound.setMuted(next);
+    if (!next) {
+      notificationSound.playChime();
     }
   };
 
-  const markSingleAsRead = async (id: string) => {
+  const unreadCount = useMemo(() => {
+    return notifications.filter((n) => !n.read).length;
+  }, [notifications]);
+
+  const filteredNotifications = useMemo(() => {
+    return notifications.filter((n) => {
+      if (filterTab === "nao_lidas") return !n.read;
+      if (filterTab === "denuncias") {
+        return (
+          n.type === "nova_denuncia" ||
+          n.type === "ocorrencia" ||
+          n.type === "alerta_critico"
+        );
+      }
+      if (filterTab === "criticas") {
+        return (
+          n.type === "alerta_critico" ||
+          n.gravidade === "critica" ||
+          n.message.toLowerCase().includes("crítica") ||
+          n.message.toLowerCase().includes("critica")
+        );
+      }
+      return true;
+    });
+  }, [notifications, filterTab]);
+
+  const counts = useMemo(() => {
+    const total = notifications.length;
+    const naoLidas = notifications.filter((n) => !n.read).length;
+    const denuncias = notifications.filter(
+      (n) => n.type === "nova_denuncia" || n.type === "ocorrencia" || n.type === "alerta_critico"
+    ).length;
+    const criticas = notifications.filter(
+      (n) =>
+        n.type === "alerta_critico" ||
+        n.gravidade === "critica" ||
+        n.message.toLowerCase().includes("crítica") ||
+        n.message.toLowerCase().includes("critica")
+    ).length;
+    return { total, naoLidas, denuncias, criticas };
+  }, [notifications]);
+
+  const formatNotificationTime = (isoDate: string) => {
     try {
-      await fetch("/api/notifications", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ notificationId: id }),
+      const date = new Date(isoDate);
+      const now = new Date();
+      const diffMs = now.getTime() - date.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMins / 60);
+
+      if (diffMins < 1) return "Agora mesmo";
+      if (diffMins < 60) return `Há ${diffMins} min`;
+      if (diffHours < 24) return `Há ${diffHours} h`;
+      return date.toLocaleDateString("pt-PT", {
+        day: "2-digit",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
       });
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-      );
-    } catch (err) {
-      console.warn("Erro ao marcar notificação:", err);
+    } catch {
+      return "Recente";
     }
+  };
+
+  const getNotificationIcon = (type: string, message: string) => {
+    const isCritica =
+      type === "alerta_critico" ||
+      message.toLowerCase().includes("crítica") ||
+      message.toLowerCase().includes("critica");
+
+    if (isCritica) {
+      return (
+        <div className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 shrink-0">
+          <AlertOctagon className="w-4 h-4" />
+        </div>
+      );
+    }
+
+    if (type === "reabertura_automatica") {
+      return (
+        <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shrink-0">
+          <AlertTriangle className="w-4 h-4" />
+        </div>
+      );
+    }
+
+    if (type === "resolucao_validada" || type === "verificacao") {
+      return (
+        <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shrink-0">
+          <CheckCircle2 className="w-4 h-4" />
+        </div>
+      );
+    }
+
+    if (type === "nova_denuncia" || type === "ocorrencia") {
+      return (
+        <div className="p-2 rounded-xl bg-forestGreen/10 dark:bg-limeGreen/15 text-forestGreen dark:text-limeGreen border border-forestGreen/20 dark:border-limeGreen/25 shrink-0">
+          <MapPin className="w-4 h-4" />
+        </div>
+      );
+    }
+
+    return (
+      <div className="p-2 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20 shrink-0">
+        <Info className="w-4 h-4" />
+      </div>
+    );
   };
 
   return (
     <div className="relative" ref={dropdownRef}>
+      {/* Botão do Sino */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-xl bg-grey100/80 dark:bg-grey800/80 border border-grey200/80 dark:border-grey700/60 text-grey700 dark:text-grey300 hover:bg-grey200/80 dark:hover:bg-grey700/80 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-forestGreen/40"
-        title="Notificações do Sistema"
+        className={`relative p-2.5 rounded-xl border transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-forestGreen/40 ${
+          isOpen
+            ? "bg-forestGreen/10 dark:bg-limeGreen/15 text-forestGreen dark:text-limeGreen border-forestGreen/30 dark:border-limeGreen/40 shadow-sm"
+            : "bg-grey100/80 dark:bg-grey800/80 border-grey200/80 dark:border-grey700/60 text-grey700 dark:text-grey300 hover:bg-grey200/80 dark:hover:bg-grey700/80"
+        }`}
+        title="Central de Notificações em Tempo Real"
         aria-label="Ver notificações"
       >
-        <Bell className="w-4 h-4" />
+        <Bell className={`w-4 h-4 ${unreadCount > 0 ? "animate-pulse" : ""}`} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center border-2 border-white dark:border-grey900">
-            {unreadCount > 9 ? "9+" : unreadCount}
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center border-2 border-white dark:border-grey900 shadow-md animate-in zoom-in-50">
+            {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
       </button>
 
+      {/* Painel Dropdown Expandido */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-grey900 border border-grey200/90 dark:border-grey800/90 rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150">
-          {/* Cabeçalho do Dropdown */}
-          <div className="p-3.5 px-4 border-b border-grey100 dark:border-grey800/80 flex items-center justify-between bg-grey50/60 dark:bg-grey900/60">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-grey900 dark:text-grey50 uppercase tracking-wider">
-                Notificações
-              </span>
-              {unreadCount > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-forestGreen/10 dark:bg-limeGreen/15 text-forestGreen dark:text-limeGreen border border-forestGreen/20 dark:border-limeGreen/25">
-                  {unreadCount} novas
+        <div className="absolute right-0 mt-2.5 w-[340px] sm:w-[440px] bg-white dark:bg-grey900 border border-grey200 dark:border-grey800 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150">
+          {/* Cabeçalho */}
+          <div className="p-4 border-b border-grey100 dark:border-grey800/80 bg-grey50/60 dark:bg-grey900/60">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-black tracking-tight text-grey900 dark:text-grey50">
+                  Notificações
                 </span>
-              )}
+                {unreadCount > 0 && (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                    {unreadCount} não lidas
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                {/* Controlo de Som */}
+                <button
+                  onClick={toggleSound}
+                  className="p-1.5 rounded-lg text-grey500 hover:text-grey800 dark:text-grey400 dark:hover:text-grey100 hover:bg-grey200/60 dark:hover:bg-grey800 transition-colors"
+                  title={muted ? "Ativar som de alertas" : "Silenciar alertas"}
+                  aria-label="Controlo de som"
+                >
+                  {muted ? (
+                    <VolumeX className="w-4 h-4 text-rose-500" />
+                  ) : (
+                    <Volume2 className="w-4 h-4 text-forestGreen dark:text-limeGreen" />
+                  )}
+                </button>
+
+                {/* Marcar todas como lidas */}
+                {unreadCount > 0 && (
+                  <button
+                    onClick={() => markAllAsRead()}
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-forestGreen dark:text-limeGreen hover:underline px-2 py-1 rounded-lg hover:bg-forestGreen/10 dark:hover:bg-limeGreen/10 transition-colors"
+                  >
+                    <CheckCheck className="w-3.5 h-3.5" />
+                    <span>Marcar todas</span>
+                  </button>
+                )}
+              </div>
             </div>
-            {unreadCount > 0 && (
+
+            {/* Abas de Filtragem */}
+            <div className="flex items-center gap-1.5 mt-3 pt-2.5 border-t border-grey200/60 dark:border-grey800/60">
               <button
-                onClick={markAllAsRead}
-                disabled={loading}
-                className="text-[11px] font-bold text-forestGreen dark:text-limeGreen hover:underline flex items-center gap-1"
+                onClick={() => setFilterTab("todas")}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                  filterTab === "todas"
+                    ? "bg-forestGreen text-white dark:bg-limeGreen dark:text-forestGreen shadow-xs"
+                    : "text-grey600 dark:text-grey400 hover:bg-grey200/50 dark:hover:bg-grey800/60"
+                }`}
               >
-                <CheckCheck className="w-3.5 h-3.5" /> Marcar todas
+                Todas ({counts.total})
               </button>
-            )}
+              <button
+                onClick={() => setFilterTab("nao_lidas")}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                  filterTab === "nao_lidas"
+                    ? "bg-forestGreen text-white dark:bg-limeGreen dark:text-forestGreen shadow-xs"
+                    : "text-grey600 dark:text-grey400 hover:bg-grey200/50 dark:hover:bg-grey800/60"
+                }`}
+              >
+                Não Lidas ({counts.naoLidas})
+              </button>
+              <button
+                onClick={() => setFilterTab("denuncias")}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                  filterTab === "denuncias"
+                    ? "bg-forestGreen text-white dark:bg-limeGreen dark:text-forestGreen shadow-xs"
+                    : "text-grey600 dark:text-grey400 hover:bg-grey200/50 dark:hover:bg-grey800/60"
+                }`}
+              >
+                Denúncias ({counts.denuncias})
+              </button>
+              <button
+                onClick={() => setFilterTab("criticas")}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                  filterTab === "criticas"
+                    ? "bg-rose-500 text-white shadow-xs"
+                    : "text-grey600 dark:text-grey400 hover:bg-grey200/50 dark:hover:bg-grey800/60"
+                }`}
+              >
+                Críticas ({counts.criticas})
+              </button>
+            </div>
           </div>
 
           {/* Lista de Notificações */}
-          <div className="max-h-80 overflow-y-auto divide-y divide-grey100 dark:divide-grey800/60">
-            {notifications.length === 0 ? (
-              <div className="p-8 text-center text-grey400 dark:text-grey500 text-xs font-medium">
-                Nenhuma notificação registada.
+          <div className="max-h-[380px] overflow-y-auto divide-y divide-grey100 dark:divide-grey800/60">
+            {filteredNotifications.length === 0 ? (
+              <div className="py-12 px-6 flex flex-col items-center justify-center text-center gap-2">
+                <div className="p-3 bg-grey100 dark:bg-grey800/60 rounded-full text-grey400 dark:text-grey500">
+                  <Inbox className="w-6 h-6" />
+                </div>
+                <p className="text-xs font-bold text-grey700 dark:text-grey300">
+                  Nenhuma notificação encontrada
+                </p>
+                <p className="text-[11px] text-grey400 dark:text-grey500 max-w-xs">
+                  {filterTab === "nao_lidas"
+                    ? "Todas as notificações já foram marcadas como lidas."
+                    : "Novos alertas em tempo real aparecerão automaticamente nesta lista."}
+                </p>
               </div>
             ) : (
-              notifications.map((n) => (
-                <div
-                  key={n.id}
-                  onClick={() => !n.read && markSingleAsRead(n.id)}
-                  className={`p-3.5 px-4 flex items-start gap-3 transition-colors cursor-pointer hover:bg-grey50/80 dark:hover:bg-grey800/40 ${
-                    !n.read ? "bg-forestGreen/5 dark:bg-limeGreen/5" : ""
-                  }`}
-                >
-                  <div className="mt-0.5 shrink-0">
-                    {n.type === "reabertura_automatica" ? (
-                      <AlertTriangle className="w-4 h-4 text-amber-500" />
-                    ) : n.type === "resolucao_validada" ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    ) : (
-                      <Info className="w-4 h-4 text-sky-500" />
-                    )}
+              filteredNotifications.map((n) => {
+                // Remover qualquer emoji remanescente na mensagem antiga
+                const cleanMessage = n.message.replace(/[\u{1F300}-\u{1FAFF}]/gu, "").trim();
+
+                return (
+                  <div
+                    key={n.id}
+                    className={`group relative p-3.5 px-4 flex items-start gap-3 transition-colors cursor-pointer hover:bg-grey50 dark:hover:bg-grey800/40 ${
+                      !n.read ? "bg-forestGreen/[0.03] dark:bg-limeGreen/[0.04]" : ""
+                    }`}
+                    onClick={() => {
+                      if (!n.read) markAsRead(n.id);
+                      if (n.occurrenceId) {
+                        setIsOpen(false);
+                        router.push(`/admin/occurrences/${n.occurrenceId}`);
+                      }
+                    }}
+                  >
+                    {/* Ícone */}
+                    {getNotificationIcon(n.type, cleanMessage)}
+
+                    {/* Conteúdo */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-grey900 dark:text-grey100 leading-snug">
+                        {cleanMessage}
+                      </p>
+
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                        <span className="flex items-center gap-1 text-[10px] font-medium text-grey400 dark:text-grey500">
+                          <Clock className="w-3 h-3" />
+                          {formatNotificationTime(n.createdAt)}
+                        </span>
+
+                        {n.occurrenceId && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-forestGreen dark:text-limeGreen hover:underline">
+                            <span>Ver ocorrência</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Ações Rápidas (Direita) */}
+                    <div className="flex items-center gap-1 shrink-0 pt-0.5">
+                      {!n.read && (
+                        <span
+                          className="w-2 h-2 rounded-full bg-forestGreen dark:bg-limeGreen shrink-0"
+                          title="Não lida"
+                        />
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteNotification(n.id);
+                        }}
+                        className="opacity-0 group-hover:opacity-100 p-1.5 text-grey400 hover:text-rose-500 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all"
+                        title="Eliminar notificação"
+                        aria-label="Eliminar"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-grey900 dark:text-grey100 leading-snug">
-                      {n.message}
-                    </p>
-                    <span className="text-[10px] text-grey400 dark:text-grey500 mt-1 block font-mono">
-                      {new Date(n.createdAt).toLocaleString("pt-PT", { timeZone: "Africa/Maputo" })}
-                    </span>
-                  </div>
-                  {!n.read && (
-                    <span className="w-2 h-2 rounded-full bg-forestGreen dark:bg-limeGreen shrink-0 mt-1.5" />
-                  )}
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>

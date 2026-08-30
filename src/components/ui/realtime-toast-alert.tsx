@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, ArrowRight, BellRing, Volume2, VolumeX, X } from "lucide-react";
+import { AlertOctagon, ArrowRight, BellRing, MapPin, Volume2, VolumeX, X } from "lucide-react";
 import { notificationSound } from "@/lib/notification-sound";
 
 export interface LiveAlertPayload {
@@ -50,6 +50,10 @@ export const RealtimeToastAlert: React.FC<RealtimeToastAlertProps> = ({
         const isCritica = alert.gravidade === "critica";
         const isAlta = alert.gravidade === "alta";
 
+        // Remove any emoji if present
+        const cleanTitle = alert.title.replace(/[\u{1F300}-\u{1FAFF}]/gu, "").trim();
+        const cleanMessage = alert.message.replace(/[\u{1F300}-\u{1FAFF}]/gu, "").trim();
+
         return (
           <div
             key={alert.id}
@@ -73,7 +77,7 @@ export const RealtimeToastAlert: React.FC<RealtimeToastAlertProps> = ({
             />
 
             <div className="flex items-start gap-3">
-              {/* Ícone Pulsante */}
+              {/* Ícone */}
               <div
                 className={`relative p-2.5 rounded-xl shrink-0 mt-0.5 ${
                   isCritica
@@ -84,7 +88,7 @@ export const RealtimeToastAlert: React.FC<RealtimeToastAlertProps> = ({
                 }`}
               >
                 {isCritica ? (
-                  <AlertCircle className="w-5 h-5 animate-bounce" />
+                  <AlertOctagon className="w-5 h-5 animate-bounce" />
                 ) : (
                   <BellRing className="w-5 h-5 animate-pulse" />
                 )}
@@ -110,14 +114,15 @@ export const RealtimeToastAlert: React.FC<RealtimeToastAlertProps> = ({
                     </span>
                   )}
                   {alert.bairro && (
-                    <span className="text-[11px] font-medium text-grey500 dark:text-grey400 truncate">
-                      📍 {alert.bairro}
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-grey500 dark:text-grey400 truncate">
+                      <MapPin className="w-3 h-3 shrink-0 text-forestGreen dark:text-limeGreen" />
+                      <span>{alert.bairro}</span>
                     </span>
                   )}
                 </div>
 
                 <h4 className="text-sm font-bold text-grey900 dark:text-white leading-snug line-clamp-2">
-                  {alert.message || alert.title}
+                  {cleanMessage || cleanTitle}
                 </h4>
 
                 {/* Botões de Ação */}

@@ -1,14 +1,5 @@
 import { prisma } from "@/lib/prisma";
-
-export interface NotificationItem {
-  id: string;
-  userId: string;
-  occurrenceId?: string | null;
-  type: string;
-  message: string;
-  read: boolean;
-  createdAt: string;
-}
+import { NotificationItem } from "./notifications.types";
 
 export const notificationsService = {
   /**
@@ -55,10 +46,10 @@ export const notificationsService = {
       const notifications = await prisma.notificacao.findMany({
         where: userId ? { id_utilizador: userId } : undefined,
         orderBy: { data_hora: "desc" },
-        take: 30,
+        take: 50,
       });
 
-      return notifications.map((n) => ({
+      return notifications.map((n: any) => ({
         id: n.id_notificacao,
         userId: n.id_utilizador,
         occurrenceId: n.id_ocorrencia,
@@ -101,6 +92,21 @@ export const notificationsService = {
       return true;
     } catch (err: any) {
       console.error("Erro ao marcar todas as notificações como lidas:", err.message);
+      return false;
+    }
+  },
+
+  /**
+   * Elimina uma notificação da base de dados.
+   */
+  async deleteNotification(notificationId: string): Promise<boolean> {
+    try {
+      await prisma.notificacao.delete({
+        where: { id_notificacao: notificationId },
+      });
+      return true;
+    } catch (err: any) {
+      console.error("Erro ao eliminar notificação:", err.message);
       return false;
     }
   },

@@ -49,3 +49,30 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
+
+/**
+ * DELETE: Remove uma notificação da base de dados.
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    await verifyAdminSession(request);
+    const { searchParams } = new URL(request.url);
+    const notificationId = searchParams.get("id");
+
+    if (!notificationId) {
+      return NextResponse.json({ error: "ID da notificação é obrigatório." }, { status: 400 });
+    }
+
+    const ok = await notificationsService.deleteNotification(notificationId);
+    if (!ok) {
+      return NextResponse.json({ error: "Erro ao remover notificação ou não encontrada." }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, notificationId });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: "Erro ao eliminar notificação: " + error.message },
+      { status: 500 }
+    );
+  }
+}
