@@ -1,6 +1,6 @@
 import { Occurrence } from "../occurrences/occurrences.types";
 import { occurrencesService } from "../occurrences/occurrences.service";
-import { HeatPoint, generateBeiraHeatmapData } from "./beira-heatmap.data";
+import { HeatPoint } from "./beira-heatmap.data";
 
 // Serviço para obter marcadores e dados do Heatmap do mapa público
 export const mapService = {
@@ -35,7 +35,7 @@ export const mapService = {
       });
     }
 
-    // Se ainda não existirem denúncias reais no banco, gera malha determinística de referência da Beira
-    return generateBeiraHeatmapData();
+    // Sem denúncias reais no banco: devolve lista vazia (sem dados fictícios/mock)
+    return [];
   }
 };

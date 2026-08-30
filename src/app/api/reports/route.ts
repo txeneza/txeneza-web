@@ -6,7 +6,6 @@ import { generateExcelReport } from "@/features/reports/services/excel-generator
 import { generateCSV } from "@/lib/csv";
 import { prisma } from "@/lib/prisma";
 import { supabaseAdmin } from "@/core/supabase-admin";
-import { getBeiraHeatmapStats, BEIRA_BAIRROS } from "@/features/map/beira-heatmap.data";
 import { findClosestBairro } from "@/core/geo/beira-bairros";
 import { ReportFilters, ExportHistoryItem } from "@/features/reports/types";
 

@@ -3,7 +3,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { HeatmapView } from "@/features/map/components/heatmap-view";
 import { useMapStore } from "@/features/map/map.store";
-import { getBeiraHeatmapStats } from "@/features/map/beira-heatmap.data";
 import { findClosestBairro } from "@/core/geo/beira-bairros";
 import { Flame, Radio, MapPin, AlertTriangle } from "lucide-react";
 
@@ -56,14 +55,13 @@ export default function HeatmapPage() {
       };
     }
 
-    // Se o banco estiver sem registos, recorre às estatísticas base do estudo de caso da Beira
-    const base = getBeiraHeatmapStats();
+    // Se o banco estiver sem registos reais, apresenta 0 (sem mock)
     return {
-      totalPoints: heatmapData.length || base.totalPoints,
-      bairrosCount: base.bairrosCount,
-      criticalZone: base.criticalZone,
+      totalPoints: 0,
+      bairrosCount: 0,
+      criticalZone: "Nenhuma",
     };
-  }, [markers, heatmapData]);
+  }, [markers]);
 
   if (!mounted) {
     return null;
