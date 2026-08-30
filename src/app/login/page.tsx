@@ -1,9 +1,43 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, Suspense } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { LoginForm } from "@/features/auth/components/login-form";
+import { useAuth } from "@/hooks/use-auth";
+
+function LoginContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { user, loading, isAdmin } = useAuth();
+
+  const redirectTarget = searchParams?.get("redirect");
+  const destination = redirectTarget && redirectTarget.startsWith("/admin")
+    ? redirectTarget
+    : "/admin";
+
+  useEffect(() => {
+    // Redireciona automaticamente se já existir uma sessão ativa de administrador
+    if (!loading && user && isAdmin) {
+      router.replace(destination);
+    }
+  }, [user, loading, isAdmin, destination, router]);
+
+  // Enquanto verifica a sessão existente no cookie/Supabase, exibe estado de transição
+  if (loading || (user && isAdmin)) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 p-8 bg-white/80 dark:bg-grey900/80 backdrop-blur-xl border border-grey200/80 dark:border-grey800/80 rounded-3xl shadow-xl">
+        <Loader2 className="w-8 h-8 text-forestGreen dark:text-limeGreen animate-spin" />
+        <span className="text-xs font-bold text-grey600 dark:text-grey400 tracking-wide uppercase">
+          A verificar sessão existente...
+        </span>
+      </div>
+    );
+  }
+
+  return <LoginForm />;
+}
 
 export default function LoginPage() {
   return (
@@ -21,8 +55,16 @@ export default function LoginPage() {
         Página Pública
       </Link>
 
-      {/* Modular LoginForm Component */}
-      <LoginForm />
+      {/* Modular LoginForm com verificação de sessão */}
+      <Suspense
+        fallback={
+          <div className="flex flex-col items-center justify-center gap-3 p-8">
+            <Loader2 className="w-8 h-8 text-forestGreen dark:text-limeGreen animate-spin" />
+          </div>
+        }
+      >
+        <LoginContent />
+      </Suspense>
     </div>
   );
 }
