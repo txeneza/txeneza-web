@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Occurrence } from "@/features/occurrences/occurrences.types";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { MapPin, ImageOff, Calendar, Tag } from "lucide-react";
 
 interface OccurrenceCardProps {

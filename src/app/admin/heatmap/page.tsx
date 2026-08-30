@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { HeatmapView } from "@/components/map/heatmap-view";
+import { HeatmapView } from "@/features/map/components/heatmap-view";
 import { useMapStore } from "@/features/map/map.store";
 import { getBeiraHeatmapStats } from "@/features/map/beira-heatmap.data";
 import { findClosestBairro } from "@/core/geo/beira-bairros";

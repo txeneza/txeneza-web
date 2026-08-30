@@ -22,13 +22,13 @@ export const ProblemSection: React.FC = () => {
         {/* Section Title */}
         <div className="max-w-3xl mb-16 md:mb-20">
           <span className="font-mono text-[11px] tracking-[0.2em] text-forestGreen dark:text-limeGreen uppercase">
-            01 · Estudo de Viabilidade
+            01 · O Problema
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
-            O desafio dos resíduos sólidos na Beira
+            O desafio dos resíduos sólidos na Cidade da Beira
           </h2>
           <p className="text-slate-600 dark:text-slate-400 mt-4 text-base sm:text-lg leading-relaxed">
-            A Cidade da Beira enfrenta desafios severos de saneamento. Dados recolhidos na nossa pesquisa demonstram o impacto crítico da gestão inadequada de resíduos na saúde e infraestrutura.
+            A Beira produz cerca de <strong>1.000 toneladas de resíduos sólidos por dia</strong>, mas o Conselho Municipal da Beira (CMB) recolhe apenas metade. Nos bairros periféricos, <strong>45,7% dos munícipes</strong> observam lixo acumulado diariamente.
           </p>
         </div>
 
@@ -41,99 +41,99 @@ export const ProblemSection: React.FC = () => {
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
 
-          {/* Card 1: 1000 Tons/dia & Separação CMB / SASB */}
-          <motion.div variants={itemVariants} className="p-6 sm:p-8 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all">
+          {/* Card 1: Produção diária & Dificuldade de Recolha */}
+          <motion.div variants={itemVariants} className="p-5 sm:p-8 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-2xl sm:rounded-3xl shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all">
             <div>
               <div className="flex items-center gap-2.5 text-forestGreen dark:text-limeGreen">
                 <Trash2 className="w-5 h-5" />
                 <h3 className="text-lg font-semibold text-foreground dark:text-white">
-                  Produção diária vs. Capacidade de recolha
+                  Produção diária vs. Recolha municipal
                 </h3>
               </div>
               <p className="text-slate-600 dark:text-slate-400 mt-3 text-sm leading-relaxed">
-                A Beira produz cerca de <strong className="text-foreground dark:text-white font-semibold">~1000 toneladas</strong> de resíduos sólidos por dia, das quais o <strong className="text-foreground dark:text-white font-semibold">Conselho Municipal da Beira (CMB)</strong> recolhe apenas metade. A separação institucional entre a CMB (resíduos) e o <strong className="text-foreground dark:text-white font-semibold">SASB</strong> (drenagem) exige um canal estruturado único.
+                Das <strong className="text-foreground dark:text-white font-semibold">1.000 toneladas/dia</strong> geradas na Beira, cerca de <strong className="text-foreground dark:text-white font-semibold">50% ficam sem recolha</strong> adequada. Isto agrava o mau cheiro, a obstrução de ruas e valas de drenagem, e a proliferação de mosquitos com elevado risco de malária e contaminação.
               </p>
             </div>
 
             <div className="mt-8 pt-6 border-t border-forestGreen/10 dark:border-white/10">
               <div className="flex justify-between items-center text-xs text-slate-500 font-medium mb-2">
-                <span>Taxa de recolha municipal</span>
-                <span className="font-mono text-red-600 dark:text-red-400">~50% recolhido / dia</span>
+                <span>Munícipes com lixo diário à porta</span>
+                <span className="font-mono text-red-600 dark:text-red-400">45,7% inquiridos</span>
               </div>
               <div className="w-full h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
-                <div className="w-1/2 h-full bg-red-500 rounded-full" />
+                <div className="w-[45.7%] h-full bg-red-500 rounded-full" />
               </div>
             </div>
           </motion.div>
 
-          {/* Card 2: Bairros Afectados & Lacuna dos Meios Informais */}
-          <motion.div variants={itemVariants} className="p-6 sm:p-8 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all">
+          {/* Card 2: Falha dos Canais Informais */}
+          <motion.div variants={itemVariants} className="p-5 sm:p-8 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-2xl sm:rounded-3xl shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all">
             <div>
               <div className="flex items-center gap-2.5 text-amber-600 dark:text-amber-400">
                 <ShieldAlert className="w-5 h-5" />
                 <h3 className="text-lg font-semibold text-foreground dark:text-white">
-                  Bairros periféricos & Lacuna dos canais informais
+                  Ineficácia dos canais informais (WhatsApp)
                 </h3>
               </div>
               <p className="text-slate-600 dark:text-slate-400 mt-3 text-sm leading-relaxed">
-                Meios informais como grupos de WhatsApp <strong className="text-foreground dark:text-white font-semibold">não geram dados georreferenciados</strong> nem permitem verificar a resolução real das ocorrências. As iniciativas como &ldquo;ponto a ponto&rdquo; e ecopontos exigem uma plataforma centralizada.
+                As denúncias atuais são feitas de forma informal em grupos de WhatsApp, <strong className="text-foreground dark:text-white font-semibold">sem dados georreferenciados ou verificáveis</strong>. Apenas <strong className="text-foreground dark:text-white font-semibold">31,4% dos moradores</strong> já denunciaram, com um nível de satisfação médio de apenas <strong className="text-amber-600 dark:text-amber-400 font-semibold">2,74 em 5</strong>.
               </p>
             </div>
 
             <div className="mt-8 pt-6 border-t border-forestGreen/10 dark:border-white/10">
-              <span className="text-xs text-slate-500 font-medium block mb-3 uppercase tracking-wide font-mono">Bairros prioritários em estudo</span>
-              <div className="flex flex-wrap gap-2">
-                {["Munhava", "Chota", "Matacuane", "Inhamizua"].map((bairro, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 bg-forestGreen/5 dark:bg-white/5 border border-forestGreen/15 dark:border-white/15 rounded-lg"
-                  >
-                    {bairro}
-                  </span>
-                ))}
+              <div className="flex justify-between items-center text-xs text-slate-500 font-medium mb-2">
+                <span>Munícipes que já denunciaram</span>
+                <span className="font-mono text-amber-600 dark:text-amber-400">31,4% (Satisfação 2,74/5)</span>
+              </div>
+              <div className="w-full h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
+                <div className="w-[31.4%] h-full bg-amber-500 rounded-full" />
               </div>
             </div>
           </motion.div>
 
-          {/* Card 3: Doenças e Malária */}
-          <motion.div variants={itemVariants} className="p-6 sm:p-8 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all">
+          {/* Card 3: Motivos para Não Denunciar */}
+          <motion.div variants={itemVariants} className="p-5 sm:p-8 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-2xl sm:rounded-3xl shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all">
             <div>
               <div className="flex items-center gap-2.5 text-red-600 dark:text-red-400">
                 <HeartPulse className="w-5 h-5" />
                 <h3 className="text-lg font-semibold text-foreground dark:text-white">
-                  Vetores de doenças e salubridade pública
+                  Barreiras à participação cidadã
                 </h3>
               </div>
               <p className="text-slate-600 dark:text-slate-400 mt-3 text-sm leading-relaxed">
-                O lixo acumulado em espaços públicos e valas atrai mosquitos e vetores. Na pesquisa de campo, <strong className="text-foreground dark:text-white font-semibold">69% dos moradores</strong> correlacionam diretamente o acúmulo de resíduos à proliferação de <strong className="text-red-600 dark:text-red-400 font-semibold">Malária</strong> e diarreias.
+                Os principais motivos indicados para nunca denunciar um ponto de lixo são <strong className="text-foreground dark:text-white font-semibold">não saber a quem reportar (33%)</strong> e o <strong className="text-foreground dark:text-white font-semibold">desceticismo de que a situação seja resolvida (33%)</strong>.
               </p>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-forestGreen/10 dark:border-white/10 flex items-center gap-5">
-              <span className="text-4xl font-mono font-semibold text-red-600 dark:text-red-400">69%</span>
-              <div className="text-xs text-slate-600 dark:text-slate-400 leading-tight">
-                Dos residentes associam o lixo diretamente ao aumento de casos de malária e diarreias.
+            <div className="mt-8 pt-6 border-t border-forestGreen/10 dark:border-white/10 flex items-center gap-4">
+              <div className="flex-1 text-center p-2 rounded-xl bg-forestGreen/5 dark:bg-white/5 border border-forestGreen/10 dark:border-white/10">
+                <span className="text-2xl font-mono font-bold text-forestGreen dark:text-limeGreen">33%</span>
+                <span className="text-[10px] text-slate-500 block">Não sabem a quem reportar</span>
+              </div>
+              <div className="flex-1 text-center p-2 rounded-xl bg-forestGreen/5 dark:bg-white/5 border border-forestGreen/10 dark:border-white/10">
+                <span className="text-2xl font-mono font-bold text-rose-500">33%</span>
+                <span className="text-[10px] text-slate-500 block">Acham que não resolveria</span>
               </div>
             </div>
           </motion.div>
 
-          {/* Card 4: Inundações / Ciclone Idai & Resiliência Climática */}
-          <motion.div variants={itemVariants} className="p-6 sm:p-8 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all">
+          {/* Card 4: Impacto Ambiental & Inundações */}
+          <motion.div variants={itemVariants} className="p-5 sm:p-8 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-2xl sm:rounded-3xl shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all">
             <div>
-              <div className="flex items-center gap-2.5 text-blue-600 dark:text-blue-400">
+              <div className="flex items-center gap-2.5 text-sky-600 dark:text-sky-400">
                 <CloudRain className="w-5 h-5" />
                 <h3 className="text-lg font-semibold text-foreground dark:text-white">
-                  Obstrução de drenagem e Ciclone Idai (2019)
+                  Obstrução de drenagem e risco de inundações
                 </h3>
               </div>
               <p className="text-slate-600 dark:text-slate-400 mt-3 text-sm leading-relaxed">
-                Como o <strong className="text-foreground dark:text-white font-semibold">Ciclone Idai evidenciou em 2019</strong>, a acumulação de resíduos obstrui as redes de drenagem do SASB, conferindo à gestão de resíduos uma dimensão de <strong className="text-foreground dark:text-white font-semibold">resiliência climática</strong> urgente.
+                A acumulação de resíduos não gerida obstrui diretamente as valas da rede de drenagem urbana, elevando drasticamente o risco de inundações em períodos chuvosos nos bairros mais vulneráveis da Cidade da Beira.
               </p>
             </div>
 
             <div className="mt-8 pt-6 border-t border-forestGreen/10 dark:border-white/10 text-xs text-slate-500 font-medium flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-blue-500 rounded-full shrink-0" />
-              Dimensão de resiliência climática que ultrapassa a simples questão sanitária.
+              <span className="w-2 h-2 bg-sky-500 rounded-full shrink-0" />
+              O Txeneza cria o canal georreferenciado e auditável que faltava para sanar esta lacuna.
             </div>
           </motion.div>
 
@@ -142,3 +142,4 @@ export const ProblemSection: React.FC = () => {
     </section>
   );
 };
+

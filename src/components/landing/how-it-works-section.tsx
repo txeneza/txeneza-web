@@ -2,79 +2,76 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Camera, MapPin, Sliders, CheckCircle } from "lucide-react";
+import { Camera, MapPin, WifiOff, CheckCircle2, Bot, LayoutDashboard } from "lucide-react";
 import { BrandName } from "@/components/brand/brand-name";
+
+import { Carousel } from "@/components/ui/carousel";
 
 export const HowItWorksSection: React.FC = () => {
   const steps = [
     {
       num: "01",
-      title: "Fotografar & IA",
-      desc: "Capture a foto do resíduo. A visão computacional via Inteligência Artificial (Google Gemini) classifica automaticamente a tipologia e o nível de gravidade.",
+      title: "Registo da Denúncia",
+      desc: "O morador tira uma fotografia do ponto de lixo acumulado; o sistema captura as coordenadas GPS automaticamente com elevada precisão.",
       icon: Camera,
     },
     {
       num: "02",
-      title: "Localizar (Offline-First)",
-      desc: "Georreferenciação automática via GPS. Graças à arquitetura Offline-First, a denúncia é guardada sem perda de dados mesmo em conectividade intermitente.",
+      title: "Classificação por IA (Gemini)",
+      desc: "A imagem é enviada à API Gemini, que identifica a categoria do resíduo e o nível de gravidade, permitindo também a correção manual do utilizador.",
       icon: MapPin,
     },
     {
       num: "03",
-      title: "Assistente Xeni & Status",
-      desc: "O assistente conversacional Xeni orienta o cidadão. O mapa de calor georreferenciado (KDE) direciona a ocorrência à equipa municipal adequada.",
-      icon: Sliders,
+      title: "Arquitetura Offline-First",
+      desc: "Sem internet, a ocorrência é guardada localmente no dispositivo e sincronizada automaticamente assim que a conectividade for restaurada, sem perda de dados.",
+      icon: WifiOff,
     },
     {
       num: "04",
-      title: "Verificação Fotográfica",
-      desc: "Após a recolha, o ciclo encerra com a verificação fotográfica antes/depois, garantindo transparência, credibilidade e responsabilização municipal.",
-      icon: CheckCircle,
+      title: "Verificação de Resolução",
+      desc: "Após a equipa municipal limpar o local, o morador recebe fotografias de 'antes/depois' para confirmar a resolução; se rejeitada, a ocorrência reabre automaticamente.",
+      icon: CheckCircle2,
+    },
+    {
+      num: "05",
+      title: "Assistente Conversacional Xeni",
+      desc: "Responde a dúvidas sobre gestão de resíduos e reciclagem, fornecendo orientações online (via Gemini) ou offline através de respostas locais pré-definidas.",
+      icon: Bot,
+    },
+    {
+      num: "06",
+      title: "Painel Administrativo (CMB)",
+      desc: "Pensado para uso potencial pelo Conselho Municipal da Beira (CMB), com estatísticas em tempo real, moderador de ocorrências e integração com o sistema 'ponto a ponto'.",
+      icon: LayoutDashboard,
     },
   ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 16 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
-  };
 
   return (
     <section id="funcionamento" className="py-20 md:py-28 bg-transparent text-foreground dark:text-grey50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="max-w-3xl mb-16 md:mb-20">
+        <div className="max-w-3xl mb-12 md:mb-16">
           <span className="font-mono text-[11px] tracking-[0.2em] text-forestGreen dark:text-limeGreen uppercase">
-            02 · Fluxo de Reporte
+            02 · Como Funciona
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
-            Como funciona a <BrandName />?
+            Fluxo inteligente e auditável da <BrandName />
           </h2>
           <p className="text-slate-600 dark:text-slate-400 mt-4 text-base sm:text-lg leading-relaxed">
-            Reportar um foco de lixo leva menos de 1 minuto. Um fluxo simples e acessível para qualquer cidadão colaborar na melhoria do saneamento da cidade.
+            Do registo fotográfico à confirmação da limpeza municipal, a plataforma combina inteligência artificial, modo offline e verificação de 'antes e depois'.
           </p>
         </div>
 
-        {/* Steps */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
+        {/* Steps Carousel */}
+        <Carousel itemsPerView={{ mobile: 1, tablet: 2, desktop: 3 }} autoPlay interval={6000}>
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
-              <motion.div
+              <div
                 key={index}
-                variants={itemVariants}
-                className="bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl p-6 sm:p-7 shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all relative overflow-hidden group"
+                className="bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl p-6 sm:p-7 shadow-xl flex flex-col justify-between hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all relative overflow-hidden group h-full min-h-[260px]"
               >
                 {/* Accent top line on hover */}
                 <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-limeGreen to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -85,7 +82,7 @@ export const HowItWorksSection: React.FC = () => {
                       <Icon className="w-6 h-6 text-forestGreen dark:text-limeGreen" />
                     </div>
                     <span className="font-mono text-xs font-bold text-slate-400 dark:text-slate-500">
-                      {step.num}/04
+                      {step.num}/06
                     </span>
                   </div>
 
@@ -96,10 +93,10 @@ export const HowItWorksSection: React.FC = () => {
                     {step.desc}
                   </p>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
-        </motion.div>
+        </Carousel>
       </div>
     </section>
   );

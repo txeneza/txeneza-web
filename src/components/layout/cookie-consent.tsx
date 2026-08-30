@@ -39,40 +39,41 @@ export const CookieConsent: React.FC = () => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 30, scale: 0.95 }}
           transition={{ duration: 0.4, type: "spring", stiffness: 100 }}
-          className="fixed bottom-6 left-6 right-6 md:left-auto md:max-w-md z-50 bg-grey900/90/90 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-white"
+          className="fixed bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 md:left-auto md:max-w-md z-50 bg-grey900/95 backdrop-blur-xl border border-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col gap-4 text-white"
         >
           {/* Header */}
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-2 text-limeGreen">
               <ShieldCheck className="w-5 h-5" />
-              <span className="font-extrabold text-sm uppercase tracking-wider">
+              <span className="font-extrabold text-xs sm:text-sm uppercase tracking-wider">
                 Privacidade & Cookies
               </span>
             </div>
             <button
               onClick={() => setVisible(false)}
-              className="text-slate-500 hover:text-white transition-colors"
+              className="p-1 text-slate-500 hover:text-white transition-colors"
+              aria-label="Fechar"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Description */}
-          <p className="text-xs text-slate-350 leading-relaxed">
+          <p className="text-xs text-slate-300 leading-relaxed">
             Utilizamos cookies para melhorar a sua experiência, guardar preferências do utilizador, analisar tráfego e garantir o correto funcionamento do mapa do <BrandName variant="onDark" />. Ao continuar a navegar, aceita a nossa política de privacidade.
           </p>
 
           {/* Action Buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2.5">
             <button
               onClick={handleDecline}
-              className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-850 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all"
+              className="flex-1 py-3 sm:py-2.5 min-h-[44px] rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all"
             >
               Recusar
             </button>
             <button
               onClick={handleAccept}
-              className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-limeGreen text-forestGreen hover:bg-lightLime hover:scale-[1.01] active:scale-95 transition-all"
+              className="flex-1 py-3 sm:py-2.5 min-h-[44px] rounded-xl text-xs font-bold bg-limeGreen text-forestGreen hover:bg-lightLime active:scale-95 transition-all"
             >
               Aceitar Todos
             </button>

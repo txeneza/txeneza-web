@@ -59,18 +59,18 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-grey950/60 backdrop-blur-md transition-opacity"
         onClick={loading ? undefined : onCancel}
       />
-      <div className="relative w-full max-w-sm bg-light-background dark:bg-grey900 border border-grey200 dark:border-grey800 rounded-2xl shadow-2xl p-6 flex flex-col gap-4">
+      <div className="relative w-[92vw] max-w-sm bg-white dark:bg-grey900 border border-grey200/90 dark:border-grey800/90 rounded-2xl shadow-xl p-5 sm:p-6 flex flex-col gap-4 animate-in fade-in-50 zoom-in-95 duration-150">
         <div className="flex items-start justify-between">
-          <div className={`p-2.5 rounded-xl ${toneClasses.iconWrap}`}>
-            {icon || <AlertTriangle className="w-6 h-6" />}
+          <div className={`p-3 rounded-xl border border-current/10 ${toneClasses.iconWrap}`}>
+            {icon || <AlertTriangle className="w-5 h-5" />}
           </div>
           <button
             onClick={onCancel}
             disabled={loading}
-            className="p-1.5 rounded-lg text-grey500 hover:bg-grey100 dark:hover:bg-grey800 transition-colors disabled:opacity-50"
+            className="p-2 rounded-xl text-grey400 dark:text-grey500 hover:text-grey700 dark:hover:text-grey200 hover:bg-grey100 dark:hover:bg-grey800/80 transition-colors disabled:opacity-50"
             aria-label="Fechar"
           >
             <X className="w-5 h-5" />
@@ -78,28 +78,28 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         </div>
 
         <div>
-          <h3 className="text-lg font-bold text-grey900 dark:text-grey50">{title}</h3>
+          <h3 className="text-lg font-bold text-grey900 dark:text-grey50 tracking-tight">{title}</h3>
           {description && (
-            <div className="text-sm text-grey600 dark:text-grey400 mt-1 leading-relaxed">{description}</div>
+            <div className="text-sm text-grey600 dark:text-grey400 mt-1.5 leading-relaxed">{description}</div>
           )}
         </div>
 
-        <div className="flex gap-3 mt-1">
+        <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 mt-2">
           <button
             onClick={onCancel}
             disabled={loading}
-            className="flex-1 py-2.5 rounded-xl text-sm font-bold text-grey700 dark:text-grey300 bg-grey100 dark:bg-grey800 hover:bg-grey200 dark:hover:bg-grey700 transition-colors disabled:opacity-50"
+            className="flex-1 py-3 sm:py-2.5 min-h-[44px] rounded-xl text-sm font-semibold text-grey700 dark:text-grey300 bg-grey100/80 dark:bg-grey800/80 hover:bg-grey200/80 dark:hover:bg-grey700/80 border border-grey200/60 dark:border-grey700/60 transition-all duration-150 disabled:opacity-50 active:scale-[0.99]"
           >
             {cancelLabel}
           </button>
           <button
             onClick={onConfirm}
             disabled={loading}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 ${toneClasses.confirm}`}
+            className={`flex-1 py-3 sm:py-2.5 min-h-[44px] rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-sm transition-all duration-150 disabled:opacity-50 active:scale-[0.99] ${toneClasses.confirm}`}
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" /> A guardar...
+                <Loader2 className="w-4 h-4 animate-spin" /> Processando...
               </>
             ) : (
               confirmLabel

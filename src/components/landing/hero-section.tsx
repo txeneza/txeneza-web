@@ -122,24 +122,24 @@ export const HeroSection: React.FC = () => {
               </a>
             </motion.div>
 
-            {/* Stat strip — replaces the bouncing scroll hint */}
+            {/* Stat strip — visible on all devices */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="hidden lg:grid grid-cols-3 gap-8 mt-10 pt-6 border-t border-white/10 max-w-lg"
+              className="grid grid-cols-3 gap-3 sm:gap-8 mt-8 sm:mt-10 pt-6 border-t border-white/10 max-w-lg mx-auto lg:mx-0 text-left"
             >
               <div>
-                <div className="font-mono text-2xl font-medium text-white">~1000t</div>
-                <div className="text-[11px] text-slate-400 mt-1">Resíduos gerados/dia</div>
+                <div className="font-mono text-xl sm:text-2xl font-bold text-white">~1000t</div>
+                <div className="text-[10px] sm:text-[11px] text-slate-400 mt-1 leading-tight">Resíduos gerados/dia</div>
               </div>
               <div>
-                <div className="font-mono text-2xl font-medium text-white">69%</div>
-                <div className="text-[11px] text-slate-400 mt-1">Associam lixo à malária</div>
+                <div className="font-mono text-xl sm:text-2xl font-bold text-white">69%</div>
+                <div className="text-[10px] sm:text-[11px] text-slate-400 mt-1 leading-tight">Associam à malária</div>
               </div>
               <div>
-                <div className="font-mono text-2xl font-medium text-white">4</div>
-                <div className="text-[11px] text-slate-400 mt-1">Bairros prioritários</div>
+                <div className="font-mono text-xl sm:text-2xl font-bold text-white">4</div>
+                <div className="text-[10px] sm:text-[11px] text-slate-400 mt-1 leading-tight">Bairros prioritários</div>
               </div>
             </motion.div>
           </div>

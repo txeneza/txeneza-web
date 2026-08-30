@@ -7,7 +7,7 @@ import { ProblemSection } from "./problem-section";
 import { HowItWorksSection } from "./how-it-works-section";
 import { MapPreviewSection } from "./map-preview-section";
 import { TargetAudienceSection } from "./target-audience-section";
-import { SocialProofSection } from "./social-proof-section";
+import { DownloadSection } from "./download";
 import { InstitutionalSection } from "./institutional-section";
 import { LandingFooter } from "./landing-footer";
 
@@ -26,23 +26,23 @@ export const LandingPage: React.FC = () => {
         {/* 1. Hero Presentational Area */}
         <HeroSection />
 
-        {/* 2. Scientific Problem Data */}
+        {/* 2. O Problema */}
         <ProblemSection />
 
-        {/* 3. Steps of reporting flow */}
+        {/* 3. Como Funciona */}
         <HowItWorksSection />
 
-        {/* 4. Live interactive preview mapping */}
+        {/* 4. O Mapa */}
         <MapPreviewSection />
 
-        {/* 5. exposed social targets */}
+        {/* 5. Público-Alvo */}
         <TargetAudienceSection />
 
-        {/* 6. Acceptance statistical proofs */}
-        <SocialProofSection />
-
-        {/* 7. Institutional alignment & SDGs */}
+        {/* 6. Enquadramento Institucional e ODS */}
         <InstitutionalSection />
+
+        {/* 7. Secção de Download Premium */}
+        <DownloadSection />
       </main>
 
       {/* Footer & download */}

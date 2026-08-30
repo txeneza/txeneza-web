@@ -82,18 +82,18 @@ export const Combobox: React.FC<ComboboxProps> = ({
         id={id}
         disabled={disabled}
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between gap-2 bg-grey100 dark:bg-grey950 border border-grey200 dark:border-grey800 rounded-xl py-2.5 px-3.5 text-sm text-left focus:outline-none focus:border-limeGreen/50 focus:ring-2 focus:ring-limeGreen/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-between gap-2 bg-white dark:bg-grey900/90 border border-grey300/80 dark:border-grey700/80 rounded-xl py-2.5 px-3.5 min-h-[44px] text-base sm:text-sm text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-forestGreen/40 dark:focus-visible:ring-limeGreen/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
       >
-        <span className={value ? "text-grey900 dark:text-grey50" : "text-grey400 dark:text-grey600"}>
+        <span className={value ? "text-grey900 dark:text-grey50 font-medium" : "text-grey400 dark:text-grey500"}>
           {value || placeholder}
         </span>
-        <ChevronsUpDown className="w-4 h-4 text-grey400 dark:text-grey600 shrink-0" />
+        <ChevronsUpDown className="w-4 h-4 text-grey400 dark:text-grey500 shrink-0" />
       </button>
 
       {open && (
-        <div className="absolute z-30 mt-1.5 w-full bg-light-background dark:bg-grey900 border border-grey200 dark:border-grey800 rounded-xl shadow-xl overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-2 border-b border-grey200 dark:border-grey800">
-            <Search className="w-4 h-4 text-grey400 dark:text-grey600 shrink-0" />
+        <div className="absolute z-30 mt-1.5 w-full bg-white dark:bg-grey900 border border-grey200/90 dark:border-grey800/90 rounded-xl shadow-xl overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150">
+          <div className="flex items-center gap-2 px-3.5 py-2.5 border-b border-grey100 dark:border-grey800/80 bg-grey50/50 dark:bg-grey900/50">
+            <Search className="w-4 h-4 text-grey400 dark:text-grey500 shrink-0" />
             <input
               ref={inputRef}
               value={query}
@@ -103,13 +103,13 @@ export const Combobox: React.FC<ComboboxProps> = ({
               }}
               onKeyDown={handleKeyDown}
               placeholder={searchPlaceholder}
-              className="w-full bg-transparent text-sm text-grey900 dark:text-grey50 placeholder:text-grey400 dark:placeholder:text-grey600 focus:outline-none"
+              className="w-full bg-transparent text-base sm:text-sm text-grey900 dark:text-grey50 placeholder:text-grey400 dark:placeholder:text-grey500 focus:outline-none"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                className="text-grey400 dark:text-grey600 hover:text-grey600 dark:hover:text-grey400"
+                className="text-grey400 dark:text-grey500 hover:text-grey600 dark:hover:text-grey300"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -118,7 +118,7 @@ export const Combobox: React.FC<ComboboxProps> = ({
 
           <ul className="max-h-56 overflow-y-auto py-1">
             {filtered.length === 0 ? (
-              <li className="px-3.5 py-2.5 text-sm text-grey500 dark:text-grey500">{emptyMessage}</li>
+              <li className="px-3.5 py-2.5 text-sm text-grey500">{emptyMessage}</li>
             ) : (
               filtered.map((option, idx) => {
                 const isSelected = option === value;
@@ -129,10 +129,10 @@ export const Combobox: React.FC<ComboboxProps> = ({
                       type="button"
                       onClick={() => select(option)}
                       onMouseEnter={() => setHighlight(idx)}
-                      className={`w-full flex items-center justify-between gap-2 px-3.5 py-2 text-sm text-left transition-colors ${
+                      className={`w-full flex items-center justify-between gap-2 px-3.5 py-2 text-sm text-left transition-colors font-medium ${
                         isHighlighted
                           ? "bg-forestGreen/10 dark:bg-limeGreen/10 text-forestGreen dark:text-limeGreen"
-                          : "text-grey900 dark:text-grey50"
+                          : "text-grey800 dark:text-grey200"
                       }`}
                     >
                       <span>{option}</span>

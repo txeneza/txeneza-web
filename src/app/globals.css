@@ -89,5 +89,17 @@ article {
   display: none;
 }
 
-/* Teste de sincronização de deploy — sem impacto visual */
+/* ── Design System Premium Limpo Utilitários ──────────────────────── */
+@layer utilities {
+  .surface-card {
+    @apply bg-white dark:bg-grey900/90 border border-grey200/80 dark:border-grey800/80 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200;
+  }
+  
+  .surface-panel {
+    @apply bg-grey50/90 dark:bg-grey900/60 backdrop-blur-md border border-grey200/70 dark:border-grey800/70 rounded-2xl;
+  }
 
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-forestGreen/40 dark:focus-visible:ring-limeGreen/40 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-grey900;
+  }
+}

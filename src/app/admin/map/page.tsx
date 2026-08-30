@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { MapView, PontoRecolhaMapData } from "@/components/map/map-view";
+import { MapView, PontoRecolhaMapData } from "@/features/map/components/map-view";
 import { useMapStore } from "@/features/map/map.store";
-import { OccurrenceCard } from "@/components/occurrences/occurrence-card";
+import { OccurrenceCard } from "@/features/occurrences/components/occurrence-card";
 import { Map as MapIcon, MapPin, Info, X, WifiOff } from "lucide-react";
 
 export default function AdminMapPage() {

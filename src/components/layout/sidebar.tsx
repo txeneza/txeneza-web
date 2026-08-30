@@ -31,8 +31,6 @@ const SidebarNav: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) => {
   const pathname = usePathname();
 
   const renderLink = (item: NavItem) => {
-    // Marca como ativo apenas a correspondência exata (ou sub-rota), evitando que "/admin"
-    // fique sempre ativo.
     const isActive =
       item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
 
@@ -41,16 +39,24 @@ const SidebarNav: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) => {
         key={item.href}
         href={item.href}
         onClick={onNavigate}
-        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+        className={`group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 ${
           isActive
-            ? "bg-forestGreen/10 dark:bg-limeGreen/10 text-forestGreen dark:text-limeGreen"
-            : "text-grey900 dark:text-grey50 hover:bg-grey200 dark:hover:bg-grey800"
+            ? "bg-forestGreen/10 dark:bg-limeGreen/15 text-forestGreen dark:text-limeGreen font-semibold border border-forestGreen/15 dark:border-limeGreen/20 shadow-xs"
+            : "text-grey700 dark:text-grey300 font-medium hover:bg-grey200/60 dark:hover:bg-grey800/60 hover:text-grey900 dark:hover:text-grey100"
         }`}
       >
-        <span className={item.accent ? "text-forestGreen dark:text-limeGreen" : ""}>{item.icon}</span>
-        <span>{item.label}</span>
+        <span
+          className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+            isActive
+              ? "bg-forestGreen/15 dark:bg-limeGreen/20 text-forestGreen dark:text-limeGreen"
+              : "bg-grey100/80 dark:bg-grey800/50 text-grey500 dark:text-grey400 group-hover:text-grey900 dark:group-hover:text-grey100"
+          }`}
+        >
+          {item.icon}
+        </span>
+        <span className="truncate">{item.label}</span>
         {item.badge && (
-          <span className="ml-auto text-[8px] tracking-wider uppercase px-1.5 py-0.5 bg-forestGreen/10 dark:bg-limeGreen/10 text-forestGreen dark:text-limeGreen rounded-md font-black border border-forestGreen/10 dark:border-limeGreen/10">
+          <span className="ml-auto text-[9px] tracking-wider uppercase px-2 py-0.5 bg-forestGreen/10 dark:bg-limeGreen/15 text-forestGreen dark:text-limeGreen rounded-md font-extrabold border border-forestGreen/20 dark:border-limeGreen/25">
             {item.badge}
           </span>
         )}
@@ -59,13 +65,13 @@ const SidebarNav: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) => {
   };
 
   return (
-    <nav className="flex flex-col gap-2">
-      <div className="text-xs font-semibold text-grey600 dark:text-grey400 uppercase tracking-wider mb-2">
+    <nav className="flex flex-col gap-1.5">
+      <div className="text-[11px] font-bold text-grey400 dark:text-grey500 uppercase tracking-widest px-3 mb-1">
         Painel Principal
       </div>
       {MAIN_ITEMS.map(renderLink)}
 
-      <div className="text-xs font-semibold text-grey600 dark:text-grey400 uppercase tracking-wider mt-6 mb-2">
+      <div className="text-[11px] font-bold text-grey400 dark:text-grey500 uppercase tracking-widest px-3 mt-6 mb-1">
         Visualizações
       </div>
       {VIEW_ITEMS.map(renderLink)}
@@ -79,7 +85,7 @@ export const Sidebar: React.FC = () => {
   return (
     <>
       {/* Barra lateral fixa — desktop */}
-      <aside className="w-64 bg-grey100 dark:bg-grey900/40 border-r border-grey200 dark:border-grey800 min-h-[calc(100vh-65px)] p-6 hidden md:block">
+      <aside className="w-64 bg-grey50/60 dark:bg-grey900/60 border-r border-grey200/80 dark:border-grey800/80 min-h-[calc(100vh-61px)] p-4 hidden md:block backdrop-blur-sm">
         <SidebarNav />
       </aside>
 
@@ -87,18 +93,18 @@ export const Sidebar: React.FC = () => {
       {sidebarOpen && (
         <div className="fixed inset-0 z-[60] md:hidden">
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-grey950/60 backdrop-blur-md transition-opacity"
             onClick={closeSidebar}
             aria-hidden
           />
-          <aside className="absolute left-0 top-0 h-full w-72 max-w-[80%] bg-light-background dark:bg-grey900 border-r border-grey200 dark:border-grey800 p-6 shadow-2xl flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <span className="text-lg font-black">
+          <aside className="absolute left-0 top-0 h-full w-72 max-w-[80%] bg-white dark:bg-grey900 border-r border-grey200 dark:border-grey800 p-5 shadow-2xl flex flex-col gap-5">
+            <div className="flex items-center justify-between border-b border-grey100 dark:border-grey800/80 pb-4">
+              <span className="text-lg font-black tracking-tight">
                 <BrandName />
               </span>
               <button
                 onClick={closeSidebar}
-                className="p-1.5 rounded-lg text-grey600 dark:text-grey400 hover:bg-grey200 dark:hover:bg-grey800 transition-colors"
+                className="p-1.5 rounded-xl text-grey400 dark:text-grey500 hover:bg-grey100 dark:hover:bg-grey800 transition-colors"
                 aria-label="Fechar menu"
               >
                 <X className="w-5 h-5" />

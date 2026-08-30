@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { MapView, PontoRecolhaMapData } from "@/components/map/map-view";
-import { HeatmapView } from "@/components/map/heatmap-view";
-import { OccurrenceCard } from "@/components/occurrences/occurrence-card";
+import { MapView, PontoRecolhaMapData } from "@/features/map/components/map-view";
+import { HeatmapView } from "@/features/map/components/heatmap-view";
+import { OccurrenceCard } from "@/features/occurrences/components/occurrence-card";
 import { useMapStore } from "@/features/map/map.store";
 import { ArrowLeft, Map as MapIcon, Flame, Info, X, WifiOff, PlusCircle, MousePointerClick } from "lucide-react";
 import { BrandName } from "@/components/brand/brand-name";

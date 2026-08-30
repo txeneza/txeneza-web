@@ -124,9 +124,9 @@ export const MapPreviewSection: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="flex flex-col gap-3"
                   >
-                    <h3 className="text-xl font-semibold text-foreground dark:text-white">Mapa de Marcadores</h3>
+                    <h3 className="text-xl font-semibold text-foreground dark:text-white">Mapa de Ocorrências (App Mobile)</h3>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                      Cada ponto reportado gera um marcador interativo. Ao clicar, moradores e vereadores veem fotos, gravidade, data e descrição. Ajuda a identificar incidentes individuais no seu bairro.
+                      Mostra os pontos denunciados com <strong className="text-foreground dark:text-white font-semibold">agregação espacial (clustering)</strong>, agrupando denúncias próximas para evitar sobreposição de marcadores e permitir rápida visualização por bairro.
                     </p>
                   </motion.div>
                 ) : (
@@ -138,9 +138,9 @@ export const MapPreviewSection: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="flex flex-col gap-3"
                   >
-                    <h3 className="text-xl font-semibold text-foreground dark:text-white">Zonas Críticas (Estimativa de Kernel - KDE)</h3>
+                    <h3 className="text-xl font-semibold text-foreground dark:text-white">Mapa de Calor (Painel Web CMB)</h3>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                      O algoritmo utiliza <strong className="text-foreground dark:text-white font-semibold">Estimativa de Densidade de Kernel (KDE)</strong> e <strong className="text-foreground dark:text-white font-semibold">clustering espacial</strong> para analisar a densidade e proximidade dos reportes, gerando &ldquo;manchas térmicas&rdquo; para priorização municipal.
+                      Gerado por <strong className="text-foreground dark:text-white font-semibold">Estimativa de Densidade de Kernel (KDE)</strong>, transforma centenas de denúncias num retrato visual das zonas mais críticas, ajudando a priorizar a atuação da equipa municipal.
                     </p>
                   </motion.div>
                 )}
@@ -172,15 +172,15 @@ export const MapPreviewSection: React.FC = () => {
           </div>
 
           {/* Right Simulated Map Dashboard */}
-          <div className="lg:col-span-8 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md border border-forestGreen/15 dark:border-forestGreen/30 rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[480px] sm:h-[520px] relative">
+          <div className="lg:col-span-8 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md border border-forestGreen/15 dark:border-forestGreen/30 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[380px] sm:h-[480px] md:h-[520px] relative">
 
             {/* Map Header Panel */}
-            <div className="px-5 py-3.5 bg-slate-50 dark:bg-grey900 border-b border-slate-200 dark:border-white/10 flex items-center justify-between text-xs font-medium">
+            <div className="px-4 sm:px-5 py-3 bg-slate-50 dark:bg-grey900 border-b border-slate-200 dark:border-white/10 flex items-center justify-between text-xs font-medium">
               <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
                 <Map className="w-4 h-4 text-forestGreen dark:text-limeGreen" />
-                <span>Consola Pública de Monitoramento • Beira, MZ</span>
+                <span className="truncate">Consola Pública • Beira, MZ</span>
               </div>
-              <div className="flex items-center gap-1.5 text-slate-500">
+              <div className="flex items-center gap-1.5 text-slate-500 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="font-mono text-[10px] uppercase font-semibold tracking-wider">Live</span>
               </div>
@@ -250,10 +250,10 @@ export const MapPreviewSection: React.FC = () => {
                         whileHover={{ scale: 1.2, zIndex: 50 }}
                         onClick={() => setSelectedPin(pin.id)}
                         style={{ top: pin.lat, left: pin.lng }}
-                        className="absolute w-7 h-7 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer group"
+                        className="absolute w-9 h-9 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer group touch-manipulation"
                       >
                         {/* Pin body */}
-                        <div className={`w-4 h-4 rounded-full border-2 border-white flex items-center justify-center shadow-md ${
+                        <div className={`w-4.5 h-4.5 rounded-full border-2 border-white flex items-center justify-center shadow-md ${
                           pin.gravidade === "Crítico" ? "bg-red-600" : "bg-orange-500"
                         }`} />
                       </motion.button>
@@ -269,7 +269,7 @@ export const MapPreviewSection: React.FC = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: 20, opacity: 0 }}
-                    className="absolute bottom-6 left-6 right-6 bg-background dark:bg-grey900 border border-slate-200 dark:border-white/15 p-4 shadow-lg z-50 flex flex-col gap-3"
+                    className="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 bg-background dark:bg-grey900 border border-slate-200 dark:border-white/15 p-4 sm:p-5 rounded-2xl shadow-xl z-50 flex flex-col gap-3"
                   >
                     {(() => {
                       const pin = mockOccurrences.find((p) => p.id === selectedPin);

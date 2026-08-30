@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useOccurrences } from "@/hooks/use-occurrences";
-import { OccurrenceTable } from "@/components/occurrences/occurrence-table";
+import { OccurrenceTable } from "@/features/occurrences/components/occurrence-table";
 import { OccurrenceStatus } from "@/features/occurrences/occurrences.types";
 import {
   OCCURRENCE_STATUS_META,

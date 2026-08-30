@@ -4,7 +4,7 @@ import React from "react";
 import { MapPin, Plus, Loader2, Pencil, X, CheckCircle2, XCircle, AlertTriangle, ArrowLeftRight } from "lucide-react";
 import { Combobox } from "@/components/ui/combobox";
 import { BAIRROS_BEIRA_NOMES } from "@/core/geo/beira-bairros";
-import { LocationPickerMap } from "@/components/map/location-picker-map";
+import { LocationPickerMap } from "@/features/map/components/location-picker-map";
 
 interface CollectionPointFormProps {
   form: {

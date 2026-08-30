@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { HeartPulse, Home, RefreshCw, Landmark } from "lucide-react";
 import { BrandName } from "@/components/brand/brand-name";
+import { Carousel } from "@/components/ui/carousel";
 
 export const InstitutionalSection: React.FC = () => {
   const odsList = [
@@ -35,7 +36,7 @@ export const InstitutionalSection: React.FC = () => {
           {/* Left Column: Partnerships & Delimitation */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <span className="font-mono text-[11px] tracking-[0.2em] text-forestGreen dark:text-limeGreen uppercase">
-              06 · Enquadramento Institucional
+              05 · Enquadramento Institucional
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight">
               Apoio à gestão e sustentabilidade urbana
@@ -81,43 +82,43 @@ export const InstitutionalSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: ODS blocks */}
+
+
+            {/* Right Column: ODS blocks */}
           <div className="lg:col-span-7 flex flex-col">
             <span className="font-mono text-[11px] font-medium tracking-widest text-forestGreen dark:text-limeGreen uppercase block px-6 py-4 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-b-0 border-forestGreen/15 dark:border-forestGreen/30 rounded-t-3xl shadow-sm">
               Alinhamento com Objectivos da ONU (ODS)
             </span>
 
-            <div className="flex flex-col gap-4 p-6 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-b-3xl shadow-xl">
-              {odsList.map((ods, idx) => {
-                const Icon = ods.icon;
-                return (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: idx * 0.1 }}
-                    className="p-6 bg-white/50 dark:bg-forestGreen/20 rounded-2xl border border-forestGreen/10 dark:border-white/10 flex gap-5 items-start hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all"
-                  >
-                  {/* Badge ODS */}
-                  <div className="w-12 h-12 rounded-xl border border-forestGreen/30 dark:border-limeGreen/30 bg-forestGreen/5 dark:bg-limeGreen/10 flex flex-col items-center justify-center shrink-0 text-forestGreen dark:text-limeGreen font-mono">
-                    <span className="text-lg font-semibold leading-none">{ods.num}</span>
-                    <span className="text-[7px] uppercase tracking-wider font-medium mt-0.5">ODS</span>
-                  </div>
+            <div className="p-4 sm:p-6 bg-white/80 dark:bg-forestGreen/10 backdrop-blur-xl border border-forestGreen/15 dark:border-forestGreen/30 rounded-b-3xl shadow-xl">
+              <Carousel itemsPerView={{ mobile: 1, tablet: 1, desktop: 1 }} autoPlay interval={6500}>
+                {odsList.map((ods, idx) => {
+                  const Icon = ods.icon;
+                  return (
+                    <div
+                      key={idx}
+                      className="p-5 sm:p-7 bg-white/60 dark:bg-forestGreen/20 rounded-2xl border border-forestGreen/10 dark:border-white/10 flex flex-col sm:flex-row gap-4 sm:gap-5 items-start hover:border-limeGreen/40 dark:hover:border-limeGreen/30 transition-all min-h-[170px]"
+                    >
+                      {/* Badge ODS */}
+                      <div className="w-12 h-12 rounded-2xl border border-forestGreen/30 dark:border-limeGreen/30 bg-forestGreen/10 dark:bg-limeGreen/10 flex flex-col items-center justify-center shrink-0 text-forestGreen dark:text-limeGreen font-mono shadow-sm">
+                        <span className="text-xl font-bold leading-none">{ods.num}</span>
+                        <span className="text-[8px] uppercase tracking-widest font-bold mt-0.5">ODS</span>
+                      </div>
 
-                  {/* Text */}
-                  <div>
-                    <h3 className="text-base font-semibold text-foreground dark:text-white flex items-center gap-2">
-                      {ods.title}
-                      <Icon className="w-4 h-4 text-slate-400" />
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-                      {ods.desc}
-                    </p>
-                  </div>
-                </motion.div>
-                );
-              })}
+                      {/* Text */}
+                      <div className="flex-1">
+                        <h3 className="text-base sm:text-lg font-bold text-foreground dark:text-white flex items-center gap-2">
+                          {ods.title}
+                          <Icon className="w-4.5 h-4.5 text-forestGreen dark:text-limeGreen" />
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                          {ods.desc}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </Carousel>
             </div>
           </div>
 

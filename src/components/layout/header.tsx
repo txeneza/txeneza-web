@@ -30,22 +30,23 @@ export const Header: React.FC = () => {
   const userInitial = (user?.email || "U").charAt(0).toUpperCase();
 
   return (
-    <header className="w-full bg-light-background dark:bg-grey900/80 backdrop-blur-md border-b border-grey200 dark:border-grey800 py-4 px-6 flex items-center justify-between sticky top-0 z-50 transition-colors duration-300">
+    <header className="w-full bg-white/80 dark:bg-grey900/80 backdrop-blur-md border-b border-grey200/80 dark:border-grey800/80 py-3.5 px-6 flex items-center justify-between sticky top-0 z-50 transition-colors duration-200 shadow-sm">
       <div className="flex items-center gap-3">
-        {/* Botão de menu — apenas mobile (a sidebar está oculta nesses ecrãs) */}
+        {/* Botão de menu — apenas mobile */}
         {isAuthenticated && (
           <button
             onClick={toggleSidebar}
-            className="md:hidden p-2 -ml-2 rounded-xl text-grey600 dark:text-grey400 hover:bg-grey100 dark:hover:bg-grey800 transition-colors"
+            className="md:hidden p-2 -ml-2 rounded-xl text-grey600 dark:text-grey400 hover:bg-grey100 dark:hover:bg-grey800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-forestGreen/40"
             aria-label="Abrir menu"
           >
             <Menu className="w-5 h-5" />
           </button>
         )}
-        <Link href="/" className="text-xl font-black hover:opacity-90 transition-opacity">
+        <Link href="/" className="text-xl font-black hover:opacity-90 transition-opacity tracking-tight">
           <BrandName />
         </Link>
-        <span className="hidden sm:inline text-[10px] uppercase tracking-wider px-2 py-0.5 bg-forestGreen/10 dark:bg-limeGreen/10 text-forestGreen dark:text-limeGreen rounded-full font-bold">
+        <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider px-2.5 py-0.5 bg-forestGreen/10 dark:bg-limeGreen/15 text-forestGreen dark:text-limeGreen rounded-full font-bold border border-forestGreen/20 dark:border-limeGreen/25">
+          <span className="w-1.5 h-1.5 rounded-full bg-forestGreen dark:bg-limeGreen shrink-0" />
           {isAuthenticated ? "Painel Admin" : "Web App"}
         </span>
       </div>
@@ -58,13 +59,13 @@ export const Header: React.FC = () => {
         {mounted && (
           <button
             onClick={(e) => toggleTheme({ x: e.clientX, y: e.clientY })}
-            className="p-2 rounded-xl bg-grey100 dark:bg-grey950 border border-grey200 dark:border-grey850 text-grey600 dark:text-grey500 hover:text-forestGreen dark:hover:text-limeGreen hover:scale-105 transition-all duration-200"
+            className="p-2 rounded-xl bg-grey100/80 dark:bg-grey800/80 border border-grey200/80 dark:border-grey700/60 text-grey700 dark:text-grey300 hover:bg-grey200/80 dark:hover:bg-grey700/80 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-forestGreen/40"
             title={theme === "light" ? "Mudar para Modo Escuro" : "Mudar para Modo Claro"}
           >
             {theme === "light" ? (
-              <Moon className="w-4.5 h-4.5" />
+              <Moon className="w-4 h-4" />
             ) : (
-              <Sun className="w-4.5 h-4.5" />
+              <Sun className="w-4 h-4" />
             )}
           </button>
         )}
@@ -74,19 +75,18 @@ export const Header: React.FC = () => {
           <>
             {isAuthenticated && user ? (
               <div className="flex items-center gap-2 sm:gap-3">
-                {/* Separador */}
-                <span className="hidden sm:inline w-px h-6 bg-grey200 dark:bg-grey800" />
+                <span className="hidden sm:inline w-px h-5 bg-grey200 dark:bg-grey800" />
 
                 <div className="flex items-center gap-2.5">
                   {/* Avatar */}
-                  <div className="w-9 h-9 rounded-full bg-forestGreen dark:bg-limeGreen text-white dark:text-forestGreen flex items-center justify-center text-sm font-black shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-forestGreen dark:bg-limeGreen text-white dark:text-forestGreen flex items-center justify-center text-xs font-black shrink-0 border border-black/10 dark:border-white/20 shadow-sm">
                     {userInitial}
                   </div>
                   <div className="hidden sm:flex flex-col leading-tight">
                     <span className="text-xs font-bold text-grey900 dark:text-grey50 max-w-[160px] truncate">
                       {user.email || "Utilizador"}
                     </span>
-                    <span className="text-[10px] text-grey600 dark:text-grey400 font-mono uppercase tracking-wide">
+                    <span className="text-[10px] text-grey500 dark:text-grey400 font-mono uppercase tracking-wider">
                       {user.role}
                     </span>
                   </div>
@@ -94,7 +94,7 @@ export const Header: React.FC = () => {
 
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-2.5 py-2 text-xs font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 border border-red-200/50 dark:border-red-900/30 rounded-xl hover:bg-red-100 dark:hover:bg-red-950/40 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 rounded-xl hover:bg-rose-100/80 dark:hover:bg-rose-950/60 transition-all duration-150 active:scale-[0.99]"
                   title="Terminar Sessão"
                 >
                   <LogOut className="w-3.5 h-3.5" />
@@ -104,7 +104,7 @@ export const Header: React.FC = () => {
             ) : (
               <Link
                 href="/login"
-                className="px-4 py-2 text-xs font-bold bg-limeGreen text-forestGreen hover:bg-lightLime rounded-xl shadow-sm hover:shadow transition-all duration-200"
+                className="px-4 py-2 text-xs font-bold bg-forestGreen text-white dark:bg-limeGreen dark:text-forestGreen hover:bg-forestGreen/90 dark:hover:bg-lightLime rounded-xl shadow-sm transition-all duration-200 active:scale-[0.99]"
               >
                 Entrar
               </Link>

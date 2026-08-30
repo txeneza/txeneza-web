@@ -62,18 +62,18 @@ export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-grey950/60 backdrop-blur-md transition-opacity"
         onClick={loading ? undefined : handleClose}
       />
-      <div className="relative w-full max-w-md bg-light-background dark:bg-grey900 border border-grey200 dark:border-grey800 rounded-2xl shadow-2xl p-6 flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-md bg-white dark:bg-grey900 border border-grey200/90 dark:border-grey800/90 rounded-2xl shadow-xl p-6 flex flex-col gap-4 max-h-[90vh] overflow-y-auto animate-in fade-in-50 zoom-in-95 duration-150">
         <div className="flex items-start justify-between">
-          <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-            <Camera className="w-6 h-6" />
+          <div className="p-3 rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">
+            <Camera className="w-5 h-5" />
           </div>
           <button
             onClick={handleClose}
             disabled={loading}
-            className="p-1.5 rounded-lg text-grey500 hover:bg-grey100 dark:hover:bg-grey800 transition-colors disabled:opacity-50"
+            className="p-1.5 rounded-xl text-grey400 dark:text-grey500 hover:text-grey700 dark:hover:text-grey200 hover:bg-grey100 dark:hover:bg-grey800/80 transition-colors disabled:opacity-50"
             aria-label="Fechar"
           >
             <X className="w-5 h-5" />
@@ -81,15 +81,13 @@ export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
         </div>
 
         <div>
-          <h3 className="text-lg font-bold text-grey900 dark:text-grey50">Prova de resolução</h3>
-          <p className="text-sm text-grey600 dark:text-grey400 mt-1 leading-relaxed">
-            Para marcar como <b>Resolvido</b>, anexa pelo menos uma fotografia do local já limpo.
-            Podes selecionar várias fotos da galeria ou tirar uma foto na hora.
+          <h3 className="text-lg font-bold text-grey900 dark:text-grey50 tracking-tight">Prova de Resolução</h3>
+          <p className="text-xs text-grey600 dark:text-grey400 mt-1.5 leading-relaxed">
+            Para marcar a ocorrência como <b>Resolvido</b>, anexe pelo menos uma fotografia do local já limpo.
+            Pode selecionar várias fotos da galeria ou capturar na hora.
           </p>
         </div>
 
-        {/* Input de ficheiros — sem `capture`, para o browser mostrar a escolha
-            entre galeria (multi-seleção) e câmara, em vez de forçar a câmara. */}
         <input
           ref={inputRef}
           type="file"
@@ -100,18 +98,18 @@ export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
         />
 
         {items.length > 0 && (
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2.5">
             {items.map((item, index) => (
-              <div key={index} className="relative aspect-square">
+              <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-grey200/80 dark:border-grey700/80 group">
                 <img
                   src={item.url}
                   alt={`Pré-visualização ${index + 1}`}
-                  className="w-full h-full object-cover rounded-lg border border-grey200 dark:border-grey800"
+                  className="w-full h-full object-cover"
                 />
                 <button
                   onClick={() => removeItem(index)}
                   disabled={loading}
-                  className="absolute top-1 right-1 p-1 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors disabled:opacity-50"
+                  className="absolute top-1.5 right-1.5 p-1 rounded-full bg-grey950/70 text-white hover:bg-grey950 transition-colors disabled:opacity-50 shadow-sm"
                   aria-label="Remover fotografia"
                 >
                   <X className="w-3 h-3" />
@@ -125,15 +123,15 @@ export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={loading}
-          className="w-full py-3 rounded-xl border-2 border-dashed border-grey300 dark:border-grey700 flex items-center justify-center gap-2 text-grey400 dark:text-grey600 hover:border-emerald-500/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors disabled:opacity-50 text-sm font-bold"
+          className="w-full py-3 px-4 rounded-xl border-2 border-dashed border-grey300/80 dark:border-grey700/80 hover:border-emerald-500 dark:hover:border-emerald-400 bg-grey50/50 dark:bg-grey900/50 hover:bg-emerald-50/20 dark:hover:bg-emerald-950/20 flex items-center justify-center gap-2 text-grey600 dark:text-grey400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all duration-150 disabled:opacity-50 text-xs font-semibold"
         >
           <Upload className="w-4 h-4" />
-          {items.length > 0 ? "Adicionar mais fotografias" : "Selecionar fotografias"}
+          {items.length > 0 ? "Adicionar mais fotografias" : "Selecionar fotografias da galeria"}
         </button>
 
         {/* Observações opcionais */}
         <div>
-          <label className="text-xs font-bold text-grey600 dark:text-grey400 uppercase tracking-wider mb-1.5 block">
+          <label className="text-xs font-semibold text-grey700 dark:text-grey300 uppercase tracking-wider mb-1.5 block">
             Observações (opcional)
           </label>
           <textarea
@@ -141,31 +139,31 @@ export const ResolutionProofModal: React.FC<ResolutionProofModalProps> = ({
             onChange={(e) => setNotes(e.target.value)}
             disabled={loading}
             rows={2}
-            placeholder="Ex.: Recolha efetuada pela equipa de limpeza no dia..."
-            className="w-full px-3 py-2 rounded-xl text-sm bg-grey50 dark:bg-grey800 border border-grey200 dark:border-grey700 text-grey900 dark:text-grey50 placeholder:text-grey400 dark:placeholder:text-grey600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 resize-none"
+            placeholder="Ex.: Limpeza efetuada pela equipa de saneamento..."
+            className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-white dark:bg-grey900 border border-grey300/80 dark:border-grey700/80 text-grey900 dark:text-grey50 placeholder:text-grey400 dark:placeholder:text-grey500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:border-emerald-500 resize-none transition-all duration-150"
           />
         </div>
 
-        <div className="flex gap-3 mt-1">
+        <div className="flex gap-3 mt-2">
           <button
             onClick={handleClose}
             disabled={loading}
-            className="flex-1 py-2.5 rounded-xl text-sm font-bold text-grey700 dark:text-grey300 bg-grey100 dark:bg-grey800 hover:bg-grey200 dark:hover:bg-grey700 transition-colors disabled:opacity-50"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-grey700 dark:text-grey300 bg-grey100/80 dark:bg-grey800/80 hover:bg-grey200/80 dark:hover:bg-grey700/80 border border-grey200/60 dark:border-grey700/60 transition-all duration-150 disabled:opacity-50 active:scale-[0.99]"
           >
             Cancelar
           </button>
           <button
             onClick={handleSubmit}
             disabled={loading || items.length === 0}
-            title={items.length === 0 ? "Anexa pelo menos uma fotografia para continuar" : undefined}
-            className="flex-1 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-emerald-600 text-white hover:bg-emerald-700"
+            title={items.length === 0 ? "Anexe pelo menos uma fotografia para continuar" : undefined}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm active:scale-[0.99]"
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" /> A guardar...
+                <Loader2 className="w-4 h-4 animate-spin" /> Guardando...
               </>
             ) : (
-              `Confirmar Resolução${items.length > 1 ? ` (${items.length} fotos)` : ""}`
+              `Confirmar Resolução${items.length > 1 ? ` (${items.length})` : ""}`
             )}
           </button>
         </div>
