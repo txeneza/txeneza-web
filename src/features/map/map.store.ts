@@ -23,7 +23,7 @@ export const useMapStore = create<MapState>((set) => ({
   heatmapData: [],
   center: BEIRA_COORDS,
   zoom: 13,
-  loading: false,
+  loading: true,
   selectedOccurrence: null,
   setSelectedOccurrence: (occ) => set({ selectedOccurrence: occ }),
   fetchMapData: async () => {
@@ -31,9 +31,10 @@ export const useMapStore = create<MapState>((set) => ({
     try {
       const markers = await mapService.getMarkers();
       const heatmapData = await mapService.getHeatmapData();
-      set({ markers, heatmapData, loading: false });
+      set({ markers, heatmapData });
     } catch (error) {
       console.error("Erro ao buscar dados do mapa", error);
+    } finally {
       set({ loading: false });
     }
   },

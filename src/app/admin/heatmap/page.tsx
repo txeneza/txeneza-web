@@ -9,7 +9,7 @@ import { Flame, Radio, MapPin, AlertTriangle } from "lucide-react";
 
 
 export default function HeatmapPage() {
-  const { heatmapData, markers, fetchMapData } = useMapStore();
+  const { heatmapData, markers, fetchMapData, loading } = useMapStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function HeatmapPage() {
     };
   }, [markers]);
 
-  if (!mounted) {
+  if (!mounted || (loading && heatmapData.length === 0 && markers.length === 0)) {
     return <MapSkeleton isHeatmap={true} />;
   }
 

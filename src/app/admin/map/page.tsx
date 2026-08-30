@@ -8,9 +8,10 @@ import { OccurrenceCard } from "@/features/occurrences/components/occurrence-car
 import { Map as MapIcon, MapPin, Info, X, WifiOff } from "lucide-react";
 
 export default function AdminMapPage() {
-  const { markers, fetchMapData, selectedOccurrence, setSelectedOccurrence } = useMapStore();
+  const { markers, fetchMapData, loading, selectedOccurrence, setSelectedOccurrence } = useMapStore();
   const [collectionPoints, setCollectionPoints] = useState<PontoRecolhaMapData[]>([]);
   const [pointsError, setPointsError] = useState<string | null>(null);
+  const [pointsLoading, setPointsLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export default function AdminMapPage() {
 
     const loadPoints = async () => {
       try {
+        setPointsLoading(true);
         const res = await fetch("/api/pontos-recolha");
         if (!res.ok) throw new Error(`API devolveu estado ${res.status}`);
         const data = await res.json();
@@ -34,12 +36,14 @@ export default function AdminMapPage() {
         console.error("Erro ao carregar pontos de recolha:", error);
         setCollectionPoints([]);
         setPointsError("Não foi possível carregar os pontos de recolha da base de dados.");
+      } finally {
+        setPointsLoading(false);
       }
     };
     loadPoints();
   }, [fetchMapData, mounted]);
 
-  if (!mounted) {
+  if (!mounted || pointsLoading || (loading && markers.length === 0)) {
     return <MapSkeleton />;
   }
 
