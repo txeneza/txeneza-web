@@ -131,7 +131,7 @@ export function useAdminRealtime() {
           // 3. Atualiza as lojas ativas (Tabela, Mapa, Estatísticas)
           useOccurrencesStore.getState().addOrUpdateOccurrence(occurrenceObj);
           useMapStore.getState().addOrUpdateMarker(occurrenceObj);
-          useDashboardStore.getState().fetchStats();
+          useDashboardStore.getState().fetchStats(true);
         }
       )
       // B. Ouve inserções na tabela de notificações (geradas pelo Trigger PostgreSQL)
@@ -193,7 +193,7 @@ export function useAdminRealtime() {
 
           useOccurrencesStore.getState().addOrUpdateOccurrence(occurrenceObj);
           useMapStore.getState().addOrUpdateMarker(occurrenceObj);
-          useDashboardStore.getState().fetchStats();
+          useDashboardStore.getState().fetchStats(true);
         }
       )
       .subscribe();
