@@ -97,6 +97,18 @@ export function useAdminRealtime() {
             createdAt: newRow.data_hora_registo || new Date().toISOString(),
           };
 
+          // Dispara alerta audiovisual completo (Toast, Chime, Notificação do Navegador)
+          triggerLiveAlert({
+            id: newRow.id_ocorrencia,
+            occurrenceId: newRow.id_ocorrencia,
+            title: `🚨 Nova Denúncia Registada`,
+            message: newRow.descricao
+              ? `Nova denúncia submetida (${newRow.gravidade || "Gravidade Normal"}): ${newRow.descricao}`
+              : `Nova denúncia de resíduos submetida com gravidade ${newRow.gravidade || "normal"}.`,
+            gravidade: newRow.gravidade || "media",
+            createdAt: newRow.data_hora_registo || new Date().toISOString(),
+          });
+
           // Atualiza as lojas ativas (Tabela, Mapa, Estatísticas)
           useOccurrencesStore.getState().addOrUpdateOccurrence(occurrenceObj);
           useMapStore.getState().addOrUpdateMarker(occurrenceObj);
@@ -119,7 +131,7 @@ export function useAdminRealtime() {
           triggerLiveAlert({
             id: newNotif.id_notificacao,
             occurrenceId: newNotif.id_ocorrencia,
-            title: "Nova Notificação",
+            title: "Nova Notificação do Sistema",
             message: newNotif.mensagem,
             createdAt: newNotif.data_hora || new Date().toISOString(),
           });
