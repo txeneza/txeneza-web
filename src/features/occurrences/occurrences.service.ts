@@ -6,7 +6,7 @@ import { Occurrence, OccurrenceFilter } from "./occurrences.types";
  */
 export const occurrencesService = {
   async getAll(filters?: OccurrenceFilter): Promise<Occurrence[]> {
-    const res = await fetch("/api/occurrences");
+    const res = await fetch("/api/occurrences", { cache: "no-store" });
     if (!res.ok) throw new Error("Erro ao buscar ocorrências no servidor.");
     
     let occurrences: Occurrence[] = await res.json();
@@ -21,7 +21,7 @@ export const occurrencesService = {
   },
 
   async getById(id: string): Promise<Occurrence | null> {
-    const res = await fetch(`/api/occurrences/${id}`);
+    const res = await fetch(`/api/occurrences/${id}`, { cache: "no-store" });
     if (res.status === 404) return null;
     if (!res.ok) throw new Error("Erro ao obter detalhes da ocorrência.");
     

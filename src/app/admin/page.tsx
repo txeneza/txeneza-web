@@ -100,9 +100,9 @@ export default function AdminDashboardPage() {
         <div className="flex items-center gap-2 w-full sm:w-auto">
           {/* Botão de Atualização Manual */}
           <button
-            onClick={() => fetchStats(false)}
+            onClick={() => fetchStats()}
             disabled={loading || isUpdating}
-            className="p-2.5 rounded-xl border border-grey200 dark:border-grey800 bg-white dark:bg-grey900 text-grey700 dark:text-grey300 hover:bg-grey50 dark:hover:bg-grey800 transition-colors disabled:opacity-50"
+            className="p-2.5 rounded-xl border border-grey200 dark:border-grey800 bg-white dark:bg-grey900 text-grey700 dark:text-grey300 hover:bg-grey50 dark:hover:bg-grey800 hover:text-forestGreen dark:hover:text-limeGreen transition-all disabled:opacity-50 active:scale-95 shadow-xs"
             title="Atualizar dados agora"
             aria-label="Atualizar métricas"
           >

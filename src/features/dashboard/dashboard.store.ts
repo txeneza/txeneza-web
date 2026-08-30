@@ -17,11 +17,12 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   lastUpdated: null,
   error: null,
   fetchStats: async (silent = false) => {
-    // Se não for silencioso e não tiver dados, mostra tela de carregamento principal
-    if (!silent && !get().stats) {
+    // Se não houver dados carregados, ativa o skeleton inicial
+    if (!get().stats && !silent) {
       set({ loading: true, error: null });
-    } else if (silent) {
-      set({ isUpdating: true });
+    } else {
+      // Se já houver dados, ativa o spinner de atualização no botão
+      set({ isUpdating: true, error: null });
     }
 
     try {

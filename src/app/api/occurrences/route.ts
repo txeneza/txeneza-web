@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { verifyAdminSession } from "@/core/server-auth";
 import { findClosestBairro } from "@/core/geo/beira-bairros";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 /**
  * Obtém todas as ocorrências cadastradas no banco de dados.
  *
