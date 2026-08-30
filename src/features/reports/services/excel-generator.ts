@@ -1,234 +1,326 @@
+
 // src/features/reports/services/excel-generator.ts
 
 import ExcelJS from "exceljs";
 import { ReportFilters } from "../types";
-import { EXCEL_STYLES, formatTableHeader, autoFitColumnWidths, drawKPIBlock } from "../templates/excel-template";
+import {
+  EXCEL_STYLES,
+  drawCoverBanner,
+  drawSectionHeader,
+  drawKPIBlock,
+  drawFooter,
+  formatTableHeader,
+  applyZebraRow,
+  autoFitColumnWidths,
+} from "../templates/excel-template";
 
-/**
- * Gera um Buffer contendo a folha Excel gerada.
- */
+const C = EXCEL_STYLES.C;
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function formatDate(raw: any): Date | string {
+  if (!raw) return "";
+  try {
+    return new Date(new Date(raw).toLocaleString("en-US", { timeZone: "Africa/Maputo" }));
+  } catch {
+    return String(raw);
+  }
+}
+
+function gravityLabel(g: string): string {
+  return ({ critica: "Crítica", alta: "Alta", media: "Média", baixa: "Baixa" }[g.toLowerCase()] ?? g);
+}
+
+function statusLabel(s: string): string {
+  if (s === "pendente") return "Pendente";
+  if (s === "resolvido" || s === "resolvida") return "Resolvida";
+  if (s === "em-progresso" || s === "em_analise") return "Em Progresso";
+  return s;
+}
+
+function filterSummary(filters: ReportFilters): string {
+  const parts: string[] = [];
+  if (filters.startDate || filters.endDate)
+    parts.push(`Período: ${filters.startDate ?? "Início"} → ${filters.endDate ?? "Hoje"}`);
+  if (filters.bairro)   parts.push(`Bairro: ${filters.bairro}`);
+  if (filters.status)   parts.push(`Estado: ${filters.status}`);
+  if (filters.gravity)  parts.push(`Gravidade: ${filters.gravity}`);
+  return parts.length > 0 ? parts.join("   •   ") : "Todos os dados (sem filtros activos)";
+}
+
+// ─── Main Generator ──────────────────────────────────────────────────────────
+
 export async function generateExcelReport(
   type: "occurrences" | "collection-points" | "summary" | "heatmap",
   data: any[],
   filters: ReportFilters,
   stats: any
 ): Promise<Buffer> {
+
+  // ── Workbook metadata ─────────────────────────────────────────────────
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "Txeneza Admin";
+  workbook.creator        = "Txeneza Admin";
   workbook.lastModifiedBy = "Txeneza Admin";
-  workbook.created = new Date();
-  workbook.modified = new Date();
+  workbook.created        = new Date();
+  workbook.modified       = new Date();
+  workbook.properties.date1904 = false;
 
-  // 1. Criar folha 1: Resumo Executivo (KPIs)
-  const summarySheet = workbook.addWorksheet("Resumo");
-  summarySheet.views = [{ showGridLines: true }];
+  // ── Title map ─────────────────────────────────────────────────────────
+  const TITLES: Record<string, string> = {
+    occurrences:        "Relatório de Ocorrências Urbanas",
+    "collection-points": "Relatório de Pontos de Recolha",
+    summary:            "Painel Consolidado de Estatísticas",
+    heatmap:            "Relatório de Análise de Densidade Espacial",
+  };
+  const reportTitle = TITLES[type] ?? "Relatório";
 
-  // Título do Relatório
-  let reportTitle = "";
-  if (type === "occurrences") reportTitle = "Relatório de Ocorrências Urbanas";
-  else if (type === "collection-points") reportTitle = "Relatório de Pontos de Recolha";
-  else if (type === "summary") reportTitle = "Painel Consolidado de Estatísticas";
-  else if (type === "heatmap") reportTitle = "Relatório de Análise de Densidade";
+  // ═══════════════════════════════════════════════════════════════════════
+  // ABA 1 — RESUMO EXECUTIVO
+  // ═══════════════════════════════════════════════════════════════════════
+  const summarySheet = workbook.addWorksheet("Resumo Executivo", {
+    pageSetup: { orientation: "landscape", fitToPage: true, fitToWidth: 1 },
+  });
+  summarySheet.views = [{ showGridLines: false }];
 
-  summarySheet.getCell("B2").value = "TXENEZA — PLATAFORMA DE MAPEAMENTO DE RESÍDUOS";
-  summarySheet.getCell("B2").font = { name: "Segoe UI", size: 9, bold: true, color: { argb: "FF757575" } };
-  
-  summarySheet.getCell("B3").value = reportTitle;
-  summarySheet.getCell("B3").font = EXCEL_STYLES.titleFont;
-
-  // Bloco de Metadados/Filtros
-  summarySheet.getCell("B5").value = "Data de Geração:";
-  summarySheet.getCell("B5").font = { name: "Segoe UI", size: 10, bold: true };
-  const nowStr = new Date().toLocaleString("pt-PT", { timeZone: "Africa/Maputo" });
-  summarySheet.getCell("C5").value = nowStr;
-  summarySheet.getCell("C5").font = { name: "Segoe UI", size: 10 };
-
-  summarySheet.getCell("B6").value = "Filtros Aplicados:";
-  summarySheet.getCell("B6").font = { name: "Segoe UI", size: 10, bold: true };
-  
-  const filterParts: string[] = [];
-  if (filters.startDate || filters.endDate) {
-    filterParts.push(`Período: ${filters.startDate || "Início"} a ${filters.endDate || "Fim"}`);
+  const SUMMARY_COLS = 12;
+  for (let c = 1; c <= SUMMARY_COLS; c++) {
+    summarySheet.getColumn(c).width = 16;
   }
-  if (filters.bairro) filterParts.push(`Bairro: ${filters.bairro}`);
-  if (filters.status) filterParts.push(`Estado: ${filters.status}`);
-  if (filters.gravity) filterParts.push(`Gravidade: ${filters.gravity}`);
-  summarySheet.getCell("C6").value = filterParts.length > 0 ? filterParts.join(" | ") : "Todos os dados (Sem filtros)";
-  summarySheet.getCell("C6").font = { name: "Segoe UI", size: 10, italic: true };
-
-  // Secção de Indicadores Chave (KPIs)
-  summarySheet.getCell("B9").value = "MÉTRICAS E INDICADORES DE DESEMPENHO";
-  summarySheet.getCell("B9").font = EXCEL_STYLES.sectionFont;
-
-  if (type === "occurrences") {
-    // KPIs de Ocorrências
-    drawKPIBlock(summarySheet, 11, 2, "Total de Casos", data.length);
-    drawKPIBlock(summarySheet, 11, 4, "Pendentes", data.filter(o => o.status === "pendente").length);
-    drawKPIBlock(summarySheet, 11, 6, "Em Progresso", data.filter(o => o.status === "em-progresso" || o.status === "em_analise").length);
-    drawKPIBlock(summarySheet, 11, 8, "Resolvidas", data.filter(o => o.status === "resolvido" || o.status === "resolvida").length);
-  } else if (type === "collection-points") {
-    // KPIs de Pontos de Recolha
-    drawKPIBlock(summarySheet, 11, 2, "Pontos Totais", data.length);
-    drawKPIBlock(summarySheet, 11, 4, "Pontos Ativos", data.filter(p => p.estado === "activo").length);
-    drawKPIBlock(summarySheet, 11, 6, "Pontos Inativos", data.filter(p => p.estado === "inactivo").length);
-    drawKPIBlock(summarySheet, 11, 8, "Bairros Cobertos", new Set(data.map(p => p.bairro)).size);
-  } else if (type === "summary") {
-    // KPIs do Painel Geral
-    drawKPIBlock(summarySheet, 11, 2, "Total Ocorrências", stats.total || 0);
-    drawKPIBlock(summarySheet, 11, 4, "Pendentes", stats.pendentes || 0);
-    drawKPIBlock(summarySheet, 11, 6, "Em Progresso", stats.emProgresso || 0);
-    drawKPIBlock(summarySheet, 11, 8, "Resolvidas", stats.resolvidos || 0);
-  } else if (type === "heatmap") {
-    // KPIs do Mapa de Calor
-    drawKPIBlock(summarySheet, 11, 2, "Pontos Ativos", stats.totalPoints || 0);
-    drawKPIBlock(summarySheet, 11, 4, "Bairros Mapeados", stats.bairrosCount || 0);
-    drawKPIBlock(summarySheet, 11, 6, "Zona Crítica", stats.criticalZone || "Nenhuma");
-  }
-
-  // Ajustar colunas da aba de resumo
   summarySheet.getColumn(1).width = 3;
-  summarySheet.getColumn(2).width = 18;
-  summarySheet.getColumn(3).width = 18;
-  summarySheet.getColumn(4).width = 18;
-  summarySheet.getColumn(5).width = 18;
-  summarySheet.getColumn(6).width = 18;
-  summarySheet.getColumn(7).width = 18;
-  summarySheet.getColumn(8).width = 18;
-  summarySheet.getColumn(9).width = 18;
+  summarySheet.getColumn(2).width = 22;
 
-  // 2. Criar folha 2: Dados Detalhados
-  const detailedSheet = workbook.addWorksheet("Dados Detalhados");
-  detailedSheet.views = [{ showGridLines: true }];
+  const nowStr = new Date().toLocaleString("pt-PT", { timeZone: "Africa/Maputo" });
 
+  // Cover banner
+  const nextRow = drawCoverBanner(
+    summarySheet,
+    reportTitle,
+    "Câmara Municipal da Beira · Sistema de Gestão de Resíduos Urbanos",
+    [
+      { label: "Data de Geração:", value: nowStr },
+      { label: "Filtros Aplicados:", value: filterSummary(filters) },
+      { label: "Total de Registos:", value: `${data.length} entrada${data.length !== 1 ? "s" : ""}` },
+    ],
+    SUMMARY_COLS
+  );
+
+  // Section header for KPIs
+  drawSectionHeader(summarySheet, nextRow, "Indicadores-Chave de Desempenho (KPIs)", SUMMARY_COLS);
+  const kpiStart = nextRow + 2;
+
+  // KPI cards (row, col) — 4 cards side by side, each 2 cols wide
+  const KPI_ROW = kpiStart;
   if (type === "occurrences" || type === "summary") {
-    // Colunas detalhadas de ocorrências
-    detailedSheet.columns = [
-      { header: "ID Ocorrência", key: "id", width: 12 },
-      { header: "Título", key: "title", width: 25 },
-      { header: "Descrição", key: "description", width: 40 },
-      { header: "Categoria", key: "category", width: 20 },
-      { header: "Bairro", key: "bairro", width: 18 },
-      { header: "Latitude", key: "latitude", width: 15 },
-      { header: "Longitude", key: "longitude", width: 15 },
-      { header: "Gravidade", key: "gravidade", width: 15 },
-      { header: "Estado", key: "status", width: 15 },
-      { header: "Reportado Por", key: "reportedBy", width: 20 },
-      { header: "Data de Criação", key: "createdAt", width: 18 },
-    ];
+    const total  = type === "summary" ? (stats.total ?? 0) : data.length;
+    const pend   = type === "summary" ? (stats.pendentes ?? 0)  : data.filter((o: any) => o.status === "pendente").length;
+    const prog   = type === "summary" ? (stats.emProgresso ?? 0) : data.filter((o: any) => ["em-progresso","em_analise"].includes(o.status)).length;
+    const resol  = type === "summary" ? (stats.resolvidos ?? 0) : data.filter((o: any) => ["resolvido","resolvida"].includes(o.status)).length;
 
-    // Preencher linhas
-    const items = type === "summary" ? (stats.occurrencesList || data) : data;
-    items.forEach((item: any) => {
-      const row = detailedSheet.addRow({
-        id: item.id || "",
-        title: item.title || item.titulo || "",
-        description: item.description || item.descricao || "",
-        category: item.category || item.categoria || "",
-        bairro: item.bairro || "",
-        latitude: item.latitude ? Number(item.latitude) : 0,
-        longitude: item.longitude ? Number(item.longitude) : 0,
-        gravidade: item.gravidade || "baixa",
-        status: item.status === "pendente" ? "Pendente" : item.status === "resolvido" || item.status === "resolvida" ? "Resolvido" : "Em Progresso",
-        reportedBy: item.reportedBy || "Munícipe",
-        createdAt: item.createdAt ? new Date(new Date(item.createdAt).toLocaleString("en-US", { timeZone: "Africa/Maputo" })) : "",
-      });
-
-      // Formatar célula de Data nativa do Excel
-      const dateCell = row.getCell("createdAt");
-      if (dateCell.value instanceof Date) {
-        dateCell.numFmt = "yyyy-mm-dd hh:mm:ss";
-      }
-
-      // Aplicar formatação condicional manual na coluna Gravidade (Coluna 8)
-      const gravidadeCell = row.getCell("gravidade");
-      const gravVal = String(gravidadeCell.value).toLowerCase();
-      if (gravVal === "critica") {
-        gravidadeCell.fill = EXCEL_STYLES.severityColors.critica.fill;
-        gravidadeCell.font = EXCEL_STYLES.severityColors.critica.font;
-      } else if (gravVal === "alta") {
-        gravidadeCell.fill = EXCEL_STYLES.severityColors.alta.fill;
-        gravidadeCell.font = EXCEL_STYLES.severityColors.alta.font;
-      } else if (gravVal === "media") {
-        gravidadeCell.fill = EXCEL_STYLES.severityColors.media.fill;
-        gravidadeCell.font = EXCEL_STYLES.severityColors.media.font;
-      } else if (gravVal === "baixa") {
-        gravidadeCell.fill = EXCEL_STYLES.severityColors.baixa.fill;
-        gravidadeCell.font = EXCEL_STYLES.severityColors.baixa.font;
-      }
-
-      // Bordas finas gerais
-      row.eachCell((cell) => {
-        cell.border = EXCEL_STYLES.cellBorder;
-      });
-    });
-
-    formatTableHeader(detailedSheet, 1, 11);
+    drawKPIBlock(summarySheet, KPI_ROW, 2, "Total de Casos",  total, C.FOREST);
+    drawKPIBlock(summarySheet, KPI_ROW, 5, "Pendentes",       pend,  C.AMBER_FG);
+    drawKPIBlock(summarySheet, KPI_ROW, 8, "Em Progresso",    prog,  C.BLUE_FG);
+    drawKPIBlock(summarySheet, KPI_ROW, 11,"Resolvidas",      resol, C.GREEN_FG);
 
   } else if (type === "collection-points") {
-    // Colunas detalhadas de pontos de recolha
-    detailedSheet.columns = [
-      { header: "ID Ponto", key: "id", width: 12 },
-      { header: "Nome do Local", key: "nome", width: 25 },
-      { header: "Bairro", key: "bairro", width: 18 },
-      { header: "Latitude", key: "latitude", width: 15 },
-      { header: "Longitude", key: "longitude", width: 15 },
-      { header: "Horário de Coleta", key: "horario", width: 15 },
-      { header: "Estado", key: "estado", width: 15 },
-    ];
+    const ativos   = data.filter((p: any) => p.estado === "activo").length;
+    const inativos = data.filter((p: any) => p.estado !== "activo").length;
+    const bairros  = new Set(data.map((p: any) => p.bairro)).size;
 
-    data.forEach((item: any) => {
-      const row = detailedSheet.addRow({
-        id: item.id || "",
-        nome: item.nome || "",
-        bairro: item.bairro || "",
-        latitude: item.latitude ? Number(item.latitude) : 0,
-        longitude: item.longitude ? Number(item.longitude) : 0,
-        horario: item.horario || "Livre",
-        estado: item.estado === "activo" ? "Ativo" : "Inativo",
-      });
-
-      row.eachCell((cell) => {
-        cell.border = EXCEL_STYLES.cellBorder;
-      });
-    });
-
-    formatTableHeader(detailedSheet, 1, 7);
+    drawKPIBlock(summarySheet, KPI_ROW, 2, "Total de Pontos", data.length, C.FOREST);
+    drawKPIBlock(summarySheet, KPI_ROW, 5, "Pontos Ativos",   ativos,     C.GREEN_FG);
+    drawKPIBlock(summarySheet, KPI_ROW, 8, "Pontos Inativos", inativos,   C.RED_FG);
+    drawKPIBlock(summarySheet, KPI_ROW, 11,"Bairros Cobertos",bairros,    C.FOREST_MID);
 
   } else if (type === "heatmap") {
-    // Colunas de Densidade por Bairro
-    detailedSheet.columns = [
-      { header: "Bairro", key: "bairro", width: 25 },
-      { header: "Quantidade de Ocorrências", key: "count", width: 25 },
-      { header: "Percentagem (%)", key: "percentage", width: 18 },
-    ];
-
-    const bairrosList = stats.bairrosDensity || [];
-    const totalPoints = stats.totalPoints || 1;
-
-    bairrosList.forEach((b: any) => {
-      const percentage = (b.count / totalPoints);
-      const row = detailedSheet.addRow({
-        bairro: b.bairro || "",
-        count: b.count || 0,
-        percentage: percentage,
-      });
-
-      // Formatação de percentagem nativa
-      const pctCell = row.getCell("percentage");
-      pctCell.numFmt = "0.0%";
-
-      row.eachCell((cell) => {
-        cell.border = EXCEL_STYLES.cellBorder;
-      });
-    });
-
-    formatTableHeader(detailedSheet, 1, 3);
+    drawKPIBlock(summarySheet, KPI_ROW, 2, "Pontos Activos",   stats.totalPoints  ?? 0, C.FOREST);
+    drawKPIBlock(summarySheet, KPI_ROW, 5, "Bairros Mapeados", stats.bairrosCount ?? 0, C.FOREST_MID);
+    drawKPIBlock(summarySheet, KPI_ROW, 8, "Zona Crítica",     stats.criticalZone ?? "—", C.RED_FG);
   }
 
-  // Auto-ajustar a largura das colunas da folha de detalhes
+  // Spacer after KPIs (5 rows)
+  const afterKPI = KPI_ROW + 6;
+
+  // Summary note block
+  drawSectionHeader(summarySheet, afterKPI, "Notas e Observações", SUMMARY_COLS);
+  summarySheet.mergeCells(afterKPI + 1, 1, afterKPI + 3, SUMMARY_COLS);
+  const noteCell = summarySheet.getCell(afterKPI + 1, 1);
+  noteCell.value =
+    "Este relatório foi gerado automaticamente pelo sistema Txeneza. " +
+    "Os dados reflectem o estado da base de dados no momento da exportação. " +
+    "Para informações adicionais, consulte o administrador do sistema ou aceda ao painel em txeneza.vercel.app.";
+  noteCell.font    = { name: "Segoe UI", size: 9, italic: true, color: { argb: C.NEUTRAL_700 } };
+  noteCell.fill    = EXCEL_STYLES.rowAlt;
+  noteCell.alignment = { vertical: "top", horizontal: "left", indent: 2, wrapText: true };
+  [afterKPI + 1, afterKPI + 2, afterKPI + 3].forEach(r => { summarySheet.getRow(r).height = 18; });
+
+  drawFooter(summarySheet, afterKPI + 5, SUMMARY_COLS);
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // ABA 2 — DADOS DETALHADOS
+  // ═══════════════════════════════════════════════════════════════════════
+  const detailedSheet = workbook.addWorksheet("Dados Detalhados", {
+    pageSetup: { orientation: "landscape", fitToPage: true, fitToWidth: 1 },
+  });
+  detailedSheet.views = [{ showGridLines: false }];
+
+  // ── Occurrences / Summary ─────────────────────────────────────────────
+  if (type === "occurrences" || type === "summary") {
+    const NUM_COLS = 10;
+
+    detailedSheet.columns = [
+      { header: "ID",           key: "id",          width: 14 },
+      { header: "Descrição",    key: "description", width: 42 },
+      { header: "Categoria",    key: "category",    width: 22 },
+      { header: "Bairro",       key: "bairro",      width: 18 },
+      { header: "Gravidade",    key: "gravidade",   width: 14 },
+      { header: "Estado",       key: "status",      width: 16 },
+      { header: "Latitude",     key: "latitude",    width: 14 },
+      { header: "Longitude",    key: "longitude",   width: 14 },
+      { header: "Reportado Por",key: "reportedBy",  width: 22 },
+      { header: "Data / Hora",  key: "createdAt",   width: 20 },
+    ];
+
+    formatTableHeader(detailedSheet, 1, NUM_COLS);
+
+    const items = type === "summary" ? (stats.occurrencesList ?? data) : data;
+    items.forEach((item: any, idx: number) => {
+      const rowData = {
+        id:          item.id ?? "",
+        description: item.description ?? item.descricao ?? "",
+        category:    item.category    ?? item.categoria  ?? "",
+        bairro:      item.bairro      ?? "",
+        gravidade:   gravityLabel(item.gravidade ?? "baixa"),
+        status:      statusLabel(item.status     ?? ""),
+        latitude:    item.latitude  ? Number(item.latitude)  : 0,
+        longitude:   item.longitude ? Number(item.longitude) : 0,
+        reportedBy:  item.reportedBy ?? "Munícipe",
+        createdAt:   formatDate(item.createdAt),
+      };
+
+      const row = detailedSheet.addRow(rowData);
+      const rowNum = row.number;
+
+      // Date formatting
+      const dateCell = row.getCell("createdAt");
+      if (dateCell.value instanceof Date) dateCell.numFmt = "dd/mm/yyyy hh:mm";
+
+      // Gravity chip
+      const gravKey = (item.gravidade ?? "baixa").toLowerCase() as keyof typeof EXCEL_STYLES.severityColors;
+      const gravStyle = EXCEL_STYLES.severityColors[gravKey] ?? EXCEL_STYLES.severityColors.baixa;
+      const gravCell = row.getCell("gravidade");
+      gravCell.fill   = gravStyle.fill;
+      gravCell.font   = gravStyle.font;
+      gravCell.border = gravStyle.border;
+      gravCell.alignment = { horizontal: "center", vertical: "middle" };
+
+      // Status chip
+      const statusKey = (item.status ?? "pendente") as keyof typeof EXCEL_STYLES.statusColors;
+      const statusStyle = EXCEL_STYLES.statusColors[statusKey] ?? EXCEL_STYLES.statusColors["pendente"];
+      const statusCell = row.getCell("status");
+      statusCell.fill = statusStyle.fill;
+      statusCell.font = statusStyle.font;
+      statusCell.alignment = { horizontal: "center", vertical: "middle" };
+
+      applyZebraRow(detailedSheet, rowNum, idx % 2 === 1, NUM_COLS);
+    });
+
+    drawFooter(detailedSheet, detailedSheet.rowCount + 2, NUM_COLS);
+
+  // ── Collection Points ─────────────────────────────────────────────────
+  } else if (type === "collection-points") {
+    const NUM_COLS = 7;
+
+    detailedSheet.columns = [
+      { header: "ID",             key: "id",      width: 14 },
+      { header: "Nome do Local",  key: "nome",    width: 30 },
+      { header: "Bairro",         key: "bairro",  width: 20 },
+      { header: "Latitude",       key: "lat",     width: 14 },
+      { header: "Longitude",      key: "lon",     width: 14 },
+      { header: "Horário",        key: "horario", width: 20 },
+      { header: "Estado",         key: "estado",  width: 14 },
+    ];
+
+    formatTableHeader(detailedSheet, 1, NUM_COLS);
+
+    data.forEach((item: any, idx: number) => {
+      const isActivo = item.estado === "activo";
+      const row = detailedSheet.addRow({
+        id:      item.id       ?? "",
+        nome:    item.nome     ?? "",
+        bairro:  item.bairro   ?? "",
+        lat:     item.latitude  ? Number(item.latitude)  : 0,
+        lon:     item.longitude ? Number(item.longitude) : 0,
+        horario: item.horario  ?? "Livre",
+        estado:  isActivo ? "Ativo" : "Inativo",
+      });
+      const rowNum = row.number;
+
+      // Status chip
+      const estadoCell = row.getCell("estado");
+      estadoCell.fill = isActivo ? EXCEL_STYLES.severityColors.baixa.fill : EXCEL_STYLES.severityColors.critica.fill;
+      estadoCell.font = isActivo ? EXCEL_STYLES.severityColors.baixa.font : EXCEL_STYLES.severityColors.critica.font;
+      estadoCell.border = isActivo ? EXCEL_STYLES.severityColors.baixa.border : EXCEL_STYLES.severityColors.critica.border;
+      estadoCell.alignment = { horizontal: "center", vertical: "middle" };
+
+      applyZebraRow(detailedSheet, rowNum, idx % 2 === 1, NUM_COLS);
+    });
+
+    drawFooter(detailedSheet, detailedSheet.rowCount + 2, NUM_COLS);
+
+  // ── Heatmap density ───────────────────────────────────────────────────
+  } else if (type === "heatmap") {
+    const NUM_COLS = 4;
+
+    detailedSheet.columns = [
+      { header: "#",                      key: "rank",       width: 6  },
+      { header: "Bairro",                 key: "bairro",     width: 30 },
+      { header: "Ocorrências",            key: "count",      width: 18 },
+      { header: "Percentagem do Total",   key: "percentage", width: 22 },
+    ];
+
+    formatTableHeader(detailedSheet, 1, NUM_COLS);
+
+    const bairrosList: any[] = stats.bairrosDensity ?? [];
+    const totalPoints = Math.max(stats.totalPoints ?? 1, 1);
+
+    bairrosList.forEach((b: any, idx: number) => {
+      const pct = b.count / totalPoints;
+      const row = detailedSheet.addRow({
+        rank:       idx + 1,
+        bairro:     b.bairro ?? "",
+        count:      b.count  ?? 0,
+        percentage: pct,
+      });
+      const rowNum = row.number;
+      row.getCell("percentage").numFmt = "0.0%";
+      row.getCell("rank").alignment = { horizontal: "center", vertical: "middle" };
+
+      // Heat colouring by density
+      const densityCell = row.getCell("count");
+      if (pct >= 0.3) {
+        densityCell.fill = EXCEL_STYLES.severityColors.critica.fill;
+        densityCell.font = EXCEL_STYLES.severityColors.critica.font;
+      } else if (pct >= 0.15) {
+        densityCell.fill = EXCEL_STYLES.severityColors.alta.fill;
+        densityCell.font = EXCEL_STYLES.severityColors.alta.font;
+      } else if (pct >= 0.07) {
+        densityCell.fill = EXCEL_STYLES.severityColors.media.fill;
+        densityCell.font = EXCEL_STYLES.severityColors.media.font;
+      }
+      densityCell.alignment = { horizontal: "right", vertical: "middle" };
+
+      applyZebraRow(detailedSheet, rowNum, idx % 2 === 1, NUM_COLS);
+    });
+
+    drawFooter(detailedSheet, detailedSheet.rowCount + 2, NUM_COLS);
+  }
+
+  // Auto-fit
   autoFitColumnWidths(detailedSheet, 12);
 
-  // 3. Serializar para buffer e retornar
+  // ═══════════════════════════════════════════════════════════════════════
+  // Serialize and return
+  // ═══════════════════════════════════════════════════════════════════════
   const excelBuffer = await workbook.xlsx.writeBuffer();
   return excelBuffer as unknown as Buffer;
 }

@@ -1,6 +1,5 @@
 @import "../styles/variables.css";
 @import "../styles/map-overrides.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
