@@ -1,42 +1,28 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface UIState {
-  /** Estado do drawer da barra lateral em ecrãs pequenos (mobile). */
   sidebarOpen: boolean;
+  sidebarCollapsed: boolean;
   toggleSidebar: () => void;
   openSidebar: () => void;
   closeSidebar: () => void;
-
-  /** Estado de recolhimento da barra lateral no desktop (compacta vs expandida). */
-  sidebarCollapsed: boolean;
-  toggleSidebarCollapsed: () => void;
-  setSidebarCollapsed: (collapsed: boolean) => void;
+  toggleCollapsed: () => void;
 }
 
-export const useUIStore = create<UIState>((set) => ({
-  sidebarOpen: false,
-  toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
-  openSidebar: () => set({ sidebarOpen: true }),
-  closeSidebar: () => set({ sidebarOpen: false }),
-
-  sidebarCollapsed:
-    typeof window !== "undefined"
-      ? localStorage.getItem("txeneza_sidebar_collapsed") === "true"
-      : false,
-
-  toggleSidebarCollapsed: () =>
-    set((s) => {
-      const next = !s.sidebarCollapsed;
-      if (typeof window !== "undefined") {
-        localStorage.setItem("txeneza_sidebar_collapsed", next ? "true" : "false");
-      }
-      return { sidebarCollapsed: next };
+export const useUIStore = create<UIState>()(
+  persist(
+    (set) => ({
+      sidebarOpen: false,
+      sidebarCollapsed: false,
+      toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
+      openSidebar: () => set({ sidebarOpen: true }),
+      closeSidebar: () => set({ sidebarOpen: false }),
+      toggleCollapsed: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
     }),
-
-  setSidebarCollapsed: (collapsed: boolean) => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("txeneza_sidebar_collapsed", collapsed ? "true" : "false");
+    {
+      name: "txeneza-ui",
+      partialize: (s) => ({ sidebarCollapsed: s.sidebarCollapsed }),
     }
-    set({ sidebarCollapsed: collapsed });
-  },
-}));
+  )
+);

@@ -30,7 +30,7 @@ export const Header: React.FC = () => {
   const userInitial = (user?.email || "U").charAt(0).toUpperCase();
 
   return (
-    <header className="w-full bg-white/80 dark:bg-grey900/80 backdrop-blur-md border-b border-grey200/80 dark:border-grey800/80 py-3.5 px-6 flex items-center justify-between sticky top-0 z-50 transition-colors duration-200 shadow-sm">
+    <header className="w-full shrink-0 h-[61px] bg-white dark:bg-[#18181b] border-b border-[#e4e4e7] dark:border-[#27272a] px-4 sm:px-6 flex items-center justify-between z-[70] shadow-sm">
       <div className="flex items-center gap-3">
         {/* Botão de menu — apenas mobile */}
         {isAuthenticated && (
