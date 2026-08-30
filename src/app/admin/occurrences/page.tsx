@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useOccurrences } from "@/hooks/use-occurrences";
 import { OccurrenceTable } from "@/features/occurrences/components/occurrence-table";
+import { OccurrencesTableSkeleton } from "@/features/occurrences/components/occurrences-table-skeleton";
 import { OccurrenceStatus } from "@/features/occurrences/occurrences.types";
 import {
   OCCURRENCE_STATUS_META,
@@ -205,11 +206,8 @@ export default function AdminOccurrencesPage() {
           <AlertCircle className="w-5 h-5 shrink-0" />
           <p>{error}</p>
         </div>
-      ) : loading ? (
-        <div className="flex flex-col items-center justify-center gap-3 py-20 border border-grey200 dark:border-grey800 rounded-2xl bg-light-background dark:bg-dark-background">
-          <div className="w-8 h-8 border-2 border-limeGreen border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm text-grey600 dark:text-grey400">A carregar ocorrências...</span>
-        </div>
+      ) : loading && occurrences.length === 0 ? (
+        <OccurrencesTableSkeleton />
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-3 py-20 border border-grey200 dark:border-grey800 rounded-2xl bg-light-background dark:bg-dark-background text-center px-6">
           <div className="p-4 bg-grey100 dark:bg-grey800/60 rounded-full text-grey400 dark:text-grey500">

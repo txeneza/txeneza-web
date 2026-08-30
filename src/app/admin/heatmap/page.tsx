@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { HeatmapView } from "@/features/map/components/heatmap-view";
 import { useMapStore } from "@/features/map/map.store";
+import { MapSkeleton } from "@/features/map/components/map-skeleton";
 import { findClosestBairro } from "@/core/geo/beira-bairros";
 import { Flame, Radio, MapPin, AlertTriangle } from "lucide-react";
 
@@ -64,7 +65,7 @@ export default function HeatmapPage() {
   }, [markers]);
 
   if (!mounted) {
-    return null;
+    return <MapSkeleton isHeatmap={true} />;
   }
 
   return (

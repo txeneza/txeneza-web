@@ -142,9 +142,16 @@ export const CollectionPointsList: React.FC<CollectionPointsListProps> = ({
       {/* Corpo */}
       <div className="flex-1 overflow-y-auto">
         {loading ? (
-          <div className="flex flex-col items-center justify-center gap-3 h-full">
-            <div className="w-8 h-8 border-2 border-limeGreen border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-grey600 dark:text-grey400">A carregar pontos de recolha...</span>
+          <div className="p-4 flex flex-col gap-3">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-grey100 dark:border-grey800 bg-grey50/50 dark:bg-grey950/30 animate-pulse">
+                <div className="flex flex-col gap-1.5 flex-1">
+                  <div className="w-36 h-4 bg-grey200 dark:bg-grey800 rounded" />
+                  <div className="w-56 h-3 bg-grey200/60 dark:bg-grey800/60 rounded" />
+                </div>
+                <div className="w-16 h-6 bg-grey200 dark:bg-grey800 rounded-full" />
+              </div>
+            ))}
           </div>
         ) : totalCount === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 h-full text-center px-6">

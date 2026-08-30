@@ -22,6 +22,7 @@ import { StatsCard } from "@/features/dashboard/components/stats-card";
 import { GravityDonutChart } from "@/features/dashboard/components/gravity-donut-chart";
 import { CategoryBarChart } from "@/features/dashboard/components/category-bar-chart";
 import { TimelineAreaChart } from "@/features/dashboard/components/timeline-area-chart";
+import { DashboardSkeleton } from "@/features/dashboard/components/dashboard-skeleton";
 
 export default function AdminDashboardPage() {
   const { stats, loading, isUpdating, lastUpdated, fetchStats } = useDashboardStore();
@@ -39,6 +40,11 @@ export default function AdminDashboardPage() {
     }));
     await exportData(exportRows, "distribuicao-categorias.csv");
   };
+
+  // Se estiver a carregar os dados iniciais do painel, exibe o Skeleton completo
+  if (loading && !stats) {
+    return <DashboardSkeleton />;
+  }
 
   // Dados de gravidade reais vindos do serviço de estatísticas
   const gravityData = stats?.gravityDistribution || {

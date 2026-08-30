@@ -432,10 +432,20 @@ export default function AdminReportsPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            {loadingHistory ? (
-              <div className="flex flex-col items-center justify-center gap-3 h-full">
-                <div className="w-8 h-8 border-2 border-limeGreen border-t-transparent rounded-full animate-spin" />
-                <span className="text-sm text-grey600 dark:text-grey400">A ler histórico...</span>
+            {loadingHistory && history.length === 0 ? (
+              <div className="p-4 flex flex-col gap-3">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex items-center justify-between p-3.5 rounded-xl border border-grey100 dark:border-grey800 bg-grey50/50 dark:bg-grey950/30 animate-pulse">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-grey200 dark:bg-grey800 shrink-0" />
+                      <div className="flex flex-col gap-1.5">
+                        <div className="w-40 h-3.5 rounded bg-grey200 dark:bg-grey800" />
+                        <div className="w-24 h-2.5 rounded bg-grey200/60 dark:bg-grey800/60" />
+                      </div>
+                    </div>
+                    <div className="w-14 h-5 rounded-full bg-grey200 dark:bg-grey800" />
+                  </div>
+                ))}
               </div>
             ) : history.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-3 h-full text-center px-6">

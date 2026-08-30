@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { MapView, PontoRecolhaMapData } from "@/features/map/components/map-view";
 import { useMapStore } from "@/features/map/map.store";
+import { MapSkeleton } from "@/features/map/components/map-skeleton";
 import { OccurrenceCard } from "@/features/occurrences/components/occurrence-card";
 import { Map as MapIcon, MapPin, Info, X, WifiOff } from "lucide-react";
 
@@ -38,7 +39,9 @@ export default function AdminMapPage() {
     loadPoints();
   }, [fetchMapData, mounted]);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return <MapSkeleton />;
+  }
 
   return (
     <div className="flex flex-col gap-6">

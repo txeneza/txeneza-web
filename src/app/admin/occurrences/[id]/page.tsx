@@ -10,6 +10,7 @@ import {
   OCCURRENCE_STATUS_ORDER,
 } from "@/features/occurrences/occurrence-status";
 import { ConfirmDialog, ConfirmTone } from "@/components/ui/confirm-dialog";
+import { OccurrenceDetailSkeleton } from "@/features/occurrences/components/occurrence-detail-skeleton";
 import { ResolutionProofModal } from "@/features/occurrences/components/resolution-proof-modal";
 import { ResolutionGallery } from "@/features/occurrences/components/resolution-gallery";
 import { resolutionVerificationService } from "@/features/occurrences/resolution-verification.service";
@@ -127,12 +128,7 @@ export default function OccurrenceDetailPage({ params }: PageProps) {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-3 py-20">
-        <div className="w-8 h-8 border-2 border-limeGreen border-t-transparent rounded-full animate-spin" />
-        <span className="text-sm text-grey600 dark:text-grey400">A carregar detalhes...</span>
-      </div>
-    );
+    return <OccurrenceDetailSkeleton />;
   }
 
   if (!occurrence) {

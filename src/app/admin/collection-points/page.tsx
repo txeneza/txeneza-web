@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useCollectionPoints, PontoRecolhaData } from "@/features/collection-points/hooks/use-collection-points";
 import { CollectionPointForm } from "@/features/collection-points/components/collection-point-form";
 import { CollectionPointsList } from "@/features/collection-points/components/collection-points-list";
+import { CollectionPointsSkeleton } from "@/features/collection-points/components/collection-points-skeleton";
 import { DeleteConfirmDialog } from "@/features/collection-points/components/delete-confirm-dialog";
 import { AlertCircle, CheckCircle2, MapPin, MapPinCheck, MapPinX, Building2 } from "lucide-react";
 
@@ -36,6 +37,10 @@ export default function AdminCollectionPointsPage() {
     await handleDelete(pointToDelete.id);
     setPointToDelete(null);
   };
+
+  if (loading && stats.total === 0) {
+    return <CollectionPointsSkeleton />;
+  }
 
   return (
     <div className="flex flex-col gap-6">
