@@ -81,6 +81,22 @@ export const notificationsService = {
   },
 
   /**
+   * Marca uma notificação como não lida.
+   */
+  async markAsUnread(notificationId: string): Promise<boolean> {
+    try {
+      await prisma.notificacao.update({
+        where: { id_notificacao: notificationId },
+        data: { lida: false },
+      });
+      return true;
+    } catch (err: any) {
+      console.error("Erro ao marcar notificação como não lida:", err.message);
+      return false;
+    }
+  },
+
+  /**
    * Marca todas as notificações como lidas.
    */
   async markAllAsRead(userId?: string): Promise<boolean> {
@@ -107,6 +123,21 @@ export const notificationsService = {
       return true;
     } catch (err: any) {
       console.error("Erro ao eliminar notificação:", err.message);
+      return false;
+    }
+  },
+
+  /**
+   * Elimina todas as notificações da base de dados.
+   */
+  async deleteAllNotifications(userId?: string): Promise<boolean> {
+    try {
+      await prisma.notificacao.deleteMany({
+        where: userId ? { id_utilizador: userId } : {},
+      });
+      return true;
+    } catch (err: any) {
+      console.error("Erro ao limpar todas as notificações:", err.message);
       return false;
     }
   },

@@ -1,9 +1,11 @@
+
 "use client";
 
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
+  Check,
   CheckCheck,
   Info,
   AlertTriangle,
@@ -12,15 +14,14 @@ import {
   Trash2,
   Volume2,
   VolumeX,
-  Flame,
   ArrowRight,
   Inbox,
   Clock,
-  Sparkles,
   MapPin,
+  Mail,
+  MailOpen,
 } from "lucide-react";
 import { useNotificationsStore } from "@/features/notifications/notifications.store";
-import { NotificationFilterTab } from "@/features/notifications/notifications.types";
 import { notificationSound } from "@/lib/notification-sound";
 
 export const NotificationBell: React.FC = () => {
@@ -31,8 +32,11 @@ export const NotificationBell: React.FC = () => {
     setFilterTab,
     fetchNotifications,
     markAsRead,
+    markAsUnread,
+    toggleRead,
     markAllAsRead,
     deleteNotification,
+    clearAllNotifications,
   } = useNotificationsStore();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -197,7 +201,7 @@ export const NotificationBell: React.FC = () => {
 
       {/* Painel Dropdown Expandido */}
       {isOpen && (
-        <div className="absolute right-0 mt-2.5 w-[340px] sm:w-[440px] bg-white dark:bg-grey900 border border-grey200 dark:border-grey800 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150">
+        <div className="absolute right-0 mt-2.5 w-[340px] sm:w-[460px] bg-white dark:bg-grey900 border border-grey200 dark:border-grey800 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150">
           {/* Cabeçalho */}
           <div className="p-4 border-b border-grey100 dark:border-grey800/80 bg-grey50/60 dark:bg-grey900/60">
             <div className="flex items-center justify-between">
@@ -205,14 +209,18 @@ export const NotificationBell: React.FC = () => {
                 <span className="text-sm font-black tracking-tight text-grey900 dark:text-grey50">
                   Notificações
                 </span>
-                {unreadCount > 0 && (
+                {unreadCount > 0 ? (
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
                     {unreadCount} não lidas
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    Em dia
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 {/* Controlo de Som */}
                 <button
                   onClick={toggleSound}
@@ -232,9 +240,26 @@ export const NotificationBell: React.FC = () => {
                   <button
                     onClick={() => markAllAsRead()}
                     className="inline-flex items-center gap-1 text-[11px] font-bold text-forestGreen dark:text-limeGreen hover:underline px-2 py-1 rounded-lg hover:bg-forestGreen/10 dark:hover:bg-limeGreen/10 transition-colors"
+                    title="Marcar todas como lidas"
                   >
                     <CheckCheck className="w-3.5 h-3.5" />
-                    <span>Marcar todas</span>
+                    <span>Marcar lidas</span>
+                  </button>
+                )}
+
+                {/* Limpar todas */}
+                {notifications.length > 0 && (
+                  <button
+                    onClick={() => {
+                      if (window.confirm("Deseja eliminar todas as notificações?")) {
+                        clearAllNotifications();
+                      }
+                    }}
+                    className="p-1.5 text-grey400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors"
+                    title="Limpar todas as notificações"
+                    aria-label="Limpar todas"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 )}
               </div>
@@ -286,7 +311,7 @@ export const NotificationBell: React.FC = () => {
           </div>
 
           {/* Lista de Notificações */}
-          <div className="max-h-[380px] overflow-y-auto divide-y divide-grey100 dark:divide-grey800/60">
+          <div className="max-h-[400px] overflow-y-auto divide-y divide-grey100 dark:divide-grey800/60">
             {filteredNotifications.length === 0 ? (
               <div className="py-12 px-6 flex flex-col items-center justify-center text-center gap-2">
                 <div className="p-3 bg-grey100 dark:bg-grey800/60 rounded-full text-grey400 dark:text-grey500">
@@ -303,33 +328,64 @@ export const NotificationBell: React.FC = () => {
               </div>
             ) : (
               filteredNotifications.map((n) => {
-                // Remover qualquer emoji remanescente na mensagem antiga
                 const cleanMessage = n.message.replace(/[\u{1F300}-\u{1FAFF}]/gu, "").trim();
 
                 return (
                   <div
                     key={n.id}
-                    className={`group relative p-3.5 px-4 flex items-start gap-3 transition-colors cursor-pointer hover:bg-grey50 dark:hover:bg-grey800/40 ${
-                      !n.read ? "bg-forestGreen/[0.03] dark:bg-limeGreen/[0.04]" : ""
+                    className={`group relative p-3.5 px-4 flex items-start gap-3 transition-colors ${
+                      !n.read
+                        ? "bg-forestGreen/[0.04] dark:bg-limeGreen/[0.05]"
+                        : "hover:bg-grey50 dark:hover:bg-grey800/40"
                     }`}
-                    onClick={() => {
-                      if (!n.read) markAsRead(n.id);
-                      if (n.occurrenceId) {
-                        setIsOpen(false);
-                        router.push(`/admin/occurrences/${n.occurrenceId}`);
-                      }
-                    }}
                   >
-                    {/* Ícone */}
-                    {getNotificationIcon(n.type, cleanMessage)}
+                    {/* Indicador visual de não lida */}
+                    <div className="pt-2">
+                      <span
+                        className={`block w-2 h-2 rounded-full transition-all ${
+                          !n.read
+                            ? "bg-forestGreen dark:bg-limeGreen ring-2 ring-forestGreen/20 dark:ring-limeGreen/30"
+                            : "bg-transparent"
+                        }`}
+                      />
+                    </div>
 
-                    {/* Conteúdo */}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-grey900 dark:text-grey100 leading-snug">
+                    {/* Ícone da Notificação */}
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => {
+                        if (!n.read) markAsRead(n.id);
+                        if (n.occurrenceId) {
+                          setIsOpen(false);
+                          router.push(`/admin/occurrences/${n.occurrenceId}`);
+                        }
+                      }}
+                    >
+                      {getNotificationIcon(n.type, cleanMessage)}
+                    </div>
+
+                    {/* Conteúdo da Notificação */}
+                    <div
+                      className="flex-1 min-w-0 cursor-pointer"
+                      onClick={() => {
+                        if (!n.read) markAsRead(n.id);
+                        if (n.occurrenceId) {
+                          setIsOpen(false);
+                          router.push(`/admin/occurrences/${n.occurrenceId}`);
+                        }
+                      }}
+                    >
+                      <p
+                        className={`text-xs leading-snug ${
+                          !n.read
+                            ? "font-bold text-grey950 dark:text-grey50"
+                            : "font-medium text-grey700 dark:text-grey300"
+                        }`}
+                      >
                         {cleanMessage}
                       </p>
 
-                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                      <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">
                         <span className="flex items-center gap-1 text-[10px] font-medium text-grey400 dark:text-grey500">
                           <Clock className="w-3 h-3" />
                           {formatNotificationTime(n.createdAt)}
@@ -337,21 +393,43 @@ export const NotificationBell: React.FC = () => {
 
                         {n.occurrenceId && (
                           <span className="inline-flex items-center gap-1 text-[10px] font-bold text-forestGreen dark:text-limeGreen hover:underline">
-                            <span>Ver ocorrência</span>
+                            <span>Ver detalhes</span>
                             <ArrowRight className="w-3 h-3" />
                           </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Ações Rápidas (Direita) */}
+                    {/* Ações Rápidas em Linha */}
                     <div className="flex items-center gap-1 shrink-0 pt-0.5">
-                      {!n.read && (
-                        <span
-                          className="w-2 h-2 rounded-full bg-forestGreen dark:bg-limeGreen shrink-0"
-                          title="Não lida"
-                        />
+                      {/* Botão de Marcar como Lida / Não Lida */}
+                      {!n.read ? (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            markAsRead(n.id);
+                          }}
+                          className="p-1.5 text-forestGreen dark:text-limeGreen hover:bg-forestGreen/10 dark:hover:bg-limeGreen/15 rounded-lg transition-colors"
+                          title="Marcar como lida"
+                          aria-label="Marcar como lida"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            markAsUnread(n.id);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 p-1.5 text-grey400 hover:text-grey700 dark:hover:text-grey200 hover:bg-grey200/60 dark:hover:bg-grey800 rounded-lg transition-all"
+                          title="Marcar como não lida"
+                          aria-label="Marcar como não lida"
+                        >
+                          <Mail className="w-3.5 h-3.5" />
+                        </button>
                       )}
+
+                      {/* Botão Eliminar */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
